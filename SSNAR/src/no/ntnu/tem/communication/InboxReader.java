@@ -21,7 +21,7 @@ public class InboxReader extends Thread {
 
     private final RobotController rc;
     private final ConcurrentLinkedQueue<Message> inbox;
-    private final boolean debug = false;
+    private final boolean debug = true;
 
     /**
      * Constructor of the class InboxReader
@@ -90,6 +90,9 @@ public class InboxReader extends Thread {
 
                         case Message.DEBUG:
                             String msg = new String(message.getData());
+                            if (debug) {
+                                System.out.println("Debug: " + msg);
+                            }
                             break;
                     }
                 } catch (Message.MessageCorruptException ex) {
