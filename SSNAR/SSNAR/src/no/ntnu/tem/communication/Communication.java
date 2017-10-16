@@ -120,10 +120,18 @@ public class Communication {
      * @param orientation the robots wanted orientation
      * @param distance the distance to move
      */
+    /*
     public void sendOrderToRobot(int robotID, double orientation, double distance) {
         switchToCommandMode();
         serialcom.send(MessageHandler.wrapSwitchToRobot(robotID)); //*switch robotID
         serialcom.send(MessageHandler.wrapRobotOrder(orientation, distance));
+    }
+    */
+    
+    public void sendOrderToRobot(int robotID, double x, double y) {
+        switchToCommandMode();
+        serialcom.send(MessageHandler.wrapSwitchToRobot(robotID)); //*switch robotID
+        serialcom.send(MessageHandler.wrapRobotOrder(x, y));
     }
     
     public void sendStartDebugToRobot(int robotID) {

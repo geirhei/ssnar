@@ -310,8 +310,16 @@ public class MessageHandler implements Language {
      * @param distance the robots distance to travel
      * @return wrapped message
      */
+    
+    /*
     public static String wrapRobotOrder(double orientation, double distance) {
         String message = "{" + UPDATE + "," + orientation + "," + distance + "}";
+        return message;
+    }
+    */
+    
+    public static String wrapRobotOrder(double x, double y) {
+        String message = "{" + UPDATE + "," + x + "," + y + "}";
         return message;
     }
 

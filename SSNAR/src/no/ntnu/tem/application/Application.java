@@ -18,8 +18,8 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import no.ntnu.et.general.Position;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.et.navigation.NavigationController;
 import no.ntnu.tem.communication.Communication;
@@ -28,7 +28,6 @@ import no.ntnu.et.simulator.Simulator;
 import no.ntnu.et.mapping.MappingController;
 import no.ntnu.tem.robot.Robot;
 import no.ntnu.hkm.particlefilter.Particlefilter;
-import no.ntnu.hkm.particlefilter.MapMerger;
 
 /**
  * This class is the main class of the program. It connects the packages in the
@@ -268,12 +267,33 @@ public final class Application {
      * @param orientation the new orientation
      * @param distance the distance to go
      */
+    /*
     public void writeCommandToRobot(int robotID, String robotName, int orientation, int distance) {
         //  newTime[robotID] = System.currentTimeMillis();
         if (!simulatorActive) {
             com.sendOrderToRobot( rc.getRobot(robotID).getAddress(), orientation, distance);
         } else {
             sim.setRobotCommand(robotName, orientation, distance);
+        }
+        rc.getRobot(robotName).setBusy(true);
+    }
+    */
+    
+    /**
+     * Method that sends a command to a physical or simulated robot.
+     * Format: (x,y)
+     *
+     * @param robotID  the robot's id
+     * @param robotName the robot's name
+     * @param position the coordinates to be sent
+     */
+    public void writeCommandToRobot(int robotID, String robotName, Position position) {
+        int x = (int) position.getXValue();
+        int y = (int) position.getYValue();
+        if (!simulatorActive) {
+            com.sendOrderToRobot( rc.getRobot(robotID).getAddress(), x, y);
+        } else {
+            // sim.setRobotCommand(robotName, x, y); not enabled
         }
         rc.getRobot(robotName).setBusy(true);
     }

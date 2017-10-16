@@ -215,6 +215,7 @@ public class CollisionManager extends Thread {
             Position currentPosition = new Position(robotControl.getRobot(name).getPosition());
             Angle currentOrientation = new Angle((double)robotControl.getRobot(name).getRobotOrientation());
             
+            //int[] command = findWallCollisionCommand(currentPosition, currentOrientation);
             int[] command = findWallCollisionCommand(currentPosition, currentOrientation);
             robots.get(name).setPriorityCommand(command);
             

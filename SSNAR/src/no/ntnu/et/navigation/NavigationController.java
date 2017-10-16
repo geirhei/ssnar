@@ -154,7 +154,8 @@ public class NavigationController extends Thread {
                         }
                     }
                 } else if (applicationRobot.isAtBase() && applicationRobot.isGoingHome() && applicationRobot.isDockReady()) {
-                    application.writeCommandToRobot(id, name, -(applicationRobot.getRobotOrientation() - 90), 0);
+                    // Docking will not work with this disabled
+                    //application.writeCommandToRobot(id, name, -(applicationRobot.getRobotOrientation() - 90), 0);
                     applicationRobot.setRangeScanBase(true);
                     if (debug) {
                         System.out.println("RETURNED TO BASE. DOCKING -> TRUE!!!");
@@ -171,11 +172,13 @@ public class NavigationController extends Thread {
                     }
                 }
                 if (navigationRobots.get(name).hasNewPriorityCommand()) {
-                    int[] nextCommand = navigationRobots.get(name).getPriorityCommand();
+                    //int[] nextCommand = navigationRobots.get(name).getPriorityCommand();
+                    Position nextCommand = navigationRobots.get(name).getPriorityCommand();
                     if (debug) {
-                        System.out.println(name + ": Executing next command, ROTATION " + nextCommand[0] + ", DISTANCE " + nextCommand[1]);
+                        //System.out.println(name + ": Executing next command, ROTATION " + nextCommand[0] + ", DISTANCE " + nextCommand[1]);
                     }
-                    application.writeCommandToRobot(id, name, nextCommand[0], nextCommand[1]);
+                    //application.writeCommandToRobot(id, name, nextCommand[0], nextCommand[1]);
+                    application.writeCommandToRobot(id, name, nextCommand);
                 } else if (!applicationRobot.isBusy() && !navigationRobots.get(name).isInCollisionManagement()) {
                     if (navigationRobots.get(name).hasMoreWaypoints()) {
                         // Get next target
@@ -188,11 +191,12 @@ public class NavigationController extends Thread {
                         Position currentPosition = new Position(applicationRobot.getPosition());
                         int currentOrientation = applicationRobot.getRobotOrientation();
                         // Command the robot to move to the next waypoint along its path
-                        int[] newCommand = findCommandToTargetPoint(nextWaypoint, currentPosition, currentOrientation);
+                        //int[] newCommand = findCommandToTargetPoint(nextWaypoint, currentPosition, currentOrientation);
                         if (debug) {
-                            System.out.println(name + ": Executing next command, ROTATION " + newCommand[0] + ", DISTANCE " + newCommand[1]);
+                            //System.out.println(name + ": Executing next command, ROTATION " + newCommand[0] + ", DISTANCE " + newCommand[1]);
                         }
-                        application.writeCommandToRobot(id, name, newCommand[0], newCommand[1]);
+                        //application.writeCommandToRobot(id, name, newCommand[0], newCommand[1]);
+                        application.writeCommandToRobot(id, name, nextWaypoint);
                     } else if (!robotTaskManager.isWorkingOnTask(name)) {
                         if (debug) {
                             System.out.println(name + ": Idle. Searching for best target");
@@ -218,17 +222,17 @@ public class NavigationController extends Thread {
                             System.out.println("Distance to target: " + Position.distanceBetween(currentPosition, nextWaypoint));
                             int[] newCommand = findCommandToTargetPoint(nextWaypoint, currentPosition, applicationRobot.getRobotOrientation());
                             if (Position.distanceBetween(currentPosition, nextWaypoint) > 1) {
-                                application.writeCommandToRobot(id, name, newCommand[0], newCommand[1] * 2);
+                                //application.writeCommandToRobot(id, name, newCommand[0], newCommand[1] * 2);
                                 applicationRobot.setAdjustRobot(2);
                             } else {
-                                application.writeCommandToRobot(id, name, 90, 0);
+                                //application.writeCommandToRobot(id, name, 90, 0);
                                 applicationRobot.setAdjustRobot(2);
                             }
                             break;
                         case 2:
                             // Turn robot to what it thinks is 90 degrees
                             if (!applicationRobot.isBusy()) {
-                                application.writeCommandToRobot(id, name, -(applicationRobot.getRobotOrientation() + applicationRobot.getAdjustDirection() - 90), 0);
+                                //application.writeCommandToRobot(id, name, -(applicationRobot.getRobotOrientation() + applicationRobot.getAdjustDirection() - 90), 0);
                                 applicationRobot.setAdjustRobot(3);
                             }
                             break;
@@ -251,7 +255,7 @@ public class NavigationController extends Thread {
                                     }
                                     applicationRobot.setAdjustRobot(-3);
                                 } else {
-                                    application.writeCommandToRobot(id, name, 0, -applicationRobot.getBackUpDist());
+                                    //application.writeCommandToRobot(id, name, 0, -applicationRobot.getBackUpDist());
                                     applicationRobot.setAdjustRobot(5);
                                 }
                             }
@@ -274,7 +278,7 @@ public class NavigationController extends Thread {
                             applicationRobot.setAdjustRobot(-1);
                             break;
                         case 7:
-                            application.writeCommandToRobot(id, name, 0, -15);
+                            //application.writeCommandToRobot(id, name, 0, -15);
                             applicationRobot.setAdjustRobot(-3);
                             break;
                         default:

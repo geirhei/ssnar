@@ -143,11 +143,13 @@ public class NavigationController extends Thread{
                 Robot applicationRobot = robotController.getRobot(name);
                 int id = applicationRobot.getId();
                 if(navigationRobots.get(name).hasNewPriorityCommand()){
-                    int[] nextCommand = navigationRobots.get(name).getPriorityCommand();
+                    //int[] nextCommand = navigationRobots.get(name).getPriorityCommand();
+                    Position nextCommand = navigationRobots.get(name).getPriorityCommand();
                     if(debug){
-                        System.out.println(name + ": Executing next command, ROTATION " + nextCommand[0] + ", DISTANCE "+ nextCommand[1]);
+                        //System.out.println(name + ": Executing next command, ROTATION " + nextCommand[0] + ", DISTANCE "+ nextCommand[1]);
                     }
-                    application.writeCommandToRobot(id, name, nextCommand[0], nextCommand[1]); 
+                    //application.writeCommandToRobot(id, name, nextCommand[0], nextCommand[1]); 
+                    application.writeCommandToRobot(id, name, nextCommand.getXValue(), nextCommand.getYValue()); 
                 }
                 
                 else if(!applicationRobot.isBusy() && !navigationRobots.get(name).isInCollisionManagement()){

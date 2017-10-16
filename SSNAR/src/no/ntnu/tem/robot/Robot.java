@@ -210,6 +210,11 @@ public class Robot {
         int[] position = {estimatedPosition[0], estimatedPosition[1]};
         return position;
     }
+    
+    public Position getPositionObject() {
+        Position position = new Position(estimatedPosition[0], estimatedPosition[1]);
+        return position;
+    }
 
     public void setPosition(int[] position) {
         this.estimatedPosition = position;

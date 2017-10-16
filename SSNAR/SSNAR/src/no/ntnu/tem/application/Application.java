@@ -315,12 +315,24 @@ public final class Application {
      * @param orientation the new orientation
      * @param distance the distance to go
      */
+    /*
     public void writeCommandToRobot(int robotID, String robotName, double orientation, double distance) {
         //  newTime[robotID] = System.currentTimeMillis();
         if (!simulatorActive) {
             com.sendOrderToRobot(robotID, orientation, distance);
         } else {
             sim.setRobotCommand(robotID, orientation, distance);
+        }
+        rc.addStatus(robotName, "BUSY");
+    }
+    */
+    
+    public void writeCommandToRobot(int robotID, String robotName, double x, double y) {
+        //  newTime[robotID] = System.currentTimeMillis();
+        if (!simulatorActive) {
+            com.sendOrderToRobot(robotID, x, y);
+        } else {
+            sim.setRobotCommand(robotID, x, y);
         }
         rc.addStatus(robotName, "BUSY");
     }
