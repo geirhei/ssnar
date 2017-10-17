@@ -22,7 +22,8 @@ public class NavigationRobot {
 
     private ArrayList<Position> waypoints;
 
-    private int[] priorityCommand;
+    //private int[] priorityCommand;
+    Position priorityCommand;
     
     private boolean hasPriority;
 
@@ -35,7 +36,8 @@ public class NavigationRobot {
     public NavigationRobot(Position lastWaypoint) {
         this.lastWaypoint = lastWaypoint;
         waypoints = new ArrayList<Position>();
-        priorityCommand = new int[2];
+        //priorityCommand = new int[2];
+        priorityCommand = new Position();
     }
    
     
@@ -43,7 +45,8 @@ public class NavigationRobot {
         waypoints.addAll(newWaypoints);
     }
 
-    public void setPriorityCommand(int[] newCommand) {
+    public void setPriorityCommand(Position newCommand) {
+        //priorityCommand = newCommand;
         priorityCommand = newCommand;
         hasPriority = true;
     }
@@ -57,7 +60,7 @@ public class NavigationRobot {
     }
     
 
-    int[] getPriorityCommand() {
+    Position getPriorityCommand() {
         if(hasPriority == true){
             hasPriority = false;
             return priorityCommand;
