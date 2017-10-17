@@ -11,7 +11,8 @@ import no.ntnu.et.general.Pose;
 import no.ntnu.et.general.Position;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 import no.ntnu.et.general.Line;
 
 /**
@@ -25,14 +26,9 @@ public class SimWorld {
     private int width;
     private int height;
     ArrayList<Feature> features;
+    ArrayList<SimRobot> robots;
     ArrayList<Integer> robotIDs;
     private ArrayList<String[]> possibleRobotNames;
-    private int addressCounter = 0;
-    HashMap<Integer, SimRobot> robots;
-    private Integer ArduinoCounter = 0;
-    private Integer NXTCounter = 0;
-    private Integer AVRCounter = 0;
-    private boolean Droneadded = false;
 
     /**
      * Default constructor
@@ -41,8 +37,10 @@ public class SimWorld {
         width = 0;
         height = 0;
         features = new ArrayList<Feature>(0);
-        robots = new HashMap<>();
+        robots = new ArrayList<SimRobot>(0);
         robotIDs = new ArrayList<Integer> (0);
+        possibleRobotNames = new ArrayList<String[]>();
+        populateRobotNames();
     }
     
     /**
@@ -72,55 +70,35 @@ public class SimWorld {
     }
     
     ArrayList<SimRobot> getRobots() {
-        ArrayList<SimRobot> robotlist = new ArrayList();
-        robotlist.addAll(robots.values());
-        return robotlist;
+        return robots;
     }
-
-    SimRobot createRobot(Pose initialPose, int RobotType) {
-       String[] identification = null;
-        if(!Droneadded && RobotType == 1){
-            identification = new String[]{"1", "Drone"};
-            Droneadded = true;
-        }
-        else if(Droneadded && RobotType == 1){
-            System.out.println("Only one Drone supported");
-            return null;
-        }
-        if(RobotType == 2){
-            ArduinoCounter++;
-            Integer id = (ArduinoCounter < 2) ? 2 : 5; // 2 5 and 8
-            if(ArduinoCounter == 3)id =8;
-            if(ArduinoCounter > 3)id = 11;
-            identification = new String[]{id.toString() , "Arduino"+ArduinoCounter.toString()};
-        }
-        if(RobotType == 3){
-            NXTCounter++;
-            Integer id = 3*NXTCounter; //3 6 and 9
-            identification = new String[]{id.toString(), "NXT"+NXTCounter.toString()};
-        }
-        if(RobotType == 4){
-            AVRCounter++;
-            Integer id = 4*AVRCounter; //4 and 8
-            identification = new String[]{id.toString(), "AVR"+AVRCounter.toString()};
-        }        
+    private void populateRobotNames() {
+        possibleRobotNames.add(new String[]{"0", "SlamRobot"});
+        possibleRobotNames.add(new String[]{"1", "Arduino1"});
+        possibleRobotNames.add(new String[]{"2", "NXT1"});
+        possibleRobotNames.add(new String[]{"3", "AVR2"});
+        possibleRobotNames.add(new String[]{"4", "Arduino2"});
+        possibleRobotNames.add(new String[]{"5", "NXT2"});
+        possibleRobotNames.add(new String[]{"6", "AVR3"});
+        possibleRobotNames.add(new String[]{"7", "Arduino3"});
+        possibleRobotNames.add(new String[]{"8", "NXT3"});
+        possibleRobotNames.add(new String[]{"9", "AVR4"});
+    }
+    
+    void createRobot(Pose initialPose) {
+        String[] identification = possibleRobotNames.remove(0);
         int id = Integer.parseInt(identification[0]);
-        if(id > 9){
-            System.out.println("Cant have more of this unit!");
-            return null;
-        }
         String name = identification[1];
         SimRobot newRobot;
-        if(name.equals("Drone")){
-            newRobot = new Drone(this, initialPose, "Drone", id, addressCounter++);
-            System.out.println("Drone created");
+        if (name.equals("SlamRobot")) {
+            newRobot = new SlamRobot(this, initialPose, name, id);
+            System.out.println("SlamRobot created");
         } else {
-            newRobot = new SimRobot(this, initialPose, name, id, addressCounter++);
+            newRobot = new BasicRobot(this, initialPose, name, id);
             System.out.println("SimRobot created");
         }
         robotIDs.add(id);
-        robots.put(id,newRobot);  
-        return newRobot;
+        robots.add(newRobot);
     }
     
     
@@ -164,7 +142,7 @@ public class SimWorld {
             if(robotIDs.get(i) == ignoredRobotId){
                 continue;
             }
-            double newIRMeasurement = Utilities.lineCircleIntersection(line, robots.get( robotIDs.get(i) ).getPose().getPosition(), 5);
+            double newIRMeasurement = Utilities.lineCircleIntersection(line, robots.get(i).getPose().getPosition(), 5);
             // Add only the measurement of the nearest feature
             if (newIRMeasurement != 0 && newIRMeasurement < shortestMeasurement) {
                 shortestMeasurement = newIRMeasurement;
@@ -178,12 +156,6 @@ public class SimWorld {
     
     SimRobot getRobot(int id) {
         return robots.get(id);
-    }
-    SimRobot getRobot(String name) {
-        for (Map.Entry<Integer, SimRobot> e : robots.entrySet()) {
-            if(e.getValue().getName().equals(name)) return e.getValue();
-        }    
-        return null;
     }
     
     /**

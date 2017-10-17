@@ -44,6 +44,7 @@ public final class MainGUI extends javax.swing.JFrame {
     private final ImageIcon greenIcon = new ImageIcon("Images//greenL.png");
     private final ImageIcon redIcon = new ImageIcon("Images//redL.png");
     private ObservableList<Robot> connectedRobots;
+    JMenuItem menuItemReset;
     private String shdwPort;
 
     private LinkedList<String> pl;
@@ -51,7 +52,7 @@ public final class MainGUI extends javax.swing.JFrame {
     private boolean communicationSuccess = false;
     private GridBagConstraints gbc;
     private final boolean debug = false;
-    private boolean changeButton3functionality = false;
+
     private ArrayList<RobotPanel> robotPanels = new ArrayList<RobotPanel>();
 
     /**
@@ -96,7 +97,6 @@ public final class MainGUI extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         pnlRobots = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         infoTextArea = new javax.swing.JTextArea();
@@ -115,6 +115,7 @@ public final class MainGUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Robot Control Panel");
         setBackground(new java.awt.Color(204, 255, 51));
+        setPreferredSize(new java.awt.Dimension(849, 751));
         addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 formMouseEntered(evt);
@@ -233,17 +234,17 @@ public final class MainGUI extends javax.swing.JFrame {
         pnlRobots.setLayout(new java.awt.GridBagLayout());
         jScrollPane1.setViewportView(pnlRobots);
 
-        jButton1.setText("Particle Filter");
+        jButton1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jButton1.setText("Connect robots");
+        jButton1.setFocusable(false);
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButton1MouseEntered(evt);
+            }
+        });
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setText("Clean Map");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
             }
         });
 
@@ -251,23 +252,19 @@ public final class MainGUI extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)))
+                .addComponent(jButton1)
+                .addContainerGap())
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -300,7 +297,7 @@ public final class MainGUI extends javax.swing.JFrame {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 618, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 607, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -327,11 +324,11 @@ public final class MainGUI extends javax.swing.JFrame {
         pnlMap.setLayout(pnlMapLayout);
         pnlMapLayout.setHorizontalGroup(
             pnlMapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 616, Short.MAX_VALUE)
+            .addGap(0, 605, Short.MAX_VALUE)
         );
         pnlMapLayout.setVerticalGroup(
             pnlMapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 634, Short.MAX_VALUE)
+            .addGap(0, 606, Short.MAX_VALUE)
         );
 
         jScrollPane3.setViewportView(pnlMap);
@@ -411,7 +408,7 @@ public final class MainGUI extends javax.swing.JFrame {
                 .addGap(11, 11, 11)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 516, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -453,6 +450,10 @@ public final class MainGUI extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jScrollPane1MouseExited
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        findMoreRobots();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     private void infoTextAreaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_infoTextAreaMouseClicked
         //beta();
     }//GEN-LAST:event_infoTextAreaMouseClicked
@@ -487,6 +488,10 @@ public final class MainGUI extends javax.swing.JFrame {
         infoTextArea.setText("Start or stop the program.\nThis starts and stops mapping and AI");
     }//GEN-LAST:event_jPanel2MouseEntered
 
+    private void jButton1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseEntered
+        infoTextArea.setText("Press to connect to more robots");
+    }//GEN-LAST:event_jButton1MouseEntered
+
     private void pnlMapMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_pnlMapMouseWheelMoved
 
     }//GEN-LAST:event_pnlMapMouseWheelMoved
@@ -495,19 +500,6 @@ public final class MainGUI extends javax.swing.JFrame {
         disconnectAllRobots();
         app.turnOffProgram();
     }//GEN-LAST:event_formWindowClosing
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if(changeButton3functionality){
-            new mapMergeOptions(this, app.getRobotController()).setVisible(true);
-        }
-        else{
-            new ParticleFilterOptions(this).setVisible(true);
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        app.cleanMap();
-    }//GEN-LAST:event_jButton2ActionPerformed
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {
         new AboutGUI().setVisible(true);
     }
@@ -552,7 +544,6 @@ public final class MainGUI extends javax.swing.JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JTextArea infoTextArea;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
@@ -607,10 +598,6 @@ public final class MainGUI extends javax.swing.JFrame {
         RobotPanel rp = new RobotPanel(r, this);
         robotPanels.add(rp);
     }
-    protected void connectRobot(Robot r) {
-        app.connectToRobot(r);
-        
-    }
 
     /**
      * Removes a graphical robot panel from the connected robot list
@@ -622,6 +609,33 @@ public final class MainGUI extends javax.swing.JFrame {
             if (robotPanels.get(i).getRobot().equals(r)) {
                 robotPanels.remove(i);
             }
+        }
+    }
+
+    /**
+     * Opens the ConnectRobotsGUI if Com port is selected (Dongle) if the com
+     * port is not selected a warning dialog pops up. If Simulator is running,
+     * ConnectRobotsGUI opens and the com port is simulated.
+     */
+    private void findMoreRobots() {
+        stop();
+        if (app.isSimulatorActive() || communicationSuccess) {
+            if (connectedRobots.size() > 0) {
+                int result = JOptionPane.showConfirmDialog(this, "Due to limitations in NRF51, All connected robots will disconnect, before the program searches for avaliable robots.", "Confirmation", JOptionPane.OK_CANCEL_OPTION);
+                switch (result) {
+                    case JOptionPane.OK_OPTION:
+                        disconnectAllRobots();
+
+                        new ConnectRobotsGUI(this).setVisible(true);
+                        break;
+                    case JOptionPane.CANCEL_OPTION:
+                        break;
+                }
+            } else {
+                new ConnectRobotsGUI(this).setVisible(true);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select the correct Com port under <Settings>", "Com port, failure", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -774,17 +788,7 @@ public final class MainGUI extends javax.swing.JFrame {
         btnStart.setEnabled(false);
         btnStop.setEnabled(true);
         jLabel2.setText("Program running");
-        for(Robot robot : app.getRobotController().getRobotList()){
-            if(robot.getParticleFilter() == null){
-                jButton1.setEnabled(false);
-                break;
-            }
-            else{
-                changeButton3functionality = true;
-                jButton1.setText("PF Map");
-                break;
-            }
-        }        lightLabel.setIcon(greenIcon);
+        lightLabel.setIcon(greenIcon);
     }
 
     /**
@@ -824,7 +828,7 @@ public final class MainGUI extends javax.swing.JFrame {
                         if (debug) {
                             System.out.println("Disconnecting robot: " + i);
                         }
-                        app.disconnectRobot(connectedRobots.get(i).getName());
+                        app.disconnectRobot(connectedRobots.get(i).getId());
                         dpb.setValue((numberOfRobots - i) * 2);
                         try {
                             Thread.sleep(250);
@@ -834,6 +838,10 @@ public final class MainGUI extends javax.swing.JFrame {
                             e.printStackTrace();
                         }
                         if (i == 0) {
+                            if (!app.isSimulatorActive()) {
+                                app.resetDongle();
+                                Thread.sleep(200);
+                            }
                             dlg.setVisible(false);
                         }
                     }
@@ -884,6 +892,12 @@ public final class MainGUI extends javax.swing.JFrame {
             windowsMenu.setVisible(false);
             generateComPortMenuItems();
             settingsMenu.addSeparator();
+            menuItemReset = new javax.swing.JMenuItem();
+            menuItemReset.setText("Reset Dongle");
+            menuItemReset.addActionListener((java.awt.event.ActionEvent evt) -> {
+                app.resetDongle();
+            });
+            settingsMenu.add(menuItemReset);
         }
     }
 }

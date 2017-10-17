@@ -26,15 +26,12 @@ import no.ntnu.et.general.Position;
  */
 public class InitialPoseDialog extends javax.swing.JDialog {
     private SimWorld world;
-    private Simulator sim;
-    private int RobotType = 2;
     /**
      * Creates new form TestDialog
      */
-    public InitialPoseDialog(java.awt.Frame parent, SimWorld world, Simulator sim) {
+    public InitialPoseDialog(java.awt.Frame parent, SimWorld world) {
         super(parent, true);
         this.world = world;
-        this.sim = sim;
         initComponents();
     }
 
@@ -56,7 +53,6 @@ public class InitialPoseDialog extends javax.swing.JDialog {
         ftxtfYPos = new javax.swing.JFormattedTextField();
         ftxtfOrientation = new javax.swing.JFormattedTextField();
         jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("robotname");
@@ -141,13 +137,6 @@ public class InitialPoseDialog extends javax.swing.JDialog {
         jLabel1.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         jLabel1.setText("Place the robot:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Arduino", "NTX", "AVR", "Drone" }));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -157,10 +146,7 @@ public class InitialPoseDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSetValues, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -169,8 +155,6 @@ public class InitialPoseDialog extends javax.swing.JDialog {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1, 1, 1)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSetValues)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -191,29 +175,11 @@ public class InitialPoseDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_ftxtfYPosActionPerformed
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        javax.swing.JComboBox<String> combo = (javax.swing.JComboBox<String>)evt.getSource();
-        String selectedbot = (String)combo.getSelectedItem();
-        if(selectedbot.equals("Arduino")){
-            RobotType = 2;
-        }
-        else if(selectedbot.equals("NTX")){
-            RobotType = 3;
-        }
-        else if(selectedbot.equals("Drone")){
-            RobotType = 1;
-        }
-        else if(selectedbot.equals("AVR")){
-            RobotType = 4;
-        }
-    }//GEN-LAST:event_jComboBox1ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSetValues;
     private javax.swing.JFormattedTextField ftxtfOrientation;
     private javax.swing.JFormattedTextField ftxtfXPos;
     private javax.swing.JFormattedTextField ftxtfYPos;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel7;
@@ -227,9 +193,10 @@ public class InitialPoseDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "To close to other object", "Placement error", JOptionPane.ERROR_MESSAGE);
         }
         else{
+            //jLabel2.setText("JALLALALLALLA");
             Angle initialAngle = new Angle(Integer.parseInt(ftxtfOrientation.getText()));
             Pose initialPose = new Pose(initialPosition, initialAngle);
-            sim.createRobot(initialPose , RobotType);
+            world.createRobot(initialPose);
             this.dispose();
         }
     }

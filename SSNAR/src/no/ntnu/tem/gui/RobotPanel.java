@@ -18,7 +18,7 @@ public class RobotPanel extends javax.swing.JPanel {
 
     private Robot robot;
     private RobotInfoGUI infoGUI;
-    private MainGUI parent;
+
     /**
      * Constructor of the class RobotPanel
      */
@@ -33,11 +33,12 @@ public class RobotPanel extends javax.swing.JPanel {
      * @param parent the main window of the application
      */
     public RobotPanel(Robot r, MainGUI parent) {
-        this.parent = parent;
         initComponents();
         robot = r;
         lblName.setText(r.getName());
-
+        InitialRobotParameterGUI initDialog = new InitialRobotParameterGUI(parent, r);
+        initDialog.setLocationRelativeTo(parent);
+        initDialog.setVisible(true);
         infoGUI = new RobotInfoGUI(robot, parent);
     }
 
@@ -60,15 +61,14 @@ public class RobotPanel extends javax.swing.JPanel {
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jButton1.setText("Con");
+        jButton1.setText("Info");
         jButton1.setFocusable(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
-        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(83, 5, 60, -1));
-        jButton1.getAccessibleContext().setAccessibleDescription("");
+        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 5, -1, -1));
 
         lblName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblName.setText("RobotName");
@@ -76,14 +76,7 @@ public class RobotPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if(robot.isConnected() ) infoGUI.setVisible(true);
-        else {
-            InitialRobotParameterGUI initDialog = new InitialRobotParameterGUI(parent, robot);
-            initDialog.setLocationRelativeTo(parent);
-            initDialog.setVisible(true);
-            jButton1.setText("Info");
-            parent.connectRobot(robot);
-        }
+        infoGUI.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

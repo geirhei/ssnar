@@ -7,15 +7,13 @@
 package no.ntnu.et.simulator;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.JFrame;
-import no.ntnu.et.general.Pose;
-import no.ntnu.tem.communication.DroneUpdateMessage;
-import no.ntnu.tem.communication.HandshakeMessage;
-import no.ntnu.tem.communication.Message;
-import no.ntnu.tem.communication.UpdateMessage;
+import no.ntnu.ge.slam.SlamMappingController;
+import no.ntnu.ge.slam.SlamNavigationController;
+import no.ntnu.tem.communication.Inbox;
 
 /**
  * This class contains both the interface and the control system of the
@@ -24,14 +22,13 @@ import no.ntnu.tem.communication.UpdateMessage;
  * @author Eirik Thon
  */
 public class Simulator {
-
     private final SimWorld world;
     private SimulatorGUI gui;
     private boolean estimateNoiseEnabled;
     private boolean sensorNoiseEnabled;
-    HashMap<String, RobotHandler> robotHandlers;
+    HashMap<Integer, RobotHandler> robotHandlers;
     private double simulationSpeed;
-    private ConcurrentLinkedQueue<Message> inbox;
+    private Inbox inbox;
     private int mode;
     private HashMap<Integer, String> idNameMapping;
 
@@ -43,17 +40,17 @@ public class Simulator {
      * @param robotNames String[]
      * @param mapPath String
      */
-    public Simulator(ConcurrentLinkedQueue<Message> inbox) {
+    public Simulator(Inbox inbox) {
         simulationSpeed = 1;
         world = new SimWorld();
         File mapFolder = new File("maps");
         File[] allMaps = mapFolder.listFiles();
-        if (allMaps.length == 0) {
+        if(allMaps.length == 0){
             System.out.println("No map files found");
         }
         String mapPath = allMaps[0].getAbsolutePath();
         world.initMap(mapPath);
-        robotHandlers = new HashMap<String, RobotHandler>();
+        robotHandlers = new HashMap<Integer, RobotHandler>();
         estimateNoiseEnabled = true;
         sensorNoiseEnabled = true;
         this.mode = mode;
@@ -101,7 +98,7 @@ public class Simulator {
      */
     public void stop() {
         // Uses the closing routine defined in initializeGUI
-        for (HashMap.Entry<String, RobotHandler> entry : robotHandlers.entrySet()) {
+        for (HashMap.Entry<Integer, RobotHandler> entry : robotHandlers.entrySet()) {
             entry.getValue().interrupt();
         }
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -112,25 +109,41 @@ public class Simulator {
         });
     }
 
-    public void createRobot(Pose initialPose, int RobotType) {
-        SimRobot robot = world.createRobot(initialPose, RobotType);
-        if (robot == null) {
-            return;
-        }
-        if (!robotHandlers.containsKey(robot.getName())) {
-            RobotHandler robotHandler = this.new RobotHandler(robot);
-            robotHandler.setName(robot.getName());
-            robotHandlers.put(robot.getName(), robotHandler);
-            robotHandler.paused = true;
-            robotHandlers.get(robot.getName()).start();
+    public void connectToRobot(int id) {
+        if (!robotHandlers.containsKey(id)) {
+            SimRobot robot = world.getRobot(id);
+            RobotHandler robotHandler;
+            if (id == 0) {
+                robotHandler = this.new SlamRobotHandler((SlamRobot)robot);
+            } else {
+                robotHandler = this.new SimRobotHandler((BasicRobot)robot);
+            }
+            robotHandler.setName("Robot " + Integer.toString(id));
+            robotHandlers.put(id, robotHandler);
+            robotHandlers.get(id).start();
         }
     }
 
-    public void disconnectRobot(String name) {
-        if (robotHandlers.containsKey(name)) {
-            robotHandlers.get(name).interrupt();
-            robotHandlers.remove(name);
+    public void disconnectRobot(int id) {
+        if (robotHandlers.containsKey(id)) {
+            robotHandlers.get(id).interrupt();
+            robotHandlers.remove(id);
         }
+    }
+
+    public ArrayList<String[]> listAvailableRobots() {
+        ArrayList<String[]> availableRobots = new ArrayList<String[]>();
+        ArrayList<Integer> robotIDs = world.getRobotIDs();
+        for (int i = 0; i < robotIDs.size(); i++) {
+            /*
+            if(robotHandlers.containsKey(id)){
+                continue;
+            }*/
+            String name = world.getRobot(robotIDs.get(i)).getName();
+            String[] robotId = {"" + robotIDs.get(i), name};
+            availableRobots.add(robotId);
+        }
+        return availableRobots;
     }
 
     /**
@@ -154,16 +167,16 @@ public class Simulator {
      * @param rotation double
      * @param distance double
      */
-    public void setRobotCommand(String name, double rotation, double distance) {
-        world.getRobot(name).setTarget(rotation, distance);
+    public void setRobotCommand(int id, double rotation, double distance) {
+        world.getRobot(id).setTarget(rotation, distance);
     }
 
-    public void pauseRobot(String name) {
-        robotHandlers.get(name).pause();
+    public void pauseRobot(int robotId) {
+        robotHandlers.get(robotId).pause();
     }
 
-    public void unpauseRobot(String name) {
-        robotHandlers.get(name).unpause();
+    public void unpauseRobot(int robotId) {
+        robotHandlers.get(robotId).unpause();
     }
 
     /**
@@ -184,13 +197,12 @@ public class Simulator {
         }
     }
 
-    private class RobotHandler extends Thread {
-
-        /**
-         * Controller object for a robot. This class contains a SimRobot object
-         * and is responsible for making that robot run.
-         */
-        final private SimRobot myRobot;
+    /**
+    * Controller object for a robot of type BasicRobot. This class contains
+ a BasicRobot object and is responsible for making that robot run.
+    */
+    private class SimRobotHandler extends RobotHandler {
+        final private BasicRobot myRobot;
         final private String myName;
         final private int myID;
         private double estimateNoise;
@@ -201,22 +213,13 @@ public class Simulator {
         /**
          * Constructor
          *
-         * @param robot SimRobot
+         * @param robot BasicRobot
          */
-        public RobotHandler(SimRobot robot) {
+        public SimRobotHandler(BasicRobot robot) {
             myRobot = robot;
             myName = robot.getName();
             myID = robot.getId();
             noiseGenerator = new Random();
-            paused = false;
-        }
-
-        void pause() {
-            paused = true;
-        }
-
-        void unpause() {
-            paused = false;
         }
 
         /**
@@ -226,13 +229,10 @@ public class Simulator {
         @Override
         public void run() {
             int counter = 0;
-
-            HandshakeMessage hm = myRobot.generateHandshake();
-            byte[] hmBytes = hm.getBytes();
-            byte[] hmMessageBytes = new byte[hmBytes.length + 1];
-            hmMessageBytes[0] = Message.HANDSHAKE;
-            System.arraycopy(hmBytes, 0, hmMessageBytes, 1, hmBytes.length);
-            inbox.add(new Message(myRobot.getAddress(), hmMessageBytes));
+            String content = myRobot.getHandShakeMessage();
+            String dongleID = "[" + myID + "]:" + myName + ":";
+            String handshake = dongleID + content;
+            inbox.putMessage(handshake);
             while (true) {
                 // Wait between each loop
                 try {
@@ -240,7 +240,7 @@ public class Simulator {
                 } catch (InterruptedException e) {
                     break;
                 }
-                if (paused) {
+                if (isPaused()) {
                     continue;
                 }
 
@@ -251,10 +251,12 @@ public class Simulator {
                     estimateNoise = 0;
                 }
                 if (myRobot.moveRobot(estimateNoise) == true) {
-                    inbox.add(new Message(myRobot.getAddress(), new byte[]{Message.IDLE}));
+                    String updateMsg = "{S,IDL}\n";
+                    String dongleSim = "[" + myID + "]:" + myName + ":";
+                    inbox.putMessage(dongleSim + updateMsg);
                 }
                 myRobot.turnTower();
-
+                
                 // Measure
                 if (counter > 19) { // Every 200 ms ( Counter is increased every 10 ms )
                     if (sensorNoiseEnabled) {
@@ -264,22 +266,99 @@ public class Simulator {
                     }
                     myRobot.measureIR(sensorNoise);
                     int[] update = myRobot.createMeasurement();
-                    if (myName.equals("Drone")) {
-                        DroneUpdateMessage um = SimRobot.generateDroneUpdate(update[0], update[1], update[2], update[4], update[5], update[6], update[7]);
-                        byte[] umBytes = um.getBytes();
-                        byte[] umMessageBytes = new byte[umBytes.length + 1];
-                        umMessageBytes[0] = Message.DRONE_UPDATE;
-                        System.arraycopy(umBytes, 0, umMessageBytes, 1, umBytes.length);
-                        inbox.add(new Message(myRobot.getAddress(), umMessageBytes));
-                    } else {
-                        UpdateMessage um = SimRobot.generateUpdate(update[0], update[1], update[2], update[3], update[4], update[5], update[6], update[7]);
-                        byte[] umBytes = um.getBytes();
-                        byte[] umMessageBytes = new byte[umBytes.length + 1];
-                        umMessageBytes[0] = Message.UPDATE;
-                        System.arraycopy(umBytes, 0, umMessageBytes, 1, umBytes.length);
-                        inbox.add(new Message(myRobot.getAddress(), umMessageBytes));
-                    }
+                    String updateMsg = BasicRobot.generateUpdate(update[0], update[1], update[2], update[3], update[4], update[5], update[6], update[7]);
+                    String dongleSim = "[" + myID + "]:" + myName + ":";
+                    inbox.putMessage(dongleSim + updateMsg);
+                    counter = 0;
+                }
+                counter++;
+            }
+        }
+    }
+    
+    /**
+    * Controller object for a robot of type SlamRobot. This class contains
+    * a SlamRobot object and is responsible for making that robot run.
+    */
+    private class SlamRobotHandler extends RobotHandler {
+        final private SlamRobot myRobot;
+        final private String myName;
+        final private int myID;
+        private double estimateNoise;
+        private double sensorNoise;
+        private final Random noiseGenerator;
+        SlamMappingController mapping;
+        SlamNavigationController navigation;
+        
+        /**
+         * Constructor
+         *
+         * @param robot SlamRobot
+         */
+        public SlamRobotHandler(SlamRobot robot) {
+            myRobot = robot;
+            myName = robot.getName();
+            myID = robot.getId();
+            noiseGenerator = new Random();
+        }
+        
+        /**
+         * A continuous loop that calls methods of the robot in a specific way
+         * in order to generate the robot behavior.
+         */
+        @Override
+        public void run() {
+            mapping = new SlamMappingController(myRobot, inbox);
+            mapping.setName("SlamMappingController");
+            mapping.start();
+            navigation = new SlamNavigationController(myRobot);
+            navigation.setName("SlamNavigationController");
+            navigation.start();
+            
+            int counter = 0;
+            String content = myRobot.getHandShakeMessage();
+            String dongleID = "[" + myID + "]:" + myName + ":";
+            String handshake = dongleID + content;
+            inbox.putMessage(handshake);
+            while (true) {
+                // Wait between each loop
+                try {
+                    Thread.sleep((int) (10 / simulationSpeed));
+                } catch (InterruptedException e) {
+                    break;
+                }
+                if (isPaused()) {
+                    continue;
+                }
 
+                // Move robot
+                if (estimateNoiseEnabled) {
+                    estimateNoise = noiseGenerator.nextGaussian() * 0.1;
+                } else {
+                    estimateNoise = 0;
+                }
+                if (myRobot.moveRobot(estimateNoise) == true) {
+                    String updateMsg = "{S,IDL}\n";
+                    String dongleSim = "[" + myID + "]:" + myName + ":";
+                    inbox.putMessage(dongleSim + updateMsg);
+                    myRobot.setBusy(false);
+                }
+                myRobot.turnTower();
+                
+                // Measure
+                if (counter > 19) { // Every 200 ms ( Counter is increased every 10 ms )
+                    if (sensorNoiseEnabled) {
+                        sensorNoise = noiseGenerator.nextGaussian() * 2;
+                    } else {
+                        sensorNoise = 0;
+                    }
+                    myRobot.measureIR(sensorNoise);
+                    myRobot.updateIrHeading();
+                    int[] update = myRobot.createMeasurement();
+                    myRobot.addUpdate(update); // add update to updateQueue -> SlamMappingController
+                    String updateMsg = BasicRobot.generateUpdate(update[0], update[1], update[2], update[3], update[4], update[5], update[6], update[7]);
+                    String dongleSim = "[" + myID + "]:" + myName + ":";
+                    inbox.putMessage(dongleSim + updateMsg);
                     counter = 0;
                 }
                 counter++;

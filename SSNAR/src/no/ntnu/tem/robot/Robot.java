@@ -6,11 +6,7 @@
  */
 package no.ntnu.tem.robot;
 
-import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import no.ntnu.et.general.Position;
-import no.ntnu.hkm.particlefilter.Particlefilter;
-import org.ejml.simple.SimpleMatrix;
 
 /**
  * This class represents each robot. It holds the robot's parameters and
@@ -44,29 +40,6 @@ public class Robot {
     private int[] destination;
     private int messageCorruptCount = 0;
     private int ValueCorruptCount = 0;
-    private int address;
-    private boolean connected = false;
-    //Particle filter
-    Particlefilter p = null;
-
-    //  DOCKING added LMS
-    private boolean rangeScanBase;
-    private boolean stuckFlag;
-    private boolean baseFlag;
-    private boolean dockReady;
-    private final Object baseLock = new Object();
-    private boolean confirmPose;
-    private boolean robotAligned;
-    public ArrayList<Position> S_REF = new ArrayList<Position>();
-    public ArrayList<Position> S_NEW = new ArrayList<Position>();
-    private SimpleMatrix realPose;
-    private int adjustRobot;
-    private int adjustDirection;
-    private int backUpDist;
-    public SimpleMatrix transMatrix = SimpleMatrix.identity(3);
-
-    private int batteryLevel;
-    private final int[] basePosition;
 
     /**
      * Constructor of the class Robot
@@ -81,7 +54,7 @@ public class Robot {
      * @param sensorOffset Sensor offset [a,b,c,d,..] from center (radius)
      * @param irHeading IR heading relative to 0 degrees (straight forward)
      */
-    public Robot(int robotID, int address, String name, int width, int length, int messageDeadline,
+    public Robot(int robotID, String name, int width, int length, int messageDeadline,
             int axleOffset, int[] towerOffset, int[] sensorOffset, int[] irHeading) {
         this.id = robotID;
         this.name = name;
@@ -92,37 +65,11 @@ public class Robot {
         this.towerOffset = towerOffset;
         this.sensorOffset = sensorOffset;
         this.irSensors = new IR(irHeading);
-        this.batteryLevel = 1023;
         this.measurements = new ConcurrentLinkedQueue<>();
-        this.address = address;
+
         this.initialPosition = new int[]{0, 0, 0};
         this.estimatedPosition = new int[]{0, 0};
         this.destination = new int[]{0, 0};
-
-        // Added LMS
-        this.goingHomeFlag = false;
-        this.baseFlag = false;
-        this.dockReady = true;
-        this.rangeScanBase = false;
-        this.homeFlag = true;
-        this.robotAligned = false;
-        this.confirmPose = false;
-        this.adjustRobot = -1;
-        this.adjustDirection = 0;
-        this.backUpDist = 0;
-        this.basePosition = new int[]{0, 35, 0};
-    }
-
-    public boolean isConnected() {
-        return connected;
-    }
-
-    public void setConnected(boolean connected) {
-        this.connected = connected;
-    }
-
-    public int getAddress() {
-        return address;
     }
 
     /**
@@ -176,10 +123,6 @@ public class Robot {
      */
     public Measurement getMeasurement() {
         Measurement m = measurements.poll();
-        //Update particle filter
-        if (p != null && m != null) {
-            p.updateMeasurement(m);
-        }
         return m;
     }
 
@@ -207,13 +150,7 @@ public class Robot {
      * @return the position
      */
     public int[] getPosition() {
-        int[] position = {estimatedPosition[0], estimatedPosition[1]};
-        return position;
-    }
-    
-    public Position getPositionObject() {
-        Position position = new Position(estimatedPosition[0], estimatedPosition[1]);
-        return position;
+        return estimatedPosition;
     }
 
     public void setPosition(int[] position) {
@@ -309,45 +246,45 @@ public class Robot {
         }
     }
 
+    
     /**
      * Method that returns the robots goingHomeFlag
-     *
+     * 
      * @return true if the robot is going home
      */
-    public boolean isGoingHome() {
-        synchronized (goingHomeLock) {
+    public boolean isGoingHome(){
+        synchronized (goingHomeLock){
             return goingHomeFlag;
         }
     }
-
     /**
      * Method that sets the robot to status going home
      *
      * @param goingHomeFlag true if the robot is going home
      */
-    public void setGoingHome(boolean goingHomeFlag) {
+    
+    public void setGoingHome(boolean goingHomeFlag){
         synchronized (goingHomeLock) {
             this.goingHomeFlag = goingHomeFlag;
         }
     }
-
-    public boolean isHome() {
-        synchronized (homeLock) {
+    
+      public boolean isHome(){
+        synchronized (homeLock){
             return homeFlag;
         }
     }
-
     /**
      * Method that sets the robot to status going home
      *
      * @param homeFlag true if the robot is going home
      */
-    public void setHome(boolean homeFlag) {
+    
+    public void setHome(boolean homeFlag){
         synchronized (homeLock) {
             this.homeFlag = homeFlag;
         }
     }
-
     /**
      * Method that returns the robots destination
      *
@@ -389,178 +326,5 @@ public class Robot {
      */
     public int getCorruptCount() {
         return messageCorruptCount + ValueCorruptCount;
-    }
-
-    /**
-     * Particlefilter functionality.
-     *
-     */
-    public void setParticleFilter(Particlefilter p) {
-        this.p = p;
-    }
-
-    /**
-     * OBS! Can return null!
-     *
-     * @return
-     */
-    public Particlefilter getParticleFilter() {
-        return p;
-    }
-
-    // Added LMS
-    public void setDock(boolean dock) {
-        this.dockReady = dock;
-    }
-
-    /*
-    * Method that sets robot ready for docking
-    *
-     */
-    public boolean isDockReady() {
-        return dockReady;
-    }
-
-    public void setConfirmPose(boolean confirm) {
-        this.confirmPose = confirm;
-    }
-
-    public boolean confirmPose() {
-        return confirmPose;
-    }
-
-    /*Update the battery level*/
-    public void updateBattery(int level) {
-        this.batteryLevel = level;
-        //System.out.println(level);
-    }
-
-    public int getBat() {
-        return this.batteryLevel;
-    }
-
-    /*  Check battery   */
-    public void checkBattery() {
-        if (this.batteryLevel < 900) {
-            this.setGoingHome(true);
-            this.setAtBase(false);
-            this.setDock(true);
-            System.out.println("Low on power, heading home!");
-        }
-    }
-
-    public boolean isAtBase() {
-        synchronized (baseLock) {
-            return baseFlag;
-        }
-    }
-
-    public void setAtBase(boolean baseFlag) {
-        synchronized (baseLock) {
-            this.baseFlag = baseFlag;
-        }
-    }
-
-    public boolean isStuck() {
-        return this.stuckFlag;
-    }
-
-    public void setStuck(boolean stuckFlag) {
-        this.stuckFlag = stuckFlag;
-    }
-
-    public void setAdjustRobot(int adjustRobot) {
-        this.adjustRobot = adjustRobot;
-    }
-
-    public int getAdjustRobot() {
-        return adjustRobot;
-    }
-
-    public void setBackUpDist(int backUpDist) {
-        this.backUpDist = backUpDist;
-    }
-
-    public int getBackUpDist() {
-        return backUpDist;
-    }
-
-    public int getAdjustDirection() {
-        return adjustDirection;
-    }
-
-    public void setAdjustDirection(int adjustDirection) {
-        this.adjustDirection = adjustDirection;
-    }
-
-    public boolean isRobotAligned() {
-        return robotAligned;
-    }
-
-    public void setRobotAligned(boolean robotAligned) {
-        this.robotAligned = robotAligned;
-    }
-
-    public boolean isRangeScanBase() {
-        return rangeScanBase;
-    }
-
-    public void setRangeScanBase(boolean rangeScanBase) {
-        this.rangeScanBase = rangeScanBase;
-    }
-
-    public void addToREF(Position in) {
-        this.S_REF.add(in);
-    }
-
-    public void addToNEW(Position in) {
-        this.S_NEW.add(in);
-    }
-
-    public void resetNew() {
-        System.out.println("NEW-list is cleared");
-        this.S_NEW.clear();
-    }
-
-    public void resetRef() {
-        System.out.println("REF-list is cleared");
-        this.S_REF.clear();
-    }
-
-    public void setRealPose(SimpleMatrix realPose) {
-        this.realPose = realPose;
-    }
-
-    public double getRealPose(int row, int col) {
-        return realPose.get(row, col);
-    }
-
-    public int[] getBasePosition() {
-        return this.basePosition;
-    }
-
-    public SimpleMatrix getTransMatrix() {
-        return transMatrix;
-    }
-
-    public void setTransMatrix(SimpleMatrix transMatrix) {
-        this.transMatrix = transMatrix;
-    }
-
-    public double Bat2Screen() {
-        double batLvl = getBat();
-        double ToDisp = Math.round(batLvl * 100.0) / 100.0;
-        if (!isGoingHome()) {
-            if (batLvl < 1023) {
-                batLvl = ((getBat() * 2.56) / 1023) * 4.5;
-                ToDisp = Math.round(batLvl * 100.0) / 100.0;
-            } else {
-                if (batLvl < ToDisp) {
-                    ToDisp = Math.round(batLvl * 100.0) / 100.0;
-                }
-
-            }
-        }
-        return batLvl;
     }
 }

@@ -215,6 +215,7 @@ public class CollisionManager extends Thread {
             Position currentPosition = new Position(robotControl.getRobot(name).getPosition());
             Angle currentOrientation = new Angle((double)robotControl.getRobot(name).getRobotOrientation());
             
+            //int[] command = findWallCollisionCommand(currentPosition, currentOrientation);
             Position command = findWallCollisionCommand(currentPosition, currentOrientation);
             robots.get(name).setPriorityCommand(command);
             
@@ -249,9 +250,7 @@ public class CollisionManager extends Thread {
         }
         
         void robotCollision(){
-            //int[] stopCommand = {0, 0};
-            // Send stop command by sending the current position
-            Position stopCommand = robotControl.getRobot(name).getPositionObject();
+            int[] stopCommand = {0, 0};
             robots.get(name).setInRobotCollision(true);
             robots.get(name).setPriorityCommand(stopCommand);
             if(debug){
@@ -303,7 +302,7 @@ public class CollisionManager extends Thread {
             Position robot1Position = new Position(robotControl.getRobot(name).getPosition());
             Angle robot1Heading = new Angle((double)robotControl.getRobot(name).getRobotOrientation());
             Position robot2Position = new Position(robotControl.getRobot(blockingRobot).getPosition());
-            Position command = findRobotCollisionCommand(robot1Position, robot1Heading, robot2Position);
+            int[] command = findRobotCollisionCommand(robot1Position, robot1Heading, robot2Position);
             if(command != null){
                 if(debug){
                     System.out.println(name + ": Stepping aside");
@@ -373,25 +372,22 @@ public class CollisionManager extends Thread {
                     System.out.println(robotName+ ": Found intersection along current path. Stop");
                 }
                 robots.get(robotName).clearWaypoints();
-                //int[] command = {0 , 0};
-                // Send stop command by sending current position
-                Position command = robotControl.getRobot(robotName).getPositionObject();
-                robotControl.getRobot(robotName).setDestination(robotControl.getRobot(robotName).getPosition());
+                int[] command = {0 , 0};
                 robots.get(robotName).setPriorityCommand(command);
+                robotControl.getRobot(robotName).setDestination(robotControl.getRobot(robotName).getPosition());
                 break;
             }
         }
     }
     
-    Position findWallCollisionCommand(Position currentPosition, Angle currentOrientation){
+    int[] findWallCollisionCommand(Position currentPosition, Angle currentOrientation){
         Position offset = Utilities.polar2cart(currentOrientation, -10);
         Position rearPosition = Position.sum(currentPosition, offset);
         MapLocation rearMapLocation = map.findLocationInMap(rearPosition);
         // Check if it is possible to just reverse 10 cm 
         if(map.findCell(rearMapLocation) != null) {
             if(map.findCell(rearMapLocation).isWeaklyTargetable()){
-                //int[] command = {0 , -10};
-                Position command = rearPosition;
+                int[] command = {0 , -10};
                 return command;
             }
         }
@@ -400,12 +396,33 @@ public class CollisionManager extends Thread {
         MapLocation robotLocation = map.findLocationInMap(currentPosition);
         MapLocation unrestrictedMapLocation = PathPlanningFunctions.findNearestFreeCell(map, robotLocation);
         Position unrestrictedPosition = map.mapLocation2Position(unrestrictedMapLocation);
-        //int[] command = NavigationController.findCommandToTargetPoint(unrestrictedPosition, currentPosition, (int)Math.round(currentOrientation.getValue()));
-        Position command = unrestrictedPosition;
+        int[] command = NavigationController.findCommandToTargetPoint(unrestrictedPosition, currentPosition, (int)Math.round(currentOrientation.getValue()));
         return command;
     }
     
-    Position findRobotCollisionCommand(Position robot1Position, Angle robot1Heading, Position robot2Position){
+    /*
+    int[] findWallCollisionCommand(Position currentPosition, Angle currentOrientation){
+        Position offset = Utilities.polar2cart(currentOrientation, -10);
+        Position rearPosition = Position.sum(currentPosition, offset);
+        MapLocation rearMapLocation = map.findLocationInMap(rearPosition);
+        // Check if it is possible to just reverse 10 cm 
+        if(map.findCell(rearMapLocation) != null) {
+            if(map.findCell(rearMapLocation).isWeaklyTargetable()){
+                int[] command = {0 , -10};
+                return command;
+            }
+        }
+
+        // Send the robot to the nearest unrestricted (and weakly unrestricted) location in the map
+        MapLocation robotLocation = map.findLocationInMap(currentPosition);
+        MapLocation unrestrictedMapLocation = PathPlanningFunctions.findNearestFreeCell(map, robotLocation);
+        Position unrestrictedPosition = map.mapLocation2Position(unrestrictedMapLocation);
+        int[] command = NavigationController.findCommandToTargetPoint(unrestrictedPosition, currentPosition, (int)Math.round(currentOrientation.getValue()));
+        return command;
+    }
+    */
+
+    int[] findRobotCollisionCommand(Position robot1Position, Angle robot1Heading, Position robot2Position){
         Angle angleBetweenRobots = Position.angleBetween(robot1Position, robot2Position);
         MapLocation robot1Location = map.findLocationInMap(robot1Position);
         
@@ -423,8 +440,7 @@ public class CollisionManager extends Thread {
             }
         }
         if(success){
-            //int[] command = {(int)Math.round(Angle.difference(testAngle, robot1Heading)), 40};
-            Position command = testPosition;
+            int[] command = {(int)Math.round(Angle.difference(testAngle, robot1Heading)), 40};
             return command;
         }
         
@@ -440,8 +456,7 @@ public class CollisionManager extends Thread {
             }
         }
         if(success){
-            //int[] command = {-(int)Math.round(Angle.difference(testAngle, robot1Heading)), 40};
-            Position command = testPosition;
+            int[] command = {-(int)Math.round(Angle.difference(testAngle, robot1Heading)), 40};
             return command;
         }
         

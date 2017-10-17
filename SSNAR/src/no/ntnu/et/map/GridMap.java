@@ -9,7 +9,6 @@ package no.ntnu.et.map;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import no.ntnu.et.general.Position;
-import no.ntnu.et.mapping.MappingController;
 
 /**
  * This class represents a grid map. A hash table of MapLocations and Cells are
@@ -541,93 +540,6 @@ public class GridMap{
                     }
                 }
             }
-        }
-    }
-        /**
-     * Function to make lines from point clouds.
-     * 
-     * @author Henrik
-     */
-    public void cleanMap(){
-        //Split map into x*y number of pxp sized submaps
-        int p = 5;
-        //Expand map to avoid unprocessed edge residues (if height % p != 0 for instance)
-        addColumnsRight(p-1);
-        addRowsTop(p-1);
-        int rows = ((topRow-bottomRow+1)/p);
-        int cols = ((rightColumn-leftColumn+1)/p);
-        ArrayList<MapLocation> centerPointCells = new  ArrayList<MapLocation>();
-        //Itterate over submaps and find center of submaps
-        for(int x = 0; x < rows; x++){
-            for(int y = 0; y < cols; y++){
-                GridMap subMap = new GridMap(cellSize,p*cellSize,p*cellSize);
-                int points = 0;
-                //Itterate over locations and transfer to submap
-                int n = 0;
-                for (int i = bottomRow+p*x; i < bottomRow+p+p*x; i++) {
-                    int m = 0;
-                    for (int j = leftColumn+p*y; j < leftColumn+p+p*y; j++) {
-                        Cell cell = map.get(new MapLocation(i,j));
-                        if(cell.isOccupied()){
-                            points++;
-                            subMap.addMeasurement(new MapLocation(n,m), true);
-                        }
-                        m++;
-                    }
-                    n++;
-                }
-                for (int i = bottomRow+p*x; i < bottomRow+p+p*x; i++) {
-                    for (int j = leftColumn+p*y; j < leftColumn+p+p*y; j++) {
-                        Cell measuredCell = map.get(new MapLocation(i,j));
-                        if(measuredCell.isPreviouslyObserved()){
-                            measuredCell.update(false);
-                        }
-                        if(i == bottomRow+p*x+(p/2) && j == leftColumn+p*y+(p/2)
-                            && points > 1){
-                            centerPointCells.add(new MapLocation(i,j));
-                        }
-                    }
-                }
-            }
-        }
-        //use centerpoints to make lines
-        for(MapLocation startLocation : centerPointCells){
-            MapLocation endLocation = startLocation;
-            for(MapLocation point : centerPointCells){
-                if(Math.abs(point.getRow() - startLocation.getRow()) < (p+1) 
-                    && Math.abs(point.getColumn() - startLocation.getColumn()) < (p+1) ){
-                    endLocation = point;
-                    ArrayList<MapLocation> line = MappingController.getLineBetweenPoints(startLocation, endLocation);
-                    for(MapLocation lineSegment : line){
-                        Cell linePoint = map.get(lineSegment);
-                        linePoint.update(true);
-                    }                
-                }
-            }
-        }
-    }
-    
-    /**
-     * Adds locations of the particles in the filter to the map.
-     * 
-     * @param location 
-     */
-    public void addParticle(MapLocation location) {
-        if(map.get(location) != null && !(map.get(location).isOccupied())) {
-            Cell measuredCell = map.get(location);
-            measuredCell.setParticle();
-        }
-    }
-    
-    /**
-     * Removes the outdated particles from the map.
-     * 
-     * @param location 
-     */
-    public void removeParticle(MapLocation location) {
-        if(map.get(location) != null) {
-            Cell measuredCell = map.get(location);
-            measuredCell.removeParticle();
         }
     }
 }

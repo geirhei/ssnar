@@ -32,23 +32,7 @@ public class Measurement {
         this.IRheading = irHeading;
         this.IRdata = irData;
     }
-    
-    /**
-     * Copy constructor
-     * @param copy 
-     */
-    public Measurement(Measurement copy) {
-        this.theta = copy.getTheta();
-        this.xPos = copy.getxPos();
-        this.yPos = copy.getyPos();
-        int[] copyIRHeading = new int[copy.getIRHeading().length];
-        System.arraycopy(copy.getIRHeading(), 0, copyIRHeading, 0, copy.getIRHeading().length);
-        this.IRheading = copyIRHeading;
-        int[] copyIRdata = new int[copy.getIRHeading().length];
-        System.arraycopy(copy.getIRdata(), 0, copyIRdata, 0, copy.getIRdata().length);
-        this.IRdata = copy.getIRdata();
-    }
-    
+
     /**
      * Method that returns the robots x position
      *

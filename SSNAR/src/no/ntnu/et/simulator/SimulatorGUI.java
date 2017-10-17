@@ -45,7 +45,7 @@ public class SimulatorGUI extends JFrame {
      */
     public SimulatorGUI(Simulator simulator, SimWorld world) {
         initComponents();
-        initDiag = new InitialPoseDialog(this, world, simulator);
+        initDiag = new InitialPoseDialog(this, world);
         mapDiag = new JDialog(this, false);
         this.world = world;
         this.simulator = simulator;
@@ -438,7 +438,13 @@ public class SimulatorGUI extends JFrame {
     }//GEN-LAST:event_newRobotButtonActionPerformed
 
     private void populateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_populateButtonActionPerformed
-
+        // TODO add your handling code here:
+        Pose initialPose = new Pose(50, 50, 90);
+        world.createRobot(initialPose);
+        initialPose = new Pose(550, 50, 90);
+        world.createRobot(initialPose);
+        initialPose = new Pose(50, 550, 90);
+        world.createRobot(initialPose);
     }//GEN-LAST:event_populateButtonActionPerformed
 
     private void selectMapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectMapButtonActionPerformed

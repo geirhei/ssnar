@@ -37,7 +37,7 @@ public class NavigationRobot {
         this.lastWaypoint = lastWaypoint;
         waypoints = new ArrayList<Position>();
         //priorityCommand = new int[2];
-        priorityCommand = new Position(0, 0);
+        priorityCommand = new Position();
     }
    
     
@@ -73,7 +73,7 @@ public class NavigationRobot {
         }
         return null;
     }
-    */
+*/
     
     Position getPriorityCommand() {
         if(hasPriority == true){

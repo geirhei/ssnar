@@ -18,8 +18,8 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import no.ntnu.et.general.Position;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.et.navigation.NavigationController;
 import no.ntnu.tem.communication.Communication;
@@ -27,7 +27,6 @@ import no.ntnu.tem.gui.MainGUI;
 import no.ntnu.et.simulator.Simulator;
 import no.ntnu.et.mapping.MappingController;
 import no.ntnu.tem.robot.Robot;
-import no.ntnu.hkm.particlefilter.Particlefilter;
 
 /**
  * This class is the main class of the program. It connects the packages in the
@@ -49,9 +48,7 @@ public final class Application {
     private final GridMap worldMap;
     private boolean simulatorActive = false;
     private boolean pause = false;
-    private boolean activateParticlefilter = false;
-    private double[] particleFilterOptions = {0,0,0,0,0};
-    
+
     /**
      * Constructor of the class Application
      */
@@ -60,7 +57,7 @@ public final class Application {
         MainGUI.setLookAndFeel();
         this.MAPLOCATION = new File("maps\\big_map.txt").getAbsolutePath();
         this.rc = new RobotController();
-        this.com = new Communication(this, rc);
+        this.com = new Communication(rc);
         this.worldMap = new GridMap(2, 50, 50);
         this.worldMapGraphic = new MapGraphic(worldMap, rc);
         this.slam = new MappingController(rc, worldMap);
@@ -69,24 +66,29 @@ public final class Application {
         if (System.getProperty("os.name").startsWith("Windows")) {
             getPDFList();
         }
+
+        getConnectedRobotList().addListener(new ListChangeListener<Robot>() {
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends Robot> c) {
+                c.next();
+                if (c.wasAdded()) {
+                    confirmHandshake(c.getAddedSubList().get(0).getId());
+                    slam.addRobot(c.getAddedSubList().get(0).getName());
+                    navigation.addRobot(c.getAddedSubList().get(0).getName(), c.getAddedSubList().get(0).getId());
+                    /*}else if(c.wasReplaced()){
+                    confirmHandshake(c.getAddedSubList().get(0).getId());
+                     */
+                }
+            }
+        });
     }
-    public void connectToRobot(Robot r) {
-        if (!simulatorActive) {
-            com.confirmHandshake(r.getAddress());
-        } else {
-            sim.unpauseRobot(r.getName());
-        }
-        r.setConnected(true);
-        slam.addRobot(r.getName());
-        navigation.addRobot(r.getName(), r.getId());
-    }
+
     /**
      * Opens a PDF using the default PDF viewer, the PDF should be in a manuals
      * folder thats next to the program path.
      *
      * @param name The name of the PDF to open, without ".pdf"
      */
-    
     public void openPDF(String name) {
         if (Desktop.isDesktopSupported()) {
             try {
@@ -128,14 +130,7 @@ public final class Application {
     public MapGraphic getWorldMap() {
         return worldMapGraphic;
     }
-    
-    /**
-     * Method that returns robot controller
-     * @return robot controller
-     */
-    public RobotController getRobotController() {
-        return rc;
-    }
+
     //////////////////////////////////////////////////////////////////////
     //////////////////////////// INITIALIZERS ////////////////////////////
     //////////////////////////////////////////////////////////////////////
@@ -145,19 +140,6 @@ public final class Application {
     public void startSystem() {
         slam.start();
         navigation.start();
-        if(activateParticlefilter){
-            for(Robot robot : rc.getRobotList()){
-                if(robot.getName().equals("Drone")){continue;} //Drone does not need PF
-                Particlefilter p = new Particlefilter(robot, worldMap,particleFilterOptions);
-                robot.setParticleFilter(p);
-            } 
-            activateParticlefilter = false;
-        }
-        for(Robot robot : rc.getRobotList()){
-            if(robot.getParticleFilter() != null){
-                robot.getParticleFilter().start();
-            }
-        }
     }
 
     /**
@@ -167,29 +149,35 @@ public final class Application {
      * @return boolean that tells if success or not
      */
     public boolean startCommunication() {
-        boolean success = false;
         if (!simulatorActive) {
             try {
-                success = com.startCommunication(com.getComPort());
-                if(success) com.startInboxReader();
+                com.startCommunication(com.getComPort());
+                com.startInboxReader();
             } catch (UnsupportedCommOperationException | PortInUseException | IOException | NoSuchPortException e) {
-                success = false;
+                return false;
             }
         }
-        return success;
+        return true;
     }
 
     //////////////////////////////////////////////////////////////////////
     /////////////////////////// ROBOT HANDLING ///////////////////////////
     //////////////////////////////////////////////////////////////////////
-
+    /**
+     * Method that returns the available robot list
+     *
+     * @return the list
+     */
+    public ObservableList<String[]> getAvailableRobotList() {
+        return rc.getAvailableRobotList();
+    }
 
     /**
      * Method that returns the connected robot list
      *
      * @return the list
      */
-    public ObservableList<Robot> getConnectedRobotList() {
+    public ObservableList getConnectedRobotList() {
         return rc.getRobotList();
     }
 
@@ -241,24 +229,84 @@ public final class Application {
     //////////////////////////////////////////////////////////////////////
     /////////////////////// COMUNICATION COMMANDS ////////////////////////
     //////////////////////////////////////////////////////////////////////
+    /**
+     * Method that starts scanning for new robots
+     */
+    public void startScan() {
+        if (!simulatorActive) {
+            com.startScanForNewRobots();
+        }
+    }
 
+    /**
+     * Method that stops scanning for new robots
+     */
+    public void stopScan() {
+        if (!simulatorActive) {
+            com.stopScanForNewRobots();
+        }
+    }
+
+    /**
+     * Method that lists the found available robots
+     */
+    public void listAvailableRobots() {
+        // Clears the old list
+        rc.getAvailableRobotList().clear();
+        if (!simulatorActive) {
+            // If the simulator is not active, lists the found bluetooth robots
+            com.listAvailableRobots();
+        } else {
+            for (String[] s : sim.listAvailableRobots()) {
+                rc.addAvailableRobot(s);
+            }
+        }
+    }
+
+    /**
+     * Method that initiates a connection to a specified robot
+     *
+     * @param robotID the robots id
+     */
+    public void connectToRobot(int robotID) {
+        if (!simulatorActive) {
+            com.connectToRobot(robotID);
+        } else {
+            sim.connectToRobot(robotID);
+        }
+    }
 
     /**
      * Method that cancels the connection to the specified robot
      *
-     * @param name the robots name
+     * @param robotID the robots id
      */
-    public void disconnectRobot(String name) {
+    public void disconnectRobot(int robotID) {
         if (!simulatorActive) {
-            com.disconnectRobot(rc.getRobot(name).getAddress());
+            com.disconnectRobot(robotID);
         } else {
-            sim.disconnectRobot(name);
+            sim.disconnectRobot(robotID);
         }
-        rc.removeRobot(name);
+        String name = rc.getRobot(robotID).getName();
+        rc.removeRobot(robotID);
         slam.removeRobot(name);
         navigation.removeRobot(name);
     }
+    
+    /**
+     * Logger function
+     */
+    public void startLogging(int robotID){
+        if (!simulatorActive) {
+            com.sendStartDebugToRobot(robotID);
+        }
+    }
 
+    public void stopLogging(int robotID){
+        if (!simulatorActive) {
+            com.sendStopDebugToRobot(robotID);
+        }
+    }    
     /**
      * Method that sends a command to a physical or simulated robot
      *
@@ -268,36 +316,37 @@ public final class Application {
      * @param distance the distance to go
      */
     /*
-    public void writeCommandToRobot(int robotID, String robotName, int orientation, int distance) {
+    public void writeCommandToRobot(int robotID, String robotName, double orientation, double distance) {
         //  newTime[robotID] = System.currentTimeMillis();
         if (!simulatorActive) {
-            com.sendOrderToRobot( rc.getRobot(robotID).getAddress(), orientation, distance);
+            com.sendOrderToRobot(robotID, orientation, distance);
         } else {
-            sim.setRobotCommand(robotName, orientation, distance);
+            sim.setRobotCommand(robotID, orientation, distance);
         }
-        rc.getRobot(robotName).setBusy(true);
+        rc.addStatus(robotName, "BUSY");
     }
     */
     
-    /**
-     * Method that sends a command to a physical or simulated robot.
-     * Format: (x,y)
-     *
-     * @param robotID  the robot's id
-     * @param robotName the robot's name
-     * @param position the coordinates to be sent
-     */
-    public void writeCommandToRobot(int robotID, String robotName, Position position) {
-        int x = (int) position.getXValue();
-        int y = (int) position.getYValue();
+    public void writeCommandToRobot(int robotID, String robotName, double x, double y) {
+        //  newTime[robotID] = System.currentTimeMillis();
         if (!simulatorActive) {
-            com.sendOrderToRobot( rc.getRobot(robotID).getAddress(), x, y);
+            com.sendOrderToRobot(robotID, x, y);
         } else {
-            // sim.setRobotCommand(robotName, x, y); not enabled
+            sim.setRobotCommand(robotID, x, y);
         }
-        rc.getRobot(robotName).setBusy(true);
+        rc.addStatus(robotName, "BUSY");
     }
 
+    /**
+     * Method that confirms that the server has received a handshake
+     *
+     * @param robotID the id of the robot.
+     */
+    public void confirmHandshake(int robotID) {
+        if (!simulatorActive) {
+            com.confirmHandshake(robotID);
+        }
+    }
 
     /**
      * Method that confirms that the robot is finished
@@ -374,13 +423,14 @@ public final class Application {
     public void stopSystem() {
         navigation.pause();
         slam.pause();
-        for(Robot robot : rc.getRobotList()){
-            if(robot.getParticleFilter() != null){
-                robot.getParticleFilter().pause();
-            }
-        }
     }
 
+    /**
+     * Resets the connected nRF51-dongle
+     */
+    public void resetDongle() {
+        com.resetDongle();
+    }
 
     /**
      * Method should be used before turning off the java program, this ensures
@@ -388,6 +438,14 @@ public final class Application {
      */
     public void turnOffProgram() {
         if (!simulatorActive) {
+            try {
+                System.out.println("Reseting dongle");
+                resetDongle();
+                Thread.sleep(100);
+                System.out.println("Reset Complete");
+            } catch (Exception e) {
+
+            }
             try {
                 System.out.println("Closing port");
                 com.getSerialCommunication().closeComPort();
@@ -397,20 +455,4 @@ public final class Application {
             }
         }
     }
-    
-    public void useParticlefilter(boolean state, double particles, double convergenceRate, double windowSize,double movmentUncertainty,double rotationUncertainty){
-        activateParticlefilter = state;
-        particleFilterOptions[0] =  particles;
-        particleFilterOptions[1] =  convergenceRate;
-        particleFilterOptions[2] =  windowSize;
-        particleFilterOptions[3] =  movmentUncertainty;
-        particleFilterOptions[4] =  rotationUncertainty;
-    }
-
-    /**
-     * Makes lines from point clouds in the map
-     */
-    public void cleanMap(){
-        worldMap.cleanMap();
-    }    
 }

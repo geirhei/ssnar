@@ -8,6 +8,7 @@ package no.ntnu.tem.application;
 import no.ntnu.tem.robot.Robot;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import no.ntnu.tem.communication.Language;
 
 /**
  * This class holds a List over all the robots in the system. It holds methods
@@ -18,8 +19,8 @@ import javafx.collections.ObservableList;
 public class RobotController {
 
     private final ObservableList<Robot> robotList;
+    private final ObservableList<String[]> availableRobots;
     private final boolean debug = false;
-    private int idCounter = 0;
 
     /**
      * Constructor of the class RobotController, starts off with an empty list
@@ -27,6 +28,7 @@ public class RobotController {
      */
     public RobotController() {
         this.robotList = FXCollections.observableArrayList();
+        this.availableRobots = FXCollections.observableArrayList();
     }
 
     /**
@@ -39,9 +41,39 @@ public class RobotController {
     }
 
     /**
+     * Method that adds a discovered robot to the available robot list
+     *
+     * @param id the robots id
+     * @param name the robots name
+     */
+    public void addAvailableRobot(int id, String name) {
+        String[] robot = new String[]{"" + id, name};
+        availableRobots.add(robot);
+    }
+
+    /**
+     * Method that adds a discovered robot to the available robot list
+     *
+     * @param robot a String array where robot[0] is the id and robot[1] is the
+     * name of the robot
+     */
+    public void addAvailableRobot(String[] robot) {
+        availableRobots.add(robot);
+    }
+
+    /**
+     * Method that returns the available robot list
+     *
+     * @return the list
+     */
+    public ObservableList<String[]> getAvailableRobotList() {
+        return availableRobots;
+    }
+
+    /**
      * Method that adds a robot to the system
      *
-     * @param address The robots address
+     * @param robotID The robots id
      * @param name The robots name
      * @param width The robots physical width (cm)
      * @param length The robots physical length (cm)
@@ -52,11 +84,11 @@ public class RobotController {
      * @param irHeading IR heading relative to 0 deg (straight forward)
      * @return true if successful
      */
-    public boolean addRobot(int address, String name, int width, int length, int messageDeadline,
+    public boolean addRobot(int robotID, String name, int width, int length, int messageDeadline,
             int axleOffset, int[] towerOffset, int[] sensorOffset, int[] irHeading) {
-        if (getRobotFromAddress(address) == null) {
+        if (getRobot(robotID) == null) {
             try {
-                Robot robot = new Robot(idCounter++, address, name, width, length, messageDeadline,
+                Robot robot = new Robot(robotID, name, width, length, messageDeadline,
                         axleOffset, towerOffset, sensorOffset, irHeading);
                 robotList.add(robot);
                 if (debug) {
@@ -71,22 +103,18 @@ public class RobotController {
         return false;
     }
 
-    public void addRobot(Robot robot) {
-        robotList.add(robot);
-    }
-
     /**
      * Method that adds a measurement to a robot
      *
-     * @param address the address of the robot
+     * @param robotName name of the robot
      * @param measuredOrientation measured orientation
      * @param measuredPosition measured position
      * @param irHeading angle of the robot tower
      * @param irData data from IR sensors
      * @return returns true if everything is ok.
      */
-    public boolean addMeasurment(int address, int measuredOrientation, int[] measuredPosition, int irHeading, int[] irData) {
-        Robot robot = getRobotFromAddress(address);
+    public boolean addMeasurment(String robotName, int measuredOrientation, int[] measuredPosition, int irHeading, int[] irData) {
+        Robot robot = getRobot(robotName);
         if (robot == null) {
             return false;
         }
@@ -97,54 +125,39 @@ public class RobotController {
     }
 
     /**
-     * Method that adds a measurement to a robot
+     * Method that updates a robots status
      *
-     * @param address the address of the robot
-     * @param measuredOrientation measured orientation
-     * @param measuredPosition measured position
-     * @param line Found line
-     * @return returns true if everything is ok.
+     * @param robotName the robot name
+     * @param status the new status
+     * @return
      */
-    public boolean addDroneMeasurment(int address, int measuredOrientation, int[] measuredPosition, int[] line) {
-        Robot robot = getRobotFromAddress(address);
+    public boolean addStatus(String robotName, String status) {
+        Robot robot = getRobot(robotName);
         if (robot == null) {
             return false;
         }
         if (debug) {
-            System.out.println("Robot <" + robot.getName() + "> updated!");
+            System.out.println("Robot <" + robot.getName() + "> status updated!");
         }
-        return robot.addMeasurement(measuredOrientation, measuredPosition, 0, line);
-    }
-    
-            /**
-     * Mathod for updating the current battery level of a robot
-     * 
-     * @param name  of th robot
-     * @param level current battery level
-     */
-    
-    public void updateBattery(int adress, int level) {
-        Robot robot = getRobotFromAddress(adress);
-        
-        if (debug) {
-            System.out.println("Robot <" + robot.getName() + "> Battery updatedet! to ->" + level);
-        }
-        robot.updateBattery(level);
-    }
-
-    /**
-     * Method that updates a robots status to idle
-     *
-     * @param address the robots
-     */
-    public void setIdle(int address) {
-        Robot robot = getRobotFromAddress(address);
-        if (robot != null) {
-            robot.setBusy(false);
+        switch (status) {
+            case Language.STATUS_IDLE:
+                if (debug) {
+                    System.out.println("idl det da");
+                }
+                robot.setBusy(false);
+                return true;
+            case Language.STATUS_HIT:
+                return true;
+            case Language.STATUS_BUSY:
+                if (debug) {
+                    System.out.println("busy det da");
+                }
+                robot.setBusy(true);
+                return true;
+            default:
+                return false;
         }
     }
-    
-
 
     /**
      * Method that returns the robot, if existing, with the given name
@@ -176,15 +189,6 @@ public class RobotController {
         return null;
     }
 
-    public Robot getRobotFromAddress(int address) {
-        for (Robot r : robotList) {
-            if (r.getAddress() == address) {
-                return r;
-            }
-        }
-        return null;
-    }
-
     /**
      * Method that removes the robot, if existing, with the given name
      *
@@ -199,35 +203,5 @@ public class RobotController {
             }
         }
         return false;
-    }
-
-    /**
-     * Method that removes the robot, if existing, with the given name
-     *
-     * @param name the robot name
-     * @return true if successful
-     */
-    public boolean removeRobot(String name) {
-        for (Robot r : robotList) {
-            if (r.getName().equalsIgnoreCase(name)) {
-                robotList.remove(r);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Mathod for updating the current battery level of a robot
-     *
-     * @param name of th robot
-     * @param level current battery level
-     */
-    public void updateBattery(String name, int level) {
-        Robot robot = getRobot(name);
-        if (debug) {
-            System.out.println("Robot <" + robot.getName() + "> Battery updatedet!");
-        }
-        robot.updateBattery(level);
     }
 }

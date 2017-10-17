@@ -23,7 +23,6 @@ public class Cell {
     private boolean stateChanged;
     private boolean isTarget;
     private boolean isPath;
-    private boolean particle;
     
     ArrayList<Cell> restrictingCells; // Other cells that restricts this cell
     ArrayList<Cell> weaklyRestrictingCells; // Other cells that weakly restricts this cell
@@ -224,17 +223,5 @@ public class Cell {
     */
     public boolean isFreelyTargetable(){
         return (!occupied && previouslyObserved && !restricted && !weaklyRestricted);
-    }
-    
-    public void setParticle(){
-        particle = true;
-    }
-    
-    public void removeParticle(){
-        particle = false;
-    }
-    
-    public boolean isParticle(){
-        return particle;
     }
 }

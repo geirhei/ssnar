@@ -14,7 +14,6 @@ import no.ntnu.et.map.GridMap;
 import no.ntnu.et.map.MapLocation;
 import no.ntnu.et.mapping.MappingController;
 import no.ntnu.tem.robot.Robot;
-import no.ntnu.et.navigation.NavigationRobot;
 
 /**
  * This class is used to manage target selection for all robots. It keeps track
@@ -26,8 +25,6 @@ import no.ntnu.et.navigation.NavigationRobot;
 public class RobotTaskManager {
 
     private GridMap map;
-
-    private NavigationRobot navRobots;
 
     private ConcurrentHashMap<String, MapLocation> temporaryTargets;
 
@@ -91,6 +88,7 @@ public class RobotTaskManager {
             ArrayList<MapLocation> possibleTargets = selectSpreadLocations(frontierLocations);
             int currentOrientation = robot.getRobotOrientation();
             boolean assigned = false;
+            robot.setHome(false);
             // Assign the robot to move to one of the frontier locations if it has nothing else to do.
             while (!assigned && !robot.isGoingHome()) {
                 Position robotPosition = new Position(robot.getPosition());
@@ -98,16 +96,10 @@ public class RobotTaskManager {
 
                 // Find the most optimal targetpoint in the map given the robots current location and the target points of the other robots
                 MapLocation bestTarget = findBestTarget(currentOrientation, robotLocation, possibleTargets, name);
-                
-               // Done mapping
-                if (bestTarget == null) {
-                    robot.setGoingHome(true);
-                    robot.setAtBase(false);
-                    robot.setDock(true);
-                    if (debug) {
-                        // Sends the robot home if it is done mapping..
-                        System.out.println(name + ": No targetpoint found");
 
+                if (bestTarget == null) {
+                    if (debug) {
+                        System.out.println(name + ": No targetpoint found");
                     }
                     break;
                 }
@@ -122,6 +114,7 @@ public class RobotTaskManager {
                 }
                 // Search for a path between the robot and the best target point
                 ArrayList<MapLocation> path = PathPlanningFunctions.findPath(map, bestTarget, robotLocation);
+
                 // If no path to bestTarget is found remove bestTarget from possibleTargets
                 if (path == null) {
                     for (int i = 0; i < possibleTargets.size(); i++) {
@@ -162,19 +155,16 @@ public class RobotTaskManager {
                     robot.setDestination(destination);
                     assigned = true;
                 }
-                /*  Added to remove the need of goHome btn in RobotIdGUI  */
-                robot.checkBattery();
-                
             }
 
-            // Runs the A* algorthim for return.....
-            while (robot.isGoingHome() && !assigned && !robot.isAtBase()) {
+            // Runs the A* algorthim for return..
+            while (robot.isGoingHome() && !assigned && !robot.isHome()) {
                 Position robotPosition = new Position(robot.getPosition());
                 MapLocation robotLocation = map.findLocationInMap(robotPosition);
 
                 // Find home location in the map.
                 MapLocation bestTarget = findBestTarget(currentOrientation, robotLocation, possibleTargets, name);
-                Position homePosition = new Position(robot.getBasePosition());
+                Position homePosition = new Position(robot.getInitialPosition());
                 MapLocation homeLocation = map.findLocationInMap(homePosition);
 
                 robotPosition = new Position(robot.getPosition());
@@ -186,14 +176,16 @@ public class RobotTaskManager {
                 //Find waypoints along the path home
                 ArrayList<Position> newWaypoints = PathPlanningFunctions.generateWaypoints(map, path);
 
-                if (newWaypoints.isEmpty() || Position.distanceBetween(robotPosition, newWaypoints.get(0)) < 4) {
-                    System.out.println("Robot: " + name + " is back at base.");
-
-                    robot.setAtBase(true);
+                if (newWaypoints.isEmpty()) {
+                    if (debug) {
+                        System.out.println("Robot: " + name + " is back at base.");
+                    }
+                    robot.setHome(true);
                     temporaryTargets.remove(name);
-                    assigned = false;
+                    System.out.println("Robot: " + name + " is back at base.");
                     break;
                 }
+
                 currentTargets.put(name, homeLocation);
                 temporaryTargets.remove(name);
                 navRobot.addWaypoints(newWaypoints);
@@ -201,13 +193,10 @@ public class RobotTaskManager {
                 int[] destination = {(int) Math.round(destinationPos.getXValue()), (int) Math.round(destinationPos.getYValue())};
                 robot.setDestination(destination);
                 assigned = true;
-                if (robot.isStuck()) {
-                    robot.setStuck(false);
-                    System.out.println("New attempt to return");
-                    break;
-                }
+
             }
             currentNumberOfWorkers--;
+
             // Remove this thread from the current working threads
             tasksInProgress.remove(name);
         }

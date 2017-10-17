@@ -16,8 +16,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,14 +37,14 @@ public class SerialCommunication extends Thread {
     private StringBuilder sb = new StringBuilder();
     private String shdwPort;
     private boolean debug = false;
-    private final ConcurrentLinkedQueue<Frame> inbox;
+    private final Inbox inbox;
 
     /**
      * Constructor of the class Communication
      *
      * @param inbox The systems message inbox
      */
-    public SerialCommunication(ConcurrentLinkedQueue<Frame> inbox) {
+    public SerialCommunication(Inbox inbox) {
         this.inbox = inbox;
     }
 
@@ -59,7 +57,7 @@ public class SerialCommunication extends Thread {
      * @throws java.io.IOException .
      * @throws gnu.io.NoSuchPortException .
      */
-    public boolean connect(String portName) throws UnsupportedCommOperationException,
+    public void connect(String portName) throws UnsupportedCommOperationException,
             PortInUseException, IOException, NoSuchPortException {
         disconnectCommPort(shdwCommPort);
         this.portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
@@ -78,50 +76,104 @@ public class SerialCommunication extends Thread {
 
                 this.inStream = serialPort.getInputStream();
                 this.outStream = serialPort.getOutputStream();
-                inStream.skip(inStream.available());
-                return true;
+
             } else {
                 System.out.println("Error: Only serial ports are handled by this example.");
             }
         }
-        return false;
     }
 
     /**
      * Method that sends a message to the connected com-port
      *
-     * @param data The bytes to be sent
+     * @param message the message
      */
-    public synchronized void send(byte[] data) {
+    public synchronized void send(String message) {
         try {
+            byte[] data = message.getBytes();
             outStream.write(data);
+            outStream.write(10);
             outStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Method that reads the in-stream and initiates parsing of received
+     * messages
+     */
+    private void receiveMessages() {
+        try {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            while (inStream.available() > 0) {
+                bytesRead = inStream.read(buffer);
+                output.write(buffer, 0, bytesRead);
+                parseMessage(output.toByteArray());
+                int i = 1;
+            }
+            output.close();
+        } catch (IOException ex) {
+            Logger.getLogger(SerialCommunication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * Stores the incoming messages in a StringBuilder. When a message is
+     * complete it will be putted in Inbox
+     *
+     * @param mess The new incoming message
+     */
+    private void parseMessage(byte[] messageAsByteArray) {
+        sb.append(new String(messageAsByteArray));
+        String message = sb.toString();
+
+        String[] strings = message.split("\\[");
+        for (int j = 0; j < strings.length; j++) {
+            if (debug) {
+                System.out.println("Strings[" + j + "]: " + strings[j]);
+            }
+            if (endOfMessage(strings[j])) {
+                // Fått slutten på en melding, tøm buffer
+                sb = new StringBuilder();
+                if (j == 0) {
+                    inbox.putMessage("[" + strings[j]);
+                }
+                for (int i = 1; i < strings.length; i++) {
+                    if (i <= j) {
+                        if (debug) {
+                            //System.out.println("MELDING: [" + strings[i]);
+                        }
+                        inbox.putMessage("[" + strings[i]);
+                    } else {
+                        sb.append("[" + strings[i]);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks whether the message ends with \n or not
+     *
+     * @param mess the message to check
+     * @return true if message ends with \n
+     */
+    private boolean endOfMessage(String mess) {
+        if (mess.endsWith("\n")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public void run() {
         super.run();
-        ByteArrayOutputStream frame = new ByteArrayOutputStream();
         while (true) {
-            try {
-                int c;
-                while ((c = inStream.read()) != -1) {
-                    frame.write(c);
-                    if (c == 0) { //End of COBS-encoded packet
-                        inbox.add(new Frame(CobsUtils.decode(frame.toByteArray())));
-                        frame.reset();
-                    }
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(SerialCommunication.class.getName()).log(Level.SEVERE, null, ex);
-                frame.reset();
-            } catch (Frame.FrameCorruptException ex) {
-                System.out.println("Frame corrupt");
-                frame.reset();
-            }
+            receiveMessages();
         }
     }
 

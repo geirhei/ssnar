@@ -10,14 +10,9 @@ import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.HashMap;
 import java.util.LinkedList;
 import no.ntnu.tem.application.RobotController;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import no.ntnu.tem.application.Application;
-import no.ntnu.tem.robot.Robot;
+
 /**
  * This class represents the initializer in the communication package. It holds
  * the different instantiated objects, and it provides methods for sending
@@ -25,52 +20,24 @@ import no.ntnu.tem.robot.Robot;
  *
  * @author Thor Eivind and Mats (Master 2016 @ NTNU)
  */
-public class Communication implements ARQProtocol.DisconnectedListener {
+public class Communication {
 
-    public static final HashMap<Integer, Protocol> protocolSettings = new HashMap<>();
-    public static final int LOCAL_ADDRESS = 0;
-    private final ConcurrentLinkedQueue<Message> messageInbox;
-    private final ConcurrentLinkedQueue<Frame> networkInbox;
+    private final Inbox inbox;
     private final InboxReader inR;
     private final SerialCommunication serialcom;
     private final ListPorts lp;
-    private final Network network;
     private String comPort = null;
 
-    private final ARQProtocol arqProtocol;
-    private final SimpleProtocol simpleProtocol;
-    private final Application app;
     /**
      * Constructor of the class Communication
      *
      * @param rc the RobotController object
      */
-    public Communication(Application app, RobotController rc) {
-        this.app = app;
-        this.networkInbox = new ConcurrentLinkedQueue<>();
-        this.messageInbox = new ConcurrentLinkedQueue<>();
-        
-        
-        this.inR = new InboxReader(messageInbox, rc);
-        this.serialcom = new SerialCommunication(networkInbox);
-        this.network = new Network(LOCAL_ADDRESS, serialcom, networkInbox);
+    public Communication(RobotController rc) {
+        this.inbox = new Inbox();
+        this.inR = new InboxReader(inbox, rc);
+        this.serialcom = new SerialCommunication(inbox);
         this.lp = new ListPorts();
-        this.arqProtocol = new ARQProtocol(network, messageInbox);
-        this.simpleProtocol = new SimpleProtocol(network, messageInbox);
-        
-        // The following can be used to select what protocol is used to send the different message types
-        protocolSettings.put(Message.CONFIRM, arqProtocol);
-        protocolSettings.put(Message.FINISH, arqProtocol);
-        protocolSettings.put(Message.ORDER, arqProtocol);
-        protocolSettings.put(Message.PAUSE, arqProtocol);
-        protocolSettings.put(Message.UNPAUSE, arqProtocol);
-        
-        ARQProtocol.addDisconnectListener(this);
-        
-        network.setReceiver(Network.PROTOCOL_ARQ, arqProtocol);
-        network.setReceiver(Network.PROTOCOL_SIMPLE, simpleProtocol);
-        
-        network.start();
     }
 
     /**
@@ -82,16 +49,14 @@ public class Communication implements ARQProtocol.DisconnectedListener {
      * @throws java.io.IOException .
      * @throws gnu.io.NoSuchPortException if the port doesn't exist
      */
-    public boolean startCommunication(String port)
+    public void startCommunication(String port)
             throws UnsupportedCommOperationException, PortInUseException,
             IOException, NoSuchPortException {
-        boolean success = serialcom.connect(port);
+        serialcom.connect(port);
         if (serialcom.isAlive()) {
         } else {
             serialcom.start();
         }
-
-        return success;
     }
 
     /**
@@ -135,8 +100,8 @@ public class Communication implements ARQProtocol.DisconnectedListener {
      *
      * @return the inbox
      */
-    public ConcurrentLinkedQueue<Message> getInbox() {
-        return this.messageInbox;
+    public Inbox getInbox() {
+        return this.inbox;
     }
 
     /**
@@ -147,74 +112,152 @@ public class Communication implements ARQProtocol.DisconnectedListener {
     public SerialCommunication getSerialCommunication() {
         return serialcom;
     }
-    public void disconnectRobot(int address) {
-        confirmRobotFinished(address);
-        arqProtocol.closeConnection(address);
-    }
+
     /**
      * Method that wraps a message and sends it to a robot
      *
-     * @param address The robots address
+     * @param robotID the receiving robot
      * @param orientation the robots wanted orientation
      * @param distance the distance to move
      */
-    public void sendOrderToRobot(int address, int orientation, int distance) {
-        ByteBuffer buffer = ByteBuffer.allocate(5);
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
-        buffer.put( (byte) Message.ORDER);
-        buffer.putShort((short)orientation);
-        buffer.putShort((short)distance);
-        byte data[] = new byte[5];
-        buffer.rewind();
-        buffer.get(data);
-        
-        protocolSettings.get(Message.ORDER).send(address, data);
-        
+    /*
+    public void sendOrderToRobot(int robotID, double orientation, double distance) {
+        switchToCommandMode();
+        serialcom.send(MessageHandler.wrapSwitchToRobot(robotID)); //*switch robotID
+        serialcom.send(MessageHandler.wrapRobotOrder(orientation, distance));
     }
-
+    */
+    
+    public void sendOrderToRobot(int robotID, double x, double y) {
+        switchToCommandMode();
+        serialcom.send(MessageHandler.wrapSwitchToRobot(robotID)); //*switch robotID
+        serialcom.send(MessageHandler.wrapRobotOrder(x, y));
+    }
+    
+    public void sendStartDebugToRobot(int robotID) {
+        switchToCommandMode();
+        serialcom.send(MessageHandler.wrapSwitchToRobot(robotID)); //*switch robotID
+        serialcom.send("{" + "D" + "," + "STA" + "}");
+    }
+    
+    public void sendStopDebugToRobot(int robotID) {
+        switchToCommandMode();
+        serialcom.send(MessageHandler.wrapSwitchToRobot(robotID)); //*switch robotID
+        serialcom.send("{" + "D" + "," + "STO" + "}");
+    }
+    
     /**
      * Method that confirms that the server has received the handshake
      *
-     * @param address The robots address
+     * @param robotID the robots ID
      */
-    public void confirmHandshake(int address) {
-        protocolSettings.get(Message.ORDER).send(address, new byte[]{Message.CONFIRM});
+    public void confirmHandshake(int robotID) {
+        switchToCommandMode();
+        serialcom.send(MessageHandler.wrapSwitchToRobot(robotID)); //*switch robotID
+        serialcom.send(MessageHandler.wrapStatus("CON"));
     }
 
     /**
      * Method that pauses the robot
      *
-     * @param address The robots address
+     * @param robotID the robots ID
      */
-    public void pauseRobot(int address) {
-        protocolSettings.get(Message.ORDER).send(address, new byte[]{Message.PAUSE});
+    public void pauseRobot(int robotID) {
+        switchToCommandMode();
+        serialcom.send(MessageHandler.wrapSwitchToRobot(robotID));
+        serialcom.send(MessageHandler.wrapStatus("PAU"));
     }
 
     /**
      * Method that unpauses the robot
      *
-     * @param address The robots address
+     * @param robotID the robots ID
      */
-    public void unPauseRobot(int address) {
-        protocolSettings.get(Message.ORDER).send(address, new byte[]{Message.UNPAUSE});
+    public void unPauseRobot(int robotID) {
+        switchToCommandMode();
+        serialcom.send(MessageHandler.wrapSwitchToRobot(robotID));
+        serialcom.send(MessageHandler.wrapStatus("UNP"));
     }
 
     /**
      * Method that confirms that the robot is finished
      *
-     * @param address The robots address
+     * @param robotID the robots ID
      */
-    public void confirmRobotFinished(int address) {
-       protocolSettings.get(Message.ORDER).send(address, new byte[]{Message.FINISH});
+    public void confirmRobotFinished(int robotID) {
+        switchToCommandMode();
+        serialcom.send(MessageHandler.wrapSwitchToRobot(robotID));
+        serialcom.send(MessageHandler.wrapStatus("FIN"));
     }
 
-    @Override
-    public void connectionLost(int address) {
-        for( Robot r : app.getConnectedRobotList() ) {
-            if(r.getAddress() == address) {
-                app.disconnectRobot(r.getName());
-                break;
-            }
-        }
+    /**
+     * Method that starts scanning for new robots
+     */
+    public void startScanForNewRobots() {
+        switchToCommandMode();
+        serialcom.send("scan");
+    }
+
+    /**
+     * Method that stops scanning for new robots
+     */
+    public void stopScanForNewRobots() {
+        switchToCommandMode();
+        serialcom.send("stop");
+    }
+
+    /**
+     * Method that initiates a connection to a specified robot
+     *
+     * @param robotID the robots id
+     */
+    public void connectToRobot(int robotID) {
+        switchToCommandMode();
+        serialcom.send(MessageHandler.wrapConnectToRobot(robotID));
+    }
+
+    /**
+     * Method that cancels the connection to the specified robot
+     *
+     * @param robotID the robots id
+     */
+    public void disconnectRobot(int robotID) {
+        switchToCommandMode();
+        serialcom.send(MessageHandler.wrapDisconnectRobot(robotID));
+    }
+
+    /**
+     * Method that switches selected robot from the current one to the specified
+     * one
+     *
+     * @param robotID the robots id
+     */
+    public void switchToRobot(int robotID) {
+        switchToCommandMode();
+        serialcom.send(MessageHandler.wrapSwitchToRobot(robotID));
+    }
+
+    /**
+     * Method that sets the NRF to command mode
+     */
+    public void switchToCommandMode() {
+        serialcom.send("*");
+    }
+
+    /**
+     * Method that tells the NRF to list found robots
+     */
+    public void listAvailableRobots() {
+        switchToCommandMode();
+        serialcom.send("list");
+
+    }
+
+    /**
+     * Method that resets the NRF dongle
+     */
+    public void resetDongle() {
+        switchToCommandMode();;
+        serialcom.send("reset");
     }
 }

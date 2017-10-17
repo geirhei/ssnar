@@ -17,7 +17,7 @@ import no.ntnu.tem.robot.Robot;
 public class InitialRobotParameterGUI extends javax.swing.JDialog {
 
     private final Robot robot;
-    java.awt.Frame parent;
+
     /**
      * Creates new form InitialRobotParameter where the user can input
      * orientation and position of the connected robot.
@@ -27,7 +27,6 @@ public class InitialRobotParameterGUI extends javax.swing.JDialog {
      */
     public InitialRobotParameterGUI(java.awt.Frame parent, Robot robot) {
         super(parent, true);
-        this.parent = parent;
         this.robot = robot;
         initComponents();
         this.setTitle(robot.getName());

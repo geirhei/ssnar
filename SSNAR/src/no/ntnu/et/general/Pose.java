@@ -47,15 +47,7 @@ public class Pose {
         position = initialPosition;
         heading = initialHeading;
     }
-    
-    /**
-     * Copy constructor
-     * @param pose 
-     */
-    public Pose(Pose pose){
-        this.position = new Position(pose.getPosition().getXValue(),pose.getPosition().getYValue());
-        this.heading = new Angle(pose.getHeading().getValue());
-    }
+
     /**
      * Returns the position of the Pose object
      * @return 
@@ -71,14 +63,6 @@ public class Pose {
     public Angle getHeading() {
         return heading;
     }
-    
-    /**
-     * Changes heading
-     * @param heading 
-     */
-    public void setHeading(Angle heading) {
-        this.heading = heading;
-    } 
     
     /**
      * Creates a new Pose object that is a deep copy of the object given as an

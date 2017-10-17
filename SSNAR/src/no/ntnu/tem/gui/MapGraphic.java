@@ -133,9 +133,6 @@ public class MapGraphic extends JPanel {
             } else {
                 g2D.setPaint(Color.yellow);
             }
-            if (cell.isParticle()) {
-                g2D.setPaint(Color.cyan); 
-            }
             g2D.fillRect((entry.getKey().getColumn() - leftmost) * cellSize * scrollSize.intValue(), (entry.getKey().getRow() - lowest) * cellSize * scrollSize.intValue(), cellSize * scrollSize.intValue(), cellSize * scrollSize.intValue());
         }
     }
