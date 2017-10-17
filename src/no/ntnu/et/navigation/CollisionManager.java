@@ -249,7 +249,8 @@ public class CollisionManager extends Thread {
         }
         
         void robotCollision(){
-            int[] stopCommand = {0, 0};
+            //int[] stopCommand = {0, 0};
+            int[] stopCommand = robotControl.getRobot(name).getPosition();
             robots.get(name).setInRobotCollision(true);
             robots.get(name).setPriorityCommand(stopCommand);
             if(debug){
@@ -419,7 +420,8 @@ public class CollisionManager extends Thread {
             }
         }
         if(success){
-            int[] command = {(int)Math.round(Angle.difference(testAngle, robot1Heading)), 40};
+            //int[] command = {(int)Math.round(Angle.difference(testAngle, robot1Heading)), 40};
+            int[] command = {(int) testPosition.getXValue(), (int) testPosition.getYValue()};
             return command;
         }
         
@@ -435,7 +437,8 @@ public class CollisionManager extends Thread {
             }
         }
         if(success){
-            int[] command = {-(int)Math.round(Angle.difference(testAngle, robot1Heading)), 40};
+            //int[] command = {-(int)Math.round(Angle.difference(testAngle, robot1Heading)), 40};
+            int[] command = {(int) testPosition.getXValue(), (int) testPosition.getYValue()};
             return command;
         }
         
