@@ -380,15 +380,16 @@ public class CollisionManager extends Thread {
         }
     }
     
-    int[] findWallCollisionCommand(Position currentPosition, Angle currentOrientation){
+    Position findWallCollisionCommand(Position currentPosition, Angle currentOrientation){
         Position offset = Utilities.polar2cart(currentOrientation, -10);
         Position rearPosition = Position.sum(currentPosition, offset);
         MapLocation rearMapLocation = map.findLocationInMap(rearPosition);
         // Check if it is possible to just reverse 10 cm 
         if(map.findCell(rearMapLocation) != null) {
             if(map.findCell(rearMapLocation).isWeaklyTargetable()){
-                int[] command = {0 , -10};
-                return command;
+                //int[] command = {0 , -10};
+                Position command = rearPosition;
+                return command; // Should maybe reverse here
             }
         }
 
@@ -396,7 +397,8 @@ public class CollisionManager extends Thread {
         MapLocation robotLocation = map.findLocationInMap(currentPosition);
         MapLocation unrestrictedMapLocation = PathPlanningFunctions.findNearestFreeCell(map, robotLocation);
         Position unrestrictedPosition = map.mapLocation2Position(unrestrictedMapLocation);
-        int[] command = NavigationController.findCommandToTargetPoint(unrestrictedPosition, currentPosition, (int)Math.round(currentOrientation.getValue()));
+        //int[] command = NavigationController.findCommandToTargetPoint(unrestrictedPosition, currentPosition, (int)Math.round(currentOrientation.getValue()));
+        Position command = unrestrictedPosition;
         return command;
     }
     
