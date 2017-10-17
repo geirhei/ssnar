@@ -371,7 +371,9 @@ public class CollisionManager extends Thread {
                     System.out.println(robotName+ ": Found intersection along current path. Stop");
                 }
                 robots.get(robotName).clearWaypoints();
-                int[] command = {0 , 0};
+                //int[] command = {0 , 0};
+                int[] position = robotControl.getRobot(robotName).getPosition();
+                Position command = new Position(position[0], position[1]);
                 robots.get(robotName).setPriorityCommand(command);
                 robotControl.getRobot(robotName).setDestination(robotControl.getRobot(robotName).getPosition());
                 break;
