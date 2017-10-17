@@ -386,7 +386,8 @@ public class CollisionManager extends Thread {
         // Check if it is possible to just reverse 10 cm 
         if(map.findCell(rearMapLocation) != null) {
             if(map.findCell(rearMapLocation).isWeaklyTargetable()){
-                int[] command = {0 , -10};
+                //int[] command = {0 , -10};
+                int[] command = {(int) rearPosition.getXValue(), (int) rearPosition.getYValue()};
                 return command;
             }
         }
@@ -395,7 +396,8 @@ public class CollisionManager extends Thread {
         MapLocation robotLocation = map.findLocationInMap(currentPosition);
         MapLocation unrestrictedMapLocation = PathPlanningFunctions.findNearestFreeCell(map, robotLocation);
         Position unrestrictedPosition = map.mapLocation2Position(unrestrictedMapLocation);
-        int[] command = NavigationController.findCommandToTargetPoint(unrestrictedPosition, currentPosition, (int)Math.round(currentOrientation.getValue()));
+        //int[] command = NavigationController.findCommandToTargetPoint(unrestrictedPosition, currentPosition, (int)Math.round(currentOrientation.getValue()));
+        int[] command = {(int) unrestrictedPosition.getXValue(), (int) unrestrictedPosition.getYValue() };
         return command;
     }
     
