@@ -262,18 +262,19 @@ public final class Application {
 
     /**
      * Method that sends a command to a physical or simulated robot
+     * (changed to (x,y)
      *
      * @param robotID the robots id
      * @param robotName the robots name
      * @param orientation the new orientation
      * @param distance the distance to go
      */
-    public void writeCommandToRobot(int robotID, String robotName, int orientation, int distance) {
+    public void writeCommandToRobot(int robotID, String robotName, int x, int y) {
         //  newTime[robotID] = System.currentTimeMillis();
         if (!simulatorActive) {
-            com.sendOrderToRobot( rc.getRobot(robotID).getAddress(), orientation, distance);
+            com.sendOrderToRobot( rc.getRobot(robotID).getAddress(), x, y);
         } else {
-            sim.setRobotCommand(robotName, orientation, distance);
+            sim.setRobotCommand(robotName, x, y);
         }
         rc.getRobot(robotName).setBusy(true);
     }
