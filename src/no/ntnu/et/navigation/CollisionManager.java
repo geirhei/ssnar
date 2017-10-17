@@ -16,7 +16,6 @@ import no.ntnu.et.map.GridMap;
 import no.ntnu.et.map.MapLocation;
 import no.ntnu.et.general.Utilities;
 import no.ntnu.et.mapping.MappingController;
-import no.ntnu.tem.application.Application;
 import no.ntnu.tem.application.RobotController;
 
 /**
@@ -372,7 +371,8 @@ public class CollisionManager extends Thread {
                     System.out.println(robotName+ ": Found intersection along current path. Stop");
                 }
                 robots.get(robotName).clearWaypoints();
-                int[] command = {0 , 0};
+                //int[] command = {0 , 0};
+                int[] command = robotControl.getRobot(robotName).getPosition();
                 robots.get(robotName).setPriorityCommand(command);
                 robotControl.getRobot(robotName).setDestination(robotControl.getRobot(robotName).getPosition());
                 break;
