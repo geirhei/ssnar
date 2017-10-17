@@ -149,13 +149,14 @@ public class Simulator {
 
     /**
      * Gives the command ("rotation", "angle") to the robot with name "name"
+     * (changed to (x,y))
      *
      * @param name String
      * @param rotation double
      * @param distance double
      */
-    public void setRobotCommand(String name, double rotation, double distance) {
-        world.getRobot(name).setTarget(rotation, distance);
+    public void setRobotCommand(String name, double x, double y) {
+        world.getRobot(name).setTarget(x, y);
     }
 
     public void pauseRobot(String name) {

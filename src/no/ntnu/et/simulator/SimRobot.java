@@ -115,6 +115,8 @@ public class SimRobot {
     /**
      * Sets the target rotation and target heading. Also resets the measured
      * rotation and distance.
+     * 
+     * Needs to be fixed because of conversion to (x,y)
      *
      * @param theta
      * @param distance
