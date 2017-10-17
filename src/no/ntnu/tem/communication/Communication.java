@@ -153,17 +153,18 @@ public class Communication implements ARQProtocol.DisconnectedListener {
     }
     /**
      * Method that wraps a message and sends it to a robot
+     * (changed to (x,y))
      *
      * @param address The robots address
      * @param orientation the robots wanted orientation
      * @param distance the distance to move
      */
-    public void sendOrderToRobot(int address, int orientation, int distance) {
+    public void sendOrderToRobot(int address, int x, int y) {
         ByteBuffer buffer = ByteBuffer.allocate(5);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         buffer.put( (byte) Message.ORDER);
-        buffer.putShort((short)orientation);
-        buffer.putShort((short)distance);
+        buffer.putShort((short)x);
+        buffer.putShort((short)y);
         byte data[] = new byte[5];
         buffer.rewind();
         buffer.get(data);
