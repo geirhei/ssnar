@@ -293,6 +293,7 @@ public final class Application {
      * @param orientation the new orientation
      * @param distance the distance to go
      */
+    /*
     public void writePriorityCommandToRobot(int robotID, String robotName, int orientation, int distance) {
         //  newTime[robotID] = System.currentTimeMillis();
         if (!simulatorActive) {
@@ -305,7 +306,7 @@ public final class Application {
         }
         rc.getRobot(robotName).setBusy(true);
     }
-
+    */
 
     /**
      * Method that confirms that the robot is finished

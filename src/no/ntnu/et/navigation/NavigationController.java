@@ -153,8 +153,9 @@ public class NavigationController extends Thread {
                             }
                         }
                     }
+                   
                 } else if (applicationRobot.isAtBase() && applicationRobot.isGoingHome() && applicationRobot.isDockReady()) {
-                    application.writeCommandToRobot(id, name, -(applicationRobot.getRobotOrientation() - 90), 0);
+                    //application.writeCommandToRobot(id, name, -(applicationRobot.getRobotOrientation() - 90), 0);
                     applicationRobot.setRangeScanBase(true);
                     if (debug) {
                         System.out.println("RETURNED TO BASE. DOCKING -> TRUE!!!");
@@ -175,7 +176,7 @@ public class NavigationController extends Thread {
                     if (debug) {
                         System.out.println("Priority command: " + nextCommand[0] + "," + nextCommand[1]);
                     }
-                    application.writePriorityCommandToRobot(id, name, nextCommand[0], nextCommand[1]);
+                    application.writeCommandToRobot(id, name, nextCommand[0], nextCommand[1]);
                 } else if (!applicationRobot.isBusy() && !navigationRobots.get(name).isInCollisionManagement()) {
                     if (navigationRobots.get(name).hasMoreWaypoints()) {
                         // Get next target
@@ -185,10 +186,11 @@ public class NavigationController extends Thread {
                         Position nextWaypoint2 = correct(nextWaypoint, applicationRobot);
                          */
                         // Get current obot location and orientation
-                        Position currentPosition = new Position(applicationRobot.getPosition());
-                        int currentOrientation = applicationRobot.getRobotOrientation();
+                        //Position currentPosition = new Position(applicationRobot.getPosition());
+                        //int currentOrientation = applicationRobot.getRobotOrientation();
                         // Command the robot to move to the next waypoint along its path
-                        int[] newCommand = findCommandToTargetPoint(nextWaypoint, currentPosition, currentOrientation);
+                        //int[] newCommand = findCommandToTargetPoint(nextWaypoint, currentPosition, currentOrientation);
+                        int[] newCommand = {(int) nextWaypoint.getXValue(), (int) nextWaypoint.getYValue()};
                         if (debug) {
                             //System.out.println(name + ": Executing next command, ROTATION " + newCommand[0] + ", DISTANCE " + newCommand[1]);
                             System.out.println("Sending waypoint: " + newCommand[0] + "," + newCommand[1]);
@@ -201,7 +203,7 @@ public class NavigationController extends Thread {
                         robotTaskManager.createNewTask(robotController.getRobot(name), navigationRobots.get(name), name);
                     }
                 }
-                // DOCKING
+                // DOCKING -> Broken
                 while (applicationRobot.getAdjustRobot() > -1) {
                     switch (applicationRobot.getAdjustRobot()) {
                         case 0:

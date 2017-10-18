@@ -248,8 +248,9 @@ public class CollisionManager extends Thread {
         }
         
         void robotCollision(){
-            int[] stopCommand = {0, 0};
-            //int[] stopCommand = robotControl.getRobot(name).getPosition();
+            //int[] stopCommand = {0, 0};
+            // Send the robot's current position to make it stop
+            int[] stopCommand = robotControl.getRobot(name).getPosition();
             robots.get(name).setInRobotCollision(true);
             robots.get(name).setPriorityCommand(stopCommand);
             if(debug){
@@ -371,8 +372,8 @@ public class CollisionManager extends Thread {
                     System.out.println(robotName+ ": Found intersection along current path. Stop");
                 }
                 robots.get(robotName).clearWaypoints();
-                int[] command = {0 , 0};
-                //int[] command = robotControl.getRobot(robotName).getPosition();
+                //int[] command = {0 , 0};
+                int[] command = robotControl.getRobot(robotName).getPosition();
                 robots.get(robotName).setPriorityCommand(command);
                 robotControl.getRobot(robotName).setDestination(robotControl.getRobot(robotName).getPosition());
                 break;
@@ -387,8 +388,8 @@ public class CollisionManager extends Thread {
         // Check if it is possible to just reverse 10 cm 
         if(map.findCell(rearMapLocation) != null) {
             if(map.findCell(rearMapLocation).isWeaklyTargetable()){
-                int[] command = {0 , -10};
-                //int[] command = {(int) rearPosition.getXValue(), (int) rearPosition.getYValue()};
+                //int[] command = {0 , -10};
+                int[] command = {(int) rearPosition.getXValue(), (int) rearPosition.getYValue()};
                 return command;
             }
         }
@@ -397,8 +398,8 @@ public class CollisionManager extends Thread {
         MapLocation robotLocation = map.findLocationInMap(currentPosition);
         MapLocation unrestrictedMapLocation = PathPlanningFunctions.findNearestFreeCell(map, robotLocation);
         Position unrestrictedPosition = map.mapLocation2Position(unrestrictedMapLocation);
-        int[] command = NavigationController.findCommandToTargetPoint(unrestrictedPosition, currentPosition, (int)Math.round(currentOrientation.getValue()));
-        //int[] command = {(int) unrestrictedPosition.getXValue(), (int) unrestrictedPosition.getYValue() };
+        //int[] command = NavigationController.findCommandToTargetPoint(unrestrictedPosition, currentPosition, (int)Math.round(currentOrientation.getValue()));
+        int[] command = {(int) unrestrictedPosition.getXValue(), (int) unrestrictedPosition.getYValue() };
         return command;
     }
     
@@ -420,8 +421,8 @@ public class CollisionManager extends Thread {
             }
         }
         if(success){
-            int[] command = {(int)Math.round(Angle.difference(testAngle, robot1Heading)), 40};
-            //int[] command = {(int) testPosition.getXValue(), (int) testPosition.getYValue()};
+            //int[] command = {(int)Math.round(Angle.difference(testAngle, robot1Heading)), 40};
+            int[] command = {(int) testPosition.getXValue(), (int) testPosition.getYValue()};
             return command;
         }
         
@@ -437,8 +438,8 @@ public class CollisionManager extends Thread {
             }
         }
         if(success){
-            int[] command = {-(int)Math.round(Angle.difference(testAngle, robot1Heading)), 40};
-            //int[] command = {(int) testPosition.getXValue(), (int) testPosition.getYValue()};
+            //int[] command = {-(int)Math.round(Angle.difference(testAngle, robot1Heading)), 40};
+            int[] command = {(int) testPosition.getXValue(), (int) testPosition.getYValue()};
             return command;
         }
         
