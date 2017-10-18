@@ -268,8 +268,8 @@ public final class Application {
      *
      * @param robotID the robots id
      * @param robotName the robots name
-     * @param orientation the new orientation
-     * @param distance the distance to go
+     * @param x the x-coordinate
+     * @param y the y-coordinate
      */
     public void writeCommandToRobot(int robotID, String robotName, int x, int y) {
         //  newTime[robotID] = System.currentTimeMillis();
@@ -280,6 +280,28 @@ public final class Application {
             com.sendOrderToRobot( rc.getRobot(robotID).getAddress(), x, y);
         } else {
             sim.setRobotCommand(robotName, x, y);
+        }
+        rc.getRobot(robotName).setBusy(true);
+    }
+    
+    /**
+     * Method that sends a command to a physical or simulated robot
+     * (changed to (x,y)
+     *
+     * @param robotID the robots id
+     * @param robotName the robots name
+     * @param orientation the new orientation
+     * @param distance the distance to go
+     */
+    public void writePriorityCommandToRobot(int robotID, String robotName, int orientation, int distance) {
+        //  newTime[robotID] = System.currentTimeMillis();
+        if (!simulatorActive) {
+            if (debug) {
+                System.out.println("writePriorityCommandToRobot() entered: " + orientation + "," + distance);
+            }
+            com.sendPriorityOrderToRobot( rc.getRobot(robotID).getAddress(), orientation, distance);
+        } else {
+            sim.setRobotCommand(robotName, orientation, distance);
         }
         rc.getRobot(robotName).setBusy(true);
     }
