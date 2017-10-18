@@ -137,7 +137,7 @@ public class ManualDriveGUI extends javax.swing.JFrame {
             int distance = Integer.parseInt(ftxtfDistance.getText());
             System.out.println("angle " + angle);
             System.out.println("Distance " + distance);
-            mainGUI.getApplication().writeCommandToRobot(robot.getId(), robot.getName(), angle, distance);
+            mainGUI.getApplication().writePriorityCommandToRobot(robot.getId(), robot.getName(), angle, distance);
             ftxtfDistance.setText("0");
             ftxtfAngle.setText("0");
         } catch (NumberFormatException nfe) {
