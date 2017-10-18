@@ -90,6 +90,7 @@ public class InboxReader extends Thread {
 
                         case Message.DEBUG:
                             String msg = new String(message.getData());
+                            System.out.println(msg);
                             break;
                     }
                 } catch (Message.MessageCorruptException ex) {

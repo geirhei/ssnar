@@ -173,6 +173,7 @@ public class NavigationController extends Thread {
                 if (navigationRobots.get(name).hasNewPriorityCommand()) {
                     int[] nextCommand = navigationRobots.get(name).getPriorityCommand();
                     if (debug) {
+                        System.out.println("Priority command: " + nextCommand[0] + "," + nextCommand[1]);
                         //System.out.println(name + ": Executing next command, ROTATION " + nextCommand[0] + ", DISTANCE " + nextCommand[1]);
                     }
                     application.writeCommandToRobot(id, name, nextCommand[0], nextCommand[1]);
@@ -192,6 +193,7 @@ public class NavigationController extends Thread {
                         int[] newCommand = {(int) nextWaypoint.getXValue(), (int) nextWaypoint.getYValue()};
                         if (debug) {
                             //System.out.println(name + ": Executing next command, ROTATION " + newCommand[0] + ", DISTANCE " + newCommand[1]);
+                            System.out.println("Sending waypoint: " + newCommand[0] + "," + newCommand[1]);
                         }
                         application.writeCommandToRobot(id, name, newCommand[0], newCommand[1]);
                     } else if (!robotTaskManager.isWorkingOnTask(name)) {

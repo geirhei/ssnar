@@ -53,6 +53,8 @@ public final class Application {
     private boolean activateParticlefilter = false;
     private double[] particleFilterOptions = {0,0,0,0,0};
     
+    private boolean debug = false;
+    
     /**
      * Constructor of the class Application
      */
@@ -272,6 +274,9 @@ public final class Application {
     public void writeCommandToRobot(int robotID, String robotName, int x, int y) {
         //  newTime[robotID] = System.currentTimeMillis();
         if (!simulatorActive) {
+            if (debug) {
+                System.out.println("writeCommandToRobot() entered: " + x + "," + y);
+            }
             com.sendOrderToRobot( rc.getRobot(robotID).getAddress(), x, y);
         } else {
             sim.setRobotCommand(robotName, x, y);

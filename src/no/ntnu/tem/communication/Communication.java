@@ -62,6 +62,7 @@ public class Communication implements ARQProtocol.DisconnectedListener {
         protocolSettings.put(Message.CONFIRM, arqProtocol);
         protocolSettings.put(Message.FINISH, arqProtocol);
         protocolSettings.put(Message.ORDER, arqProtocol);
+        protocolSettings.put(Message.PRIORITY_ORDER, arqProtocol);
         protocolSettings.put(Message.PAUSE, arqProtocol);
         protocolSettings.put(Message.UNPAUSE, arqProtocol);
         
@@ -156,8 +157,8 @@ public class Communication implements ARQProtocol.DisconnectedListener {
      * (changed to (x,y))
      *
      * @param address The robots address
-     * @param orientation the robots wanted orientation
-     * @param distance the distance to move
+     * @param x the x-coordinate
+     * @param y the y-coordinate
      */
     public void sendOrderToRobot(int address, int x, int y) {
         ByteBuffer buffer = ByteBuffer.allocate(5);
@@ -169,8 +170,33 @@ public class Communication implements ARQProtocol.DisconnectedListener {
         buffer.rewind();
         buffer.get(data);
         
+        //System.out.println("sendOrderToRobot() entered, data[]: " + data[0] + "," + data[1]);
+        
         protocolSettings.get(Message.ORDER).send(address, data);
         
+    }
+    
+    /**
+     * Method that wraps a message and sends it to a robot
+     * (changed to (x,y))
+     *
+     * @param address The robots address
+     * @param orientation the robots wanted orientation
+     * @param distance the distance to move
+     */
+    public void sendPriorityOrderToRobot(int address, int orientation, int distance) {
+        ByteBuffer buffer = ByteBuffer.allocate(5);
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        buffer.put( (byte) Message.ORDER);
+        buffer.putShort((short)orientation);
+        buffer.putShort((short)distance);
+        byte data[] = new byte[5];
+        buffer.rewind();
+        buffer.get(data);
+        
+        //System.out.println("sendOrderToRobot() entered, data[]: " + data[0] + "," + data[1]);
+        
+        protocolSettings.get(Message.PRIORITY_ORDER).send(address, data);
     }
 
     /**
