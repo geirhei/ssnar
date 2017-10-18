@@ -174,9 +174,9 @@ public class NavigationController extends Thread {
                     int[] nextCommand = navigationRobots.get(name).getPriorityCommand();
                     if (debug) {
                         System.out.println("Priority command: " + nextCommand[0] + "," + nextCommand[1]);
-                        //System.out.println(name + ": Executing next command, ROTATION " + nextCommand[0] + ", DISTANCE " + nextCommand[1]);
+                        System.out.println(name + ": Executing next command, ROTATION " + nextCommand[0] + ", DISTANCE " + nextCommand[1]);
                     }
-                    application.writeCommandToRobot(id, name, nextCommand[0], nextCommand[1]);
+                    application.writePriorityCommandToRobot(id, name, nextCommand[0], nextCommand[1]);
                 } else if (!applicationRobot.isBusy() && !navigationRobots.get(name).isInCollisionManagement()) {
                     if (navigationRobots.get(name).hasMoreWaypoints()) {
                         // Get next target
