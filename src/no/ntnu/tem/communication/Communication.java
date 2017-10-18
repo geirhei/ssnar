@@ -159,12 +159,12 @@ public class Communication implements ARQProtocol.DisconnectedListener {
      * @param x the x-coordinate
      * @param y the y-coordinate
      */
-    public void sendOrderToRobot(int address, int orientation, int distance) {
+    public void sendOrderToRobot(int address, int x, int y) {
         ByteBuffer buffer = ByteBuffer.allocate(5);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         buffer.put( (byte) Message.ORDER);
-        buffer.putShort((short)orientation);
-        buffer.putShort((short)distance);
+        buffer.putShort((short)x);
+        buffer.putShort((short)y);
         byte data[] = new byte[5];
         buffer.rewind();
         buffer.get(data);
@@ -183,6 +183,7 @@ public class Communication implements ARQProtocol.DisconnectedListener {
      * @param orientation the robots wanted orientation
      * @param distance the distance to move
      */
+    /*
     public void sendPriorityOrderToRobot(int address, int orientation, int distance) {
         ByteBuffer buffer = ByteBuffer.allocate(5);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -197,6 +198,7 @@ public class Communication implements ARQProtocol.DisconnectedListener {
         
         protocolSettings.get(Message.PRIORITY_ORDER).send(address, data);
     }
+    */
 
     /**
      * Method that confirms that the server has received the handshake
