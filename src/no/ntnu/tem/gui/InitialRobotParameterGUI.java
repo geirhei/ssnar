@@ -134,7 +134,7 @@ public class InitialRobotParameterGUI extends javax.swing.JDialog {
         });
 
         ftxtfOrientation.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        ftxtfOrientation.setText("90");
+        ftxtfOrientation.setText("0");
         ftxtfOrientation.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 ftxtfOrientationFocusGained(evt);
