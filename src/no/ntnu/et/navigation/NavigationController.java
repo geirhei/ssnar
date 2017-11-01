@@ -134,6 +134,7 @@ public class NavigationController extends Thread {
                 String name = robotNames.get(i);
                 Robot applicationRobot = robotController.getRobot(name);
                 int id = applicationRobot.getId();
+                /*
                 if (applicationRobot.isHome() && !applicationRobot.isGoingHome()) {
                     
                     // For optimal S_REF send robot 35 cm forward.. deactiavted for mutual testing
@@ -171,6 +172,7 @@ public class NavigationController extends Thread {
                         }
                     }
                 }
+                */
                 if (navigationRobots.get(name).hasNewPriorityCommand()) {
                     int[] nextCommand = navigationRobots.get(name).getPriorityCommand();
                     if (debug) {
@@ -203,7 +205,8 @@ public class NavigationController extends Thread {
                         robotTaskManager.createNewTask(robotController.getRobot(name), navigationRobots.get(name), name);
                     }
                 }
-                // DOCKING -> Broken
+                // DOCKING -> disabled
+                /*
                 while (applicationRobot.getAdjustRobot() > -1) {
                     switch (applicationRobot.getAdjustRobot()) {
                         case 0:
@@ -289,6 +292,7 @@ public class NavigationController extends Thread {
                     applicationRobot.setAtBase(false);
                     applicationRobot.setConfirmPose(false);
                 }
+                */
             }
         }
     }
