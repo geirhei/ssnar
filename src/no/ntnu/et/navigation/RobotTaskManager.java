@@ -166,7 +166,7 @@ public class RobotTaskManager {
                 robot.checkBattery();
                 
             }
-
+            
             // Runs the A* algorthim for return.....
             while (robot.isGoingHome() && !assigned && !robot.isAtBase()) {
                 Position robotPosition = new Position(robot.getPosition());
@@ -187,7 +187,7 @@ public class RobotTaskManager {
                 ArrayList<Position> newWaypoints = PathPlanningFunctions.generateWaypoints(map, path);
 
                 if (newWaypoints.isEmpty() || Position.distanceBetween(robotPosition, newWaypoints.get(0)) < 4) {
-                    System.out.println("Robot: " + name + " is back at base.");
+                    //System.out.println("Robot: " + name + " is back at base.");
 
                     robot.setAtBase(true);
                     temporaryTargets.remove(name);
