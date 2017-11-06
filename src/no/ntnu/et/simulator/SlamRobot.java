@@ -6,7 +6,10 @@
  */
 package no.ntnu.et.simulator;
 
+import java.util.ArrayList;
 import no.ntnu.et.general.Pose;
+import no.ntnu.et.general.Position;
+import no.ntnu.et.general.Vertex;
 
 /**
  *
@@ -14,6 +17,7 @@ import no.ntnu.et.general.Pose;
  */
 public class SlamRobot extends SimRobot {
     private SimWorld world;
+    private ArrayList<Vertex> vertices = new ArrayList();
     
     /**
      * Constructor for SlamRobot.
@@ -27,6 +31,11 @@ public class SlamRobot extends SimRobot {
     SlamRobot(SimWorld world, Pose initialPose, String name, int id, int address) {
         super(world, initialPose, name, id, address);
         this.world = world;
+        
+        vertices.add(new Vertex(Vertex.EXTERIOR, new Position(25, 25)) );
     }
-            
+    
+    public ArrayList<Vertex> getVertices() {
+        return vertices;
+    }
 }

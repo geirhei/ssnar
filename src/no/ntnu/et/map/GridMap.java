@@ -9,6 +9,7 @@ package no.ntnu.et.map;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import no.ntnu.et.general.Position;
+import no.ntnu.et.general.Vertex;
 import no.ntnu.et.mapping.MappingController;
 
 /**
@@ -46,6 +47,8 @@ public class GridMap{
     private int rightColumn;
     private int leftColumn;
     
+    private ArrayList<Vertex> vertices = new ArrayList();
+    
     /**
      * Constructor for the GridMap class
      * @param cellSize Specifies the size of cells in cm. Cells are quadratic
@@ -68,7 +71,17 @@ public class GridMap{
                     map.put(new MapLocation(i, j), new Cell());
                 }
             }
+            
+            vertices.add( new Vertex(Vertex.INTERIOR, new Position(25, 25)) );
         }
+    }
+    
+    public void addVertex(Vertex vertex) {
+        vertices.add(vertex);
+    }
+    
+    public ArrayList<Vertex> getVertices() {
+        return vertices;
     }
     
     /**
@@ -629,5 +642,16 @@ public class GridMap{
             Cell measuredCell = map.get(location);
             measuredCell.removeParticle();
         }
+    }
+    
+    /**
+     * Add discovered vertice to the map.
+     * 
+     * @param location
+     * @param type 0 = exterior, 1 = interior
+     */
+    public void addVertice(MapLocation location, int type) {
+        int radius = 5;
+        ArrayList<MapLocation> circle = createCircle(location, 5);
     }
 }
