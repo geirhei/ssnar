@@ -141,7 +141,7 @@ public class InitialPoseDialog extends javax.swing.JDialog {
         jLabel1.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         jLabel1.setText("Place the robot:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Arduino", "NTX", "AVR", "Drone" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Arduino", "NTX", "AVR", "Drone", "SLAM" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
@@ -205,6 +205,9 @@ public class InitialPoseDialog extends javax.swing.JDialog {
         }
         else if(selectedbot.equals("AVR")){
             RobotType = 4;
+        }
+        else if(selectedbot.equals("SLAM")){
+            RobotType = 5;
         }
     }//GEN-LAST:event_jComboBox1ActionPerformed
 

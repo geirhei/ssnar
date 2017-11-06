@@ -194,7 +194,7 @@
     <Component class="javax.swing.JComboBox" name="jComboBox1">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] { &quot;Arduino&quot;, &quot;NTX&quot;, &quot;AVR&quot;, &quot;Drone&quot; })" type="code"/>
+          <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] { &quot;Arduino&quot;, &quot;NTX&quot;, &quot;AVR&quot;, &quot;Drone&quot;, &quot;SLAM&quot; })" type="code"/>
         </Property>
       </Properties>
       <Events>
