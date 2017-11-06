@@ -168,6 +168,7 @@ public class RobotTaskManager {
             }
             
             // Runs the A* algorthim for return.....
+            /*
             while (robot.isGoingHome() && !assigned && !robot.isAtBase()) {
                 Position robotPosition = new Position(robot.getPosition());
                 MapLocation robotLocation = map.findLocationInMap(robotPosition);
@@ -207,6 +208,8 @@ public class RobotTaskManager {
                     break;
                 }
             }
+            */
+            
             currentNumberOfWorkers--;
             // Remove this thread from the current working threads
             tasksInProgress.remove(name);
