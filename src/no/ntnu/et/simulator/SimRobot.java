@@ -126,16 +126,23 @@ public class SimRobot {
             double xDiff = x - pose.getPosition().getXValue();
             double yDiff = y - pose.getPosition().getYValue();
             targetDistance = Math.sqrt( Math.pow(xDiff, 2) + Math.pow(yDiff, 2) );
-            double targetAngle = Math.toDegrees( Math.atan2(yDiff, xDiff) );
-            if (targetAngle < 0) { // Wrap to [0,360) degrees
-                targetAngle +=360;
+            Angle targetAngle = new Angle( Math.toDegrees( Math.atan2(yDiff, xDiff) ) );
+            //double targetAngle = Math.toDegrees( Math.atan2(yDiff, xDiff) );
+            if (targetAngle.getValue() < 0) { // Wrap to [0,360) degrees
+                targetAngle.add(360);
             }
-            targetRotation = targetAngle - pose.getHeading().getValue();
+            Angle currentHeading = new Angle(pose.getHeading().getValue());
+            targetRotation = Angle.difference(targetAngle, currentHeading);
             //targetRotation = theta;
             //targetDistance = distance;
             measuredRotation = 0;
             measuredDistance = 0;
-            rotationDirection = (int) Math.signum(targetRotation);
+            if ( (currentHeading.getValue() - targetAngle.getValue() + 360)%360 > 180 ) {
+                rotationDirection = 1;
+            } else {
+                rotationDirection = -1;
+            }
+            //rotationDirection = (int) Math.signum(targetRotation);
             //movementDirection = (int) Math.signum(distance); // cludged to 1
             movementDirection = 1;
             //Angle targetAngle = Angle.sum(pose.getHeading(), new Angle(theta));
