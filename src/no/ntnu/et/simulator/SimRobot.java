@@ -121,17 +121,26 @@ public class SimRobot {
      * @param theta
      * @param distance
      */
-    void setTarget(double theta, double distance) {
+    void setTarget(double x, double y) {
         synchronized (movementLock) {
-            targetRotation = theta;
-            targetDistance = distance;
+            double xDiff = x - pose.getPosition().getXValue();
+            double yDiff = y - pose.getPosition().getYValue();
+            targetDistance = Math.sqrt( Math.pow(xDiff, 2) + Math.pow(yDiff, 2) );
+            double targetAngle = Math.toDegrees( Math.atan2(yDiff, xDiff) );
+            if (targetAngle < 0) { // Wrap to [0,360) degrees
+                targetAngle +=360;
+            }
+            targetRotation = targetAngle - pose.getHeading().getValue();
+            //targetRotation = theta;
+            //targetDistance = distance;
             measuredRotation = 0;
             measuredDistance = 0;
-            rotationDirection = (int) Math.signum(theta);
-            movementDirection = (int) Math.signum(distance);
-            Angle targetAngle = Angle.sum(pose.getHeading(), new Angle(theta));
-            Position offset = Utilities.polar2cart(targetAngle, distance);
-            targetPosition = Position.sum(pose.getPosition(), offset);
+            rotationDirection = (int) Math.signum(targetRotation);
+            //movementDirection = (int) Math.signum(distance); // cludged to 1
+            movementDirection = 1;
+            //Angle targetAngle = Angle.sum(pose.getHeading(), new Angle(theta));
+            //Position offset = Utilities.polar2cart(targetAngle, distance);
+            //targetPosition = Position.sum(pose.getPosition(), offset);
             rotationFinished = false;
             translationFinished = false;
         }

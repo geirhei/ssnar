@@ -38,7 +38,7 @@ public class CollisionManager extends Thread {
     
     private RobotController robotControl;
     
-    private boolean debug = false;
+    private boolean debug = true;
     
     public CollisionManager(GridMap map, RobotController robotController) {
         robotControl = robotController;
