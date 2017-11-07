@@ -172,6 +172,28 @@ public class MappingController extends Thread {
                     continue;
                 }
                 
+                // SLAMrobot handling. Does not currently care about other robots
+                if (robot.getName().equals("SLAM")) {
+                    for (Sensor sensor : sensors) {
+                        
+                        map.resize(sensor.getPosition());
+                        MapLocation measurementLocation = map.findLocationInMap(sensor.getPosition());
+                        if (sensor.isMeasurement()) {
+                            map.setObstructed(measurementLocation);
+                        } else {
+                            map.setFrontier(measurementLocation);
+                        }
+                        
+                        // Process rest of the lineOfSight-array
+                        ArrayList<MapLocation> lineOfSight = getLineBetweenPoints(robotLocation, measurementLocation);
+                        for (MapLocation location : lineOfSight) {
+                            // Remove cells from the arrays if they are present
+                            map.clearLocation(location);
+                        }
+                    }
+                    //continue;
+                }
+                
                 int sensorOneValue = 0;
 
                 int sensCount = 0;

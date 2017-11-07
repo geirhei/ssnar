@@ -57,6 +57,7 @@ public class RobotTaskManager {
         tasksInProgress = new HashMap<String, RobotTaskWorker>();
         currentNumberOfWorkers = 0;
         
+        //SLAM-test
         occupiedCount = 0;
         frontierCount = 0;
         locationCount = occupiedCount + frontierCount;

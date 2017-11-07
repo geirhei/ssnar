@@ -232,7 +232,7 @@ public class SimRobot {
                     pose.move(moveSpeed * movementDirection);
                 }
             }
-            System.out.println("SimRobot orientation: " + pose.getHeading().getValue());
+            //System.out.println("SimRobot orientation: " + pose.getHeading().getValue());
             return false;
         }
     }

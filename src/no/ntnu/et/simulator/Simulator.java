@@ -247,7 +247,8 @@ public class Simulator {
 
                 // Move robot
                 if (estimateNoiseEnabled) {
-                    estimateNoise = noiseGenerator.nextGaussian() * 0.1;
+                    //estimateNoise = noiseGenerator.nextGaussian() * 0.1;
+                    estimateNoise = noiseGenerator.nextGaussian() * 0.01;
                 } else {
                     estimateNoise = 0;
                 }

@@ -49,6 +49,10 @@ public class GridMap{
     
     private ArrayList<Vertex> vertices = new ArrayList();
     
+    //SLAMrobot simulation
+    private ArrayList<MapLocation> obstructed = new ArrayList();
+    private ArrayList<MapLocation> frontiers = new ArrayList();
+    
     /**
      * Constructor for the GridMap class
      * @param cellSize Specifies the size of cells in cm. Cells are quadratic
@@ -74,6 +78,33 @@ public class GridMap{
             
             vertices.add( new Vertex(Vertex.INTERIOR, new Position(25, 25)) );
         }
+    }
+    
+    public ArrayList<MapLocation> getObstructed() {
+        return obstructed;
+    }
+    
+    public ArrayList<MapLocation> getFrontiers() {
+        return frontiers;
+    }
+    
+    public void setFrontier(MapLocation loc) {
+        obstructed.remove(loc);
+        if (!frontiers.contains(loc)) {
+            frontiers.add(loc);
+        }
+    }
+    
+    public void setObstructed(MapLocation loc) {
+        frontiers.remove(loc);
+        if (!obstructed.contains(loc)) {
+            obstructed.add(loc);
+        }
+    }
+    
+    public void clearLocation(MapLocation loc) {
+        frontiers.remove(loc);
+        obstructed.remove(loc);
     }
     
     public void addVertex(Vertex vertex) {

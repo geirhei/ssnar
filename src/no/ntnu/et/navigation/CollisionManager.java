@@ -227,20 +227,26 @@ public class CollisionManager extends Thread {
                 if(paused){
                     continue;
                 }
-                if(!robotControl.getRobot(name).isBusy()){
-                    currentPosition = new Position(robotControl.getRobot(name).getPosition());
-                    MapLocation robotLocation = map.findLocationInMap(currentPosition);
-                    if(map.findCell(robotLocation).isRestricted()){
-                        currentOrientation = new Angle((double)robotControl.getRobot(name).getRobotOrientation());
-                        command = findWallCollisionCommand(currentPosition, currentOrientation);
-                        robots.get(name).setPriorityCommand(command);
-                    }
-                    else{
-                        if(debug){
-                            System.out.println(name + ": No longer stuck");
+                try {
+                    if(!robotControl.getRobot(name).isBusy()){
+                        currentPosition = new Position(robotControl.getRobot(name).getPosition());
+                        MapLocation robotLocation = map.findLocationInMap(currentPosition);
+                        if(map.findCell(robotLocation).isRestricted()){
+                            currentOrientation = new Angle((double)robotControl.getRobot(name).getRobotOrientation());
+                            command = findWallCollisionCommand(currentPosition, currentOrientation);
+                            robots.get(name).setPriorityCommand(command);
                         }
-                        done = true;
+                        else{
+                            if(debug){
+                                System.out.println(name + ": No longer stuck");
+                            }
+                            done = true;
+                        }
                     }
+                } catch (NullPointerException e) {
+                    System.out.println("Exception in Collisionmanager!");
+                    System.out.println(e);
+                    break;
                 }
             }
             robots.get(name).setInWallCollision(false);
