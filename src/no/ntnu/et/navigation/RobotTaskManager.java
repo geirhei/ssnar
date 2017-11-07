@@ -42,6 +42,13 @@ public class RobotTaskManager {
     final private boolean debug = true;
 
     final private int targetSpacing = 5; //[cm]
+    
+    // Memory usage test variables
+    private int occupiedCount;
+    private int frontierCount;
+    private int locationCount;
+    private int memoryUsage;
+    private int maxUsage;
 
     public RobotTaskManager(GridMap map) {
         this.map = map;
@@ -49,6 +56,12 @@ public class RobotTaskManager {
         currentTargets = new ConcurrentHashMap<String, MapLocation>();
         tasksInProgress = new HashMap<String, RobotTaskWorker>();
         currentNumberOfWorkers = 0;
+        
+        occupiedCount = 0;
+        frontierCount = 0;
+        locationCount = occupiedCount + frontierCount;
+        memoryUsage = 0;
+        maxUsage = memoryUsage;
     }
 
     public void updateCurrentTarget(String robotName, MapLocation currentLocation) {
@@ -87,6 +100,17 @@ public class RobotTaskManager {
 
         @Override
         public void run() {
+            if (debug) {
+                occupiedCount = map.getOccupiedCount();
+                frontierCount = map.getFrontierCount();
+                locationCount = occupiedCount + frontierCount;
+                memoryUsage = locationCount*4; // 4 bytes for coordinates for each location
+                //System.out.println("Memory usage: " + memoryUsage + "KB");
+                if (memoryUsage > maxUsage) {
+                    maxUsage = memoryUsage;
+                }
+                System.out.println("Max memory usage: " + maxUsage + "KB");
+            }
             ArrayList<MapLocation> frontierLocations = map.getFrontierLocations();
             ArrayList<MapLocation> possibleTargets = selectSpreadLocations(frontierLocations);
             int currentOrientation = robot.getRobotOrientation();

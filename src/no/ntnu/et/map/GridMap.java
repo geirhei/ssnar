@@ -242,6 +242,34 @@ public class GridMap{
     }
     
     /**
+     * Returns the number of frontier locations in the map.
+     * 
+     * @return 
+     */
+    public int getFrontierCount() {
+        ArrayList<MapLocation> frontierLocations = getFrontierLocations();
+        return frontierLocations.size();
+    }
+    
+    /**
+     * Returns the number of occupied cells in the map.
+     * 
+     * @return 
+     */
+    public int getOccupiedCount() {
+        int count = 0;
+        for (int i = bottomRow; i <= topRow; i++) {
+            for (int j = 0; j <= rightColumn; j++) {
+                MapLocation location = new MapLocation(i, j);
+                if (map.get(location).isOccupied()) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    
+    /**
      * Returns the number of unexplored cells around the specified location
      * within the specified radius
      * @param location
