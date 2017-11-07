@@ -45,7 +45,7 @@ public class NavigationController extends Thread {
 
     private boolean paused;
 
-    private boolean debug = true;
+    private boolean debug = false;
 
     public NavigationController(RobotController robotController, Application application, GridMap map) {
         this.robotController = robotController;

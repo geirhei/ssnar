@@ -105,7 +105,7 @@ public class Pose {
      * @param rotation 
      */
     public void rotate(Angle rotation) {
-        heading.add(rotation);
+        heading.add(rotation.getValue());
     }
     
     /**

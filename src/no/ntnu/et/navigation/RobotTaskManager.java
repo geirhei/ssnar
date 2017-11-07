@@ -39,7 +39,7 @@ public class RobotTaskManager {
 
     private boolean paused = true;
 
-    final private boolean debug = true;
+    final private boolean debug = false;
 
     final private int targetSpacing = 5; //[cm]
     

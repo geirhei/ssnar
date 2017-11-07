@@ -111,43 +111,31 @@ public class SimRobot {
     String getName() {
         return name;
     }
-
+    
     /**
      * Sets the target rotation and target heading. Also resets the measured
      * rotation and distance.
-     * 
-     * Needs to be fixed because of conversion to (x,y)
      *
-     * @param theta
-     * @param distance
+     * @param x
+     * @param y
      */
     void setTarget(double x, double y) {
         synchronized (movementLock) {
-            double xDiff = x - pose.getPosition().getXValue();
-            double yDiff = y - pose.getPosition().getYValue();
-            targetDistance = Math.sqrt( Math.pow(xDiff, 2) + Math.pow(yDiff, 2) );
-            Angle targetAngle = new Angle( Math.toDegrees( Math.atan2(yDiff, xDiff) ) );
-            //double targetAngle = Math.toDegrees( Math.atan2(yDiff, xDiff) );
-            if (targetAngle.getValue() < 0) { // Wrap to [0,360) degrees
-                targetAngle.add(360);
-            }
-            Angle currentHeading = new Angle(pose.getHeading().getValue());
-            targetRotation = Angle.difference(targetAngle, currentHeading);
-            //targetRotation = theta;
-            //targetDistance = distance;
-            measuredRotation = 0;
-            measuredDistance = 0;
-            if ( (currentHeading.getValue() - targetAngle.getValue() + 360)%360 > 180 ) {
+            targetPosition = new Position(x, y);
+            targetDistance = Position.distanceBetween(targetPosition, pose.getPosition()); //cm
+            
+            Angle targetAngle = Position.angleBetween(pose.getPosition(), targetPosition); //deg
+            targetRotation = Angle.difference(pose.getHeading(), targetAngle); //deg
+            // Determine if robot should rotate left or right
+            if ((pose.getHeading().getValue() - targetAngle.getValue() + 360) % 360 > 180) {
                 rotationDirection = 1;
             } else {
                 rotationDirection = -1;
             }
-            //rotationDirection = (int) Math.signum(targetRotation);
-            //movementDirection = (int) Math.signum(distance); // cludged to 1
-            movementDirection = 1;
-            //Angle targetAngle = Angle.sum(pose.getHeading(), new Angle(theta));
-            //Position offset = Utilities.polar2cart(targetAngle, distance);
-            //targetPosition = Position.sum(pose.getPosition(), offset);
+            
+            measuredRotation = 0;
+            measuredDistance = 0;
+            movementDirection = 1; // cludged
             rotationFinished = false;
             translationFinished = false;
         }
@@ -244,6 +232,7 @@ public class SimRobot {
                     pose.move(moveSpeed * movementDirection);
                 }
             }
+            System.out.println("SimRobot orientation: " + pose.getHeading().getValue());
             return false;
         }
     }
