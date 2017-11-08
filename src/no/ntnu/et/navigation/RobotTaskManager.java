@@ -260,7 +260,7 @@ public class RobotTaskManager {
                 MapLocation robotLocation = map.findLocationInMap(robotPosition);
 
                 // Find the most optimal targetpoint in the map given the robots current location and the target points of the other robots
-                MapLocation bestTarget = findBestTarget(currentOrientation, robotLocation, possibleTargets, name);
+                MapLocation bestTarget = simpleFindBestTarget(currentOrientation, robotLocation, possibleTargets, name);
             }
         }
     }
@@ -299,7 +299,31 @@ public class RobotTaskManager {
         }
         return bestTargetPoint;
     }
-
+    
+    /**
+     * Simple version of findBestTarget(). Used for SLAMrobot.
+     * 
+     * @param currentOrientation
+     * @param currentLocation
+     * @param possibleTargetLocations
+     * @param robotName
+     * @return 
+     */
+    MapLocation simpleFindBestTarget(int currentOrientation, MapLocation currentLocation, ArrayList<MapLocation> possibleTargetLocations, String robotName) {
+        MapLocation bestTargetPoint = null;
+        double bestUtility = Double.NEGATIVE_INFINITY;
+        for (MapLocation targetPoint : possibleTargetLocations) {
+            // map.findCell(targetPoint).setTarget();
+            double utility = computeSimpleUtility(targetPoint, currentLocation, currentOrientation, robotName, false);
+            if (utility > bestUtility) {
+                bestUtility = utility;
+                bestTargetPoint = MapLocation.copy(targetPoint);
+                temporaryTargets.put(robotName, bestTargetPoint);
+            }
+        }
+        return bestTargetPoint;
+    }
+    
     private double computeUtility(MapLocation target, MapLocation currentLocation, int currentOrientation, String robotName, boolean print) {
         int mapCellSize = map.getCellSize();
 
@@ -377,6 +401,18 @@ public class RobotTaskManager {
         return weight1 * exploration - weight2 * distance - weight3 * distribution + weight4 * lineOfSight - weight5 * closeToWall - tooNear - weight6 * turnDistance;
     }
     
+    /**
+     * Simplified version of the computeUtility()-method. Some variables are
+     * not considered. This method does not take into account the targets
+     * of other robots in the system.
+     * 
+     * @param target
+     * @param currentLocation
+     * @param currentOrientation
+     * @param robotName
+     * @param print
+     * @return 
+     */
     private double computeSimpleUtility(MapLocation target, MapLocation currentLocation, int currentOrientation, String robotName, boolean print) {
         int mapCellSize = map.getCellSize();
 
@@ -436,7 +472,7 @@ public class RobotTaskManager {
         }
 
         double closeToWall = 0;
-        if (map.findCell(target).isWeaklyRestricted()) {
+        if (map.isRestricted(target)) {
             closeToWall = 1;
         }
 

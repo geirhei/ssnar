@@ -280,7 +280,7 @@ public class GridMap{
      * @param location
      * @return whether the location is restricted
      */
-    boolean isRestricted(MapLocation location){
+    public boolean isRestricted(MapLocation location){
         int radius = 15; // cm. 
         radius = radius/cellSize;
         int row = location.getRow();
