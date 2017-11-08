@@ -273,6 +273,34 @@ public class GridMap{
     }
     
     /**
+     * Checks if there are any occupied locations in a given radius around
+     * the given location. Used by the SLAMrobot. Radius may have to be
+     * adjusted.
+     * 
+     * @param location
+     * @return whether the location is restricted
+     */
+    boolean isRestricted(MapLocation location){
+        int radius = 15; // cm. 
+        radius = radius/cellSize;
+        int row = location.getRow();
+        int column = location.getColumn();
+        int top = row + radius;
+        int bottom = row - radius;
+        int right = column + radius;
+        int left = column - radius;
+        for (int i = bottom; i <= top; i++) {
+            for (int j = left; j <= right; j++) {
+                MapLocation otherLocation = new MapLocation(i, j);
+                if (obstructed.contains(otherLocation)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Returns the number of frontier locations in the map.
      * 
      * @return 
