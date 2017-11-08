@@ -84,10 +84,11 @@ public class RobotTaskManager {
 
     private class RobotTaskWorker implements Runnable {
 
-        private NavigationRobot navRobot;
-        private Robot robot;
-        private String name;
-        private boolean done;
+        // These were private, may be bad practice to use protected
+        protected NavigationRobot navRobot;
+        protected Robot robot;
+        protected String name;
+        protected boolean done;
 
         public RobotTaskWorker(Robot robot, NavigationRobot navRobot, String name) {
             this.robot = robot;
@@ -240,6 +241,29 @@ public class RobotTaskManager {
             tasksInProgress.remove(name);
         }
     }
+    
+    private class SlamRobotTaskWorker extends RobotTaskWorker {
+        
+        public SlamRobotTaskWorker(Robot robot, NavigationRobot navRobot, String name) {
+            super(robot, navRobot, name);
+        }
+        
+        @Override
+        public void run() {
+            ArrayList<MapLocation> frontierLocations = map.getFrontierLocations();
+            ArrayList<MapLocation> possibleTargets = selectSpreadLocations(frontierLocations);
+            int currentOrientation = robot.getRobotOrientation();
+            boolean assigned = false;
+            // Assign the robot to move to one of the frontier locations if it has nothing else to do.
+            while (!assigned && !robot.isGoingHome()) {
+                Position robotPosition = new Position(robot.getPosition());
+                MapLocation robotLocation = map.findLocationInMap(robotPosition);
+
+                // Find the most optimal targetpoint in the map given the robots current location and the target points of the other robots
+                MapLocation bestTarget = findBestTarget(currentOrientation, robotLocation, possibleTargets, name);
+            }
+        }
+    }
 
     ArrayList<MapLocation> selectSpreadLocations(ArrayList<MapLocation> frontierLocations) {
         ArrayList<MapLocation> spreadLocations = new ArrayList<MapLocation>();
@@ -316,6 +340,96 @@ public class RobotTaskManager {
         ArrayList<MapLocation> shortestPath = MappingController.getLineBetweenPoints(currentLocation, target);
         for (MapLocation location : shortestPath) {
             if (!map.findCell(location).isWeaklyTargetable()) {
+                lineOfSight = 0;
+                break;
+            }
+        }
+
+        double closeToWall = 0;
+        if (map.findCell(target).isWeaklyRestricted()) {
+            closeToWall = 1;
+        }
+
+        double weight1 = 0.2;
+        double weight2 = 3;
+        double weight3 = 40000;
+        double weight4 = 300;
+        double weight5 = 2000;
+        double weight6 = 1;
+        //return exploration*0.5-distance*5*+distribution*1+lineOfSight*1;
+        if (print) {
+            /*
+            System.out.println("Base UTILITY:");
+            System.out.println(exploration);
+            System.out.println(distance);
+            System.out.println(distribution);
+            System.out.println(lineOfSight);
+            System.out.println(closeToWall);
+             */
+            System.out.println("Calculated UTILITY:");
+            System.out.println(weight1 * exploration);
+            System.out.println(weight2 * distance);
+            System.out.println(weight3 * distribution);
+            System.out.println(weight4 * lineOfSight);
+            System.out.println(weight5 * closeToWall);
+            System.out.println(weight6 * turnDistance);
+        }
+        return weight1 * exploration - weight2 * distance - weight3 * distribution + weight4 * lineOfSight - weight5 * closeToWall - tooNear - weight6 * turnDistance;
+    }
+    
+    private double computeSimpleUtility(MapLocation target, MapLocation currentLocation, int currentOrientation, String robotName, boolean print) {
+        int mapCellSize = map.getCellSize();
+
+        // This should be simplified
+        double exploration = map.countUnknownCellsAroundLocation(target, 30) * mapCellSize * mapCellSize;
+
+        double turnDistance = MapLocation.angleBetween(currentLocation, target) - currentOrientation;
+        turnDistance = Math.abs((turnDistance + 180) % 360 - 180);
+
+        double distance = MapLocation.distance(target, currentLocation) * map.getCellSize();
+
+        double tooNear = 0;
+        if (distance < 5) {
+            tooNear = Double.POSITIVE_INFINITY;
+        }
+        
+        double distribution = 0;
+        /* We do not account for distribution
+        for (ConcurrentHashMap.Entry<String, MapLocation> entry : temporaryTargets.entrySet()) {
+            if (entry.getKey() != robotName) {
+                if (MapLocation.distance(target, entry.getValue()) * mapCellSize <= 50) {
+                    distribution = Double.POSITIVE_INFINITY;
+                } else {
+                    distribution += 1 / MapLocation.distance(target, entry.getValue()) * mapCellSize;
+                }
+            }
+        }
+        
+        for (ConcurrentHashMap.Entry<String, MapLocation> entry : currentTargets.entrySet()) {
+            if (entry.getKey() != robotName) {
+                if (MapLocation.distance(target, entry.getValue()) * mapCellSize <= 50) {
+                    distribution = Double.POSITIVE_INFINITY;
+                } else {
+                    distribution += 1 / MapLocation.distance(target, entry.getValue()) * mapCellSize;
+                }
+            }
+        }
+        distribution = distribution / (currentTargets.size() + temporaryTargets.size() + 1);
+        */
+
+        double lineOfSight = 1;
+        ArrayList<MapLocation> shortestPath = MappingController.getLineBetweenPoints(currentLocation, target);
+        for (MapLocation location : shortestPath) {
+            // Checks if there are locations marked as obstructed in the line
+            if (map.getObstructed().contains(location)) {
+                lineOfSight = 0;
+                break;
+            }
+            // Checks if any of the locations in the line are frontiers. This
+            // means that the target is on the other side of unexplored territory.
+            // But it could also just be two frontiers next to eachother, check
+            // the behaviour of this.
+            if (map.getFrontiers().contains(location)) {
                 lineOfSight = 0;
                 break;
             }
