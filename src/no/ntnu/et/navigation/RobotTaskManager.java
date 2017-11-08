@@ -261,6 +261,19 @@ public class RobotTaskManager {
 
                 // Find the most optimal targetpoint in the map given the robots current location and the target points of the other robots
                 MapLocation bestTarget = simpleFindBestTarget(currentOrientation, robotLocation, possibleTargets, name);
+                
+                // Done mapping
+                if (bestTarget == null) {
+                    robot.setGoingHome(true);
+                    robot.setAtBase(false);
+                    robot.setDock(true);
+                    if (debug) {
+                        // Sends the robot home if it is done mapping..
+                        System.out.println(name + ": No targetpoint found");
+
+                    }
+                    break;
+                }
             }
         }
     }
