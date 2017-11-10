@@ -8,6 +8,8 @@ package no.ntnu.et.map;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+import no.ntnu.et.general.Line;
+import no.ntnu.et.general.Observation;
 import no.ntnu.et.general.Position;
 import no.ntnu.et.general.Vertex;
 import no.ntnu.et.mapping.MappingController;
@@ -53,6 +55,17 @@ public class GridMap{
     private ArrayList<MapLocation> obstructed = new ArrayList();
     private ArrayList<MapLocation> frontiers = new ArrayList();
     
+    private ArrayList<Position> StateSpace = new ArrayList();
+    private ArrayList<Observation> observationHistory = new ArrayList();
+    private ArrayList<int[]> actionHistory = new ArrayList();
+    private ArrayList<Line> LineBuffer = new ArrayList();
+    private ArrayList<Line> LineRepository = new ArrayList();
+    private ArrayList<Position> PointBufferF = new ArrayList();
+    private ArrayList<Position> PointBufferL = new ArrayList();
+    private ArrayList<Position> PointBufferB = new ArrayList();
+    private ArrayList<Position> PointBufferR = new ArrayList();
+    private ArrayList<ArrayList<Position>> pointBuffers = new ArrayList<ArrayList<Position>>();
+    
     /**
      * Constructor for the GridMap class
      * @param cellSize Specifies the size of cells in cm. Cells are quadratic
@@ -77,7 +90,14 @@ public class GridMap{
             }
             
             vertices.add( new Vertex(Vertex.INTERIOR, new Position(25, 25)) );
+            for (int k = 0; k < 4; k++) {
+                pointBuffers.add(new ArrayList<Position>());
+            }
         }
+    }
+    
+    public ArrayList<ArrayList<Position>> getPointBuffers() {
+        return pointBuffers;
     }
     
     public ArrayList<MapLocation> getObstructed() {

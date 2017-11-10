@@ -172,25 +172,25 @@ public class MappingController extends Thread {
                     continue;
                 }
                 
-                // SLAMrobot handling. Does not currently care about other robots
+                // SLAMrobot handling. Does not currently care about other robots.
+                // 2D list of positions should be ok
                 if (robot.getName().equals("SLAM")) {
-                    for (Sensor sensor : sensors) {
-                        
-                        map.resize(sensor.getPosition());
-                        MapLocation measurementLocation = map.findLocationInMap(sensor.getPosition());
-                        if (sensor.isMeasurement()) {
-                            map.setObstructed(measurementLocation);
+                    ArrayList<ArrayList<Position>> pointBuffers = map.getPointBuffers();
+                    for (int j = 0; i < 4; i++) {
+                        if (sensors[j].isMeasurement()) {
+                            Position measurementPoint = sensors[j].getPosition();
+                            pointBuffers.get(j).add(measurementPoint);
                         } else {
-                            map.setFrontier(measurementLocation);
-                        }
-                        
-                        // Process rest of the lineOfSight-array
-                        ArrayList<MapLocation> lineOfSight = getLineBetweenPoints(robotLocation, measurementLocation);
-                        for (MapLocation location : lineOfSight) {
-                            // Remove cells from the arrays if they are present
-                            map.clearLocation(location);
+                            // If no obstacle is measured, set the point values av infinity
+                            Position inf = new Position(Double.MAX_VALUE, Double.MAX_VALUE);
+                            pointBuffers.get(j).add(inf);
                         }
                     }
+                    
+                    
+                    
+                    //System.out.println("Point buffer 1 length: " + pointBuffers.get(0).size());
+                    
                     //continue;
                 }
                 

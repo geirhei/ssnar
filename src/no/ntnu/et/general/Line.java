@@ -22,6 +22,9 @@ public class Line {
     private double[] direction;
     
     private double length;
+    
+    private Position a;
+    private Position b;
 
     /**
      * Creates a new Line object
@@ -33,6 +36,16 @@ public class Line {
         this.start = start;
         this.direction = direction;
         this.length = length;
+    }
+    
+    /**
+     * Constructor Line object used in line merge
+     * @param a
+     * @param b 
+     */
+    public Line(Position a, Position b) {
+        this.a = a;
+        this.b = b;
     }
 
     /**

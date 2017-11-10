@@ -274,6 +274,59 @@ public class RobotTaskManager {
                     }
                     break;
                 }
+                
+                robotPosition = new Position(robot.getPosition());
+                robotLocation = map.findLocationInMap(robotPosition);
+                if (map.findCell(robotLocation).isRestricted()) {
+                    if (debug) {
+                        System.out.println(name + ": Robot in restricted position");
+                    }
+                    break;
+                }
+                // Search for a path between the robot and the best target point
+                ArrayList<MapLocation> path = PathPlanningFunctions.findPath(map, bestTarget, robotLocation);
+                // If no path to bestTarget is found remove bestTarget from possibleTargets
+                if (path == null) {
+                    for (int i = 0; i < possibleTargets.size(); i++) {
+                        if (MapLocation.equals(bestTarget, possibleTargets.get(i))) {
+                            possibleTargets.remove(i);
+                            break;
+                        }
+                    }
+                    // If there are no targets left in possibleTargets give up and try agin next iteration
+                    if (possibleTargets.size() == 0) {
+                        if (debug) {
+                            System.out.println(name + ": No targetpoints reachable. Waiting");
+                        }
+                        break;
+                    }
+                    if (debug) {
+                        System.out.println(name + ": Target unreachable. Finding new target");
+                    }
+                } // If a path is found find waypoints along the way and set destination for the robot
+                else {
+                    //computeUtility(bestTarget, robotLocation, currentOrientation, name, true);
+                    if (debug) {
+                        System.out.println(name + ": Path found");
+                    }
+                    ArrayList<Position> newWaypoints = PathPlanningFunctions.generateWaypoints(map, path);
+                    if (newWaypoints.isEmpty()) {
+                        if (debug) {
+                            System.out.println(name + ": Unable to generate waypoints");
+                        }
+                        temporaryTargets.remove(name);
+                        break;
+                    }
+                    currentTargets.put(name, bestTarget);
+                    temporaryTargets.remove(name);
+                    navRobot.addWaypoints(newWaypoints);
+                    Position destinationPos = newWaypoints.get(newWaypoints.size() - 1);
+                    int[] destination = {(int) Math.round(destinationPos.getXValue()), (int) Math.round(destinationPos.getYValue())};
+                    robot.setDestination(destination);
+                    assigned = true;
+                }
+                /*  Added to remove the need of goHome btn in RobotIdGUI  */
+                robot.checkBattery();
             }
         }
     }
