@@ -114,22 +114,53 @@ public class Line {
     
     public static void lineMerge(ArrayList<Position> pointBuffer, ArrayList<Line> lineBuffer) {
         if (pointBuffer.size() <= 1) {
+            pointBuffer.clear();
             return;
         } else if (pointBuffer.size() == 2) {
-            Line newLine = new Line(pointBuffer.get(0), pointBuffer.get(1));
-            lineBuffer.add(newLine);
-        } else {
-            Position a = pointBuffer.get(0);
-            Position b = pointBuffer.get(1);
-            Position c = pointBuffer.get(2);
-            int i = 2; // Starts on the 3rd element
-            while (i < pointBuffer.size()-2) {
-                if (isCollinear(a, b, c)) {
-                    
-                }
-            }
+            Line line = new Line(pointBuffer.get(0), pointBuffer.get(1));
+            lineBuffer.add(line);
+            pointBuffer.clear();
+            return;
         }
         
+        Position a = pointBuffer.get(0);
+        Position b = pointBuffer.get(1);
+
+        int i = 2;
+        while (i < pointBuffer.size()) {
+            if (i == pointBuffer.size() - 1) {
+                if (isCollinear(a, b, pointBuffer.get(i))) {
+                    Line line = new Line(a, pointBuffer.get(i));
+                    lineBuffer.add(line);
+                } else {
+                    Line line = new Line(a, pointBuffer.get(i-1));
+                    lineBuffer.add(line);
+                }
+                i = pointBuffer.size();
+            } else if (i == pointBuffer.size() - 2) {
+                if (!isCollinear(a, b, pointBuffer.get(i))) {
+                    Line line1 = new Line(a, pointBuffer.get(i-1));
+                    Line line2 = new Line(pointBuffer.get(i), pointBuffer.get(i+1));
+                    lineBuffer.add(line1);
+                    lineBuffer.add(line2);
+                } else {
+                    Line line = new Line(a, pointBuffer.get(i));
+                    lineBuffer.add(line);
+                }
+                i = pointBuffer.size();
+            } else {
+                if (!isCollinear(a, b, pointBuffer.get(i))) {
+                    Line line = new Line(a, pointBuffer.get(i-1));
+                    lineBuffer.add(line);
+                    a = pointBuffer.get(i);
+                    b = pointBuffer.get(i+1);
+                    i = i+2;
+                } else {
+                    i = i+1;
+                }
+            }
+        
+        }
         pointBuffer.clear();
     }
     

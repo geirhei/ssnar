@@ -14,6 +14,7 @@ import no.ntnu.tem.application.RobotController;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.et.map.MapLocation;
 import no.ntnu.et.general.Angle;
+import no.ntnu.et.general.Line;
 import no.ntnu.et.general.Pose;
 import no.ntnu.et.general.Position;
 import no.ntnu.et.navigation.NavigationRobot;
@@ -121,6 +122,7 @@ public class MappingController extends Thread {
         int numberOfScans = 200;
         int battery = 0;
         int ICPCount = 0;
+        int counter = 0;
         while (true) {
             try {
                 Thread.sleep(10);
@@ -174,9 +176,11 @@ public class MappingController extends Thread {
                 
                 // SLAMrobot handling. Does not currently care about other robots.
                 // 2D list of positions should be ok
+
                 if (robot.getName().equals("SLAM")) {
                     ArrayList<ArrayList<Position>> pointBuffers = map.getPointBuffers();
-                    for (int j = 0; i < 4; i++) {
+                    ArrayList<ArrayList<Line>> lineBuffers = map.getLineBuffers();
+                    for (int j = 0; j < 4; j++) {
                         if (sensors[j].isMeasurement()) {
                             Position measurementPoint = sensors[j].getPosition();
                             pointBuffers.get(j).add(measurementPoint);
@@ -187,7 +191,18 @@ public class MappingController extends Thread {
                         }
                     }
                     
-                    
+                    if (counter > 20) {
+                        for (ArrayList<Position> pointBuffer : pointBuffers) {
+                            for (ArrayList<Line> lineBuffer : lineBuffers) {
+                                Line.lineMerge(pointBuffer, lineBuffer);
+                            }
+                        }
+                        System.out.println("Lines merged.");
+                        System.out.println("pointBuffer0 size: " + pointBuffers.get(0).size());
+                        //System.out.println("lineBuffer0 size: " + lineBuffers.get(0).size());
+                        counter = 0;
+                    }
+                    counter++;
                     
                     //System.out.println("Point buffer 1 length: " + pointBuffers.get(0).size());
                     

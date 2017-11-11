@@ -18,7 +18,7 @@ import javafx.collections.ObservableList;
 public class RobotController {
 
     private final ObservableList<Robot> robotList;
-    private final boolean debug = true;
+    private final boolean debug = false;
     private int idCounter = 0;
 
     /**

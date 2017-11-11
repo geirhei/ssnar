@@ -58,13 +58,13 @@ public class GridMap{
     private ArrayList<Position> StateSpace = new ArrayList();
     private ArrayList<Observation> observationHistory = new ArrayList();
     private ArrayList<int[]> actionHistory = new ArrayList();
-    private ArrayList<Line> LineBuffer = new ArrayList();
     private ArrayList<Line> LineRepository = new ArrayList();
     private ArrayList<Position> PointBufferF = new ArrayList();
     private ArrayList<Position> PointBufferL = new ArrayList();
     private ArrayList<Position> PointBufferB = new ArrayList();
     private ArrayList<Position> PointBufferR = new ArrayList();
     private ArrayList<ArrayList<Position>> pointBuffers = new ArrayList<ArrayList<Position>>();
+    private ArrayList<ArrayList<Line>> lineBuffers = new ArrayList<ArrayList<Line>>();
     
     /**
      * Constructor for the GridMap class
@@ -98,6 +98,10 @@ public class GridMap{
     
     public ArrayList<ArrayList<Position>> getPointBuffers() {
         return pointBuffers;
+    }
+    
+    public ArrayList<ArrayList<Line>> getLineBuffers() {
+        return lineBuffers;
     }
     
     public ArrayList<MapLocation> getObstructed() {
