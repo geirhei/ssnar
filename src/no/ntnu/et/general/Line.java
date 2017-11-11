@@ -6,6 +6,7 @@
  */
 package no.ntnu.et.general;
 
+import java.util.ArrayList;
 import no.ntnu.et.map.MapLocation;
 import no.ntnu.et.simulator.Feature;
 
@@ -109,6 +110,45 @@ public class Line {
         double yDiff = endPos.getYValue()-startPos.getYValue();
         double[] vector = {xDiff/length, yDiff/length};
         return new Line(start, vector, length);
+    }
+    
+    public static void lineMerge(ArrayList<Position> pointBuffer, ArrayList<Line> lineBuffer) {
+        if (pointBuffer.size() <= 1) {
+            return;
+        } else if (pointBuffer.size() == 2) {
+            Line newLine = new Line(pointBuffer.get(0), pointBuffer.get(1));
+            lineBuffer.add(newLine);
+        } else {
+            Position a = pointBuffer.get(0);
+            Position b = pointBuffer.get(1);
+            Position c = pointBuffer.get(2);
+            int i = 2; // Starts on the 3rd element
+            while (i < pointBuffer.size()-2) {
+                if (isCollinear(a, b, c)) {
+                    
+                }
+            }
+        }
+        
+        pointBuffer.clear();
+    }
+    
+    /**
+     * Determines if 3 given points are collinear
+     * 
+     * @param a
+     * @param b
+     * @param c
+     * @return 
+     */
+    private static boolean isCollinear(Position a, Position b, Position c) {
+        double x1 = a.getXValue();
+        double y1 = a.getYValue();
+        double x2 = b.getXValue();
+        double y2 = b.getYValue();
+        double x3 = c.getXValue();
+        double y3 = c.getYValue();
+        return Math.abs((y1 - y2) * (x1 - x3) - (y1 - y3) * (x1 - x2)) <= 1e-9; // epsilon because of float comparison
     }
     
     /**
