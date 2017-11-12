@@ -37,10 +37,11 @@ public class MappingController extends Thread {
     private boolean paused;
     private Thread mapCleaner;
     private boolean debug = false;
+    private boolean mergeNeeded = false;
     
     ArrayList<ArrayList<Position>> pointBuffers;
     ArrayList<ArrayList<Line>> lineBuffers;
-    ArrayList<Line> lineRepository;
+    List<Line> lineRepository;
 
     /**
      * Constructor
@@ -196,24 +197,28 @@ public class MappingController extends Thread {
                             //Position inf = new Position(Double.MAX_VALUE, Double.MAX_VALUE);
                             //pointBuffers.get(j).add(inf);
                         }
+                        if (pointBuffers.get(j).size() > 50) {
+                            mergeNeeded = true;
+                        }
                     }
                     
-                    if (counter > 20) {
+                    if (mergeNeeded) {
                         for (int k = 0; k < 4; k++) {
                             Line.lineCreate(pointBuffers.get(k), lineBuffers.get(k));
+                            //Line.lineMerge(lineBuffers.get(k), lineRepository);
                         }
+                        /*
                         for (int l = 0; l < 4; l++) {
-                            Line.lineMerge(lineBuffers.get(l), lineRepository);
+                            
                         }
-                        
+                        */
                         System.out.println("pointBuffer0 size: " + pointBuffers.get(0).size());
                         System.out.println("Lines created.");
                         System.out.println("lineBuffer0 size: " + lineBuffers.get(0).size());
-                        System.out.println("Lines merged.");
-                        System.out.println("lineRepository size: " + lineRepository.size());
-                        counter = 0;
+                        //System.out.println("Lines merged.");
+                        //System.out.println("lineRepository size: " + lineRepository.size());
+                        mergeNeeded = false;
                     }
-                    counter++;
                     
                     //System.out.println("Point buffer 1 length: " + pointBuffers.get(0).size());
                     

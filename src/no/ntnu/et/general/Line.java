@@ -7,6 +7,7 @@
 package no.ntnu.et.general;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ListIterator;
 import no.ntnu.et.map.MapLocation;
 import no.ntnu.et.simulator.Feature;
@@ -78,11 +79,11 @@ public class Line {
         return (b.getYValue() - a.getYValue()) / (b.getXValue() - a.getXValue());
     }
     
-    private Position getA() {
+    public Position getA() {
         return a;
     }
     
-    private Position getB() {
+    public Position getB() {
         return b;
     }
     
@@ -149,18 +150,23 @@ public class Line {
                     Line line = new Line(a, pointBuffer.get(i-1));
                     lineBuffer.add(line);
                 }
-                i = pointBuffer.size();
+                break;
             } else if (i == pointBuffer.size() - 2) {
                 if (!isCollinear(a, b, pointBuffer.get(i))) {
                     Line line1 = new Line(a, pointBuffer.get(i-1));
                     Line line2 = new Line(pointBuffer.get(i), pointBuffer.get(i+1));
                     lineBuffer.add(line1);
                     lineBuffer.add(line2);
+                    break;
                 } else {
+                    i++;
+                }
+                /*else {
                     Line line = new Line(a, pointBuffer.get(i));
                     lineBuffer.add(line);
                 }
                 i = pointBuffer.size();
+                */
             } else {
                 if (!isCollinear(a, b, pointBuffer.get(i))) {
                     Line line = new Line(a, pointBuffer.get(i-1));
@@ -177,38 +183,44 @@ public class Line {
         pointBuffer.clear();
     }
     
-    public static void lineMerge(ArrayList<Line> lineBuffer, ArrayList<Line> lineRepository) {
+    public static void lineMerge(ArrayList<Line> lineBuffer, List<Line> lineRepository) {
         // Array size check here
+        /*
         if (lineRepository.size() == 0) {
             for (Line bufferLine : lineBuffer) {
-                lineRepository.add(bufferLine);
+                synchronized (lineRepository) {
+                    lineRepository.add(bufferLine);
+                }
             }
             lineBuffer.clear();
             return;
         }
+        */
         
-        double u = 1;
-        double d = 200;
+        double u = 0.05; // slope tolerance
+        double d = 0.5; // distance tolerance
         for (Line bufferLine : lineBuffer) {
             double m1 = bufferLine.getSlope();
-            
-            ListIterator<Line> iter = lineRepository.listIterator();
-            while (iter.hasNext()) {
-                Line line = iter.next();
-                double m2 = line.getSlope();
-                double m = Math.abs(m1 - m2);
-                double dist1 = Position.distanceBetween(bufferLine.getA(), line.getA());
-                double dist2 = Position.distanceBetween(bufferLine.getA(), line.getB());
-                double dist3 = Position.distanceBetween(bufferLine.getB(), line.getA());
-                double dist4 = Position.distanceBetween(bufferLine.getB(), line.getB());
-                if ( (m <= u) && (dist1 <= d || dist2 <= d || dist3 <= d || dist4 <= d) ) {
-                    // Replace the line in the repo with a new extended line
-                    Line newLine = new Line(bufferLine.getA(), line.getB());
-                    iter.set(newLine);
-                    break;
+            synchronized(lineRepository) {
+                ListIterator<Line> iter = lineRepository.listIterator();
+                while (iter.hasNext()) {
+                    Line line = iter.next();
+                    double m2 = line.getSlope();
+                    double m = Math.abs(m1 - m2);
+                    double dist1 = Position.distanceBetween(bufferLine.getA(), line.getA());
+                    double dist2 = Position.distanceBetween(bufferLine.getA(), line.getB());
+                    double dist3 = Position.distanceBetween(bufferLine.getB(), line.getA());
+                    double dist4 = Position.distanceBetween(bufferLine.getB(), line.getB());
+                    if ( (m <= u) && (dist1 <= d || dist2 <= d || dist3 <= d || dist4 <= d) ) {
+                        // Replace the line in the repo with a new extended line
+                        Line newLine = new Line(bufferLine.getA(), line.getB());
+                        iter.set(newLine);
+                        break;
+                    }
                 }
-            }
             lineRepository.add(bufferLine);
+            }
+            
              
         }
         lineBuffer.clear();

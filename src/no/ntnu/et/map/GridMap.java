@@ -7,6 +7,8 @@
 package no.ntnu.et.map;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import no.ntnu.et.general.Line;
 import no.ntnu.et.general.Observation;
@@ -64,7 +66,8 @@ public class GridMap{
     private ArrayList<Position> PointBufferR = new ArrayList();
     private ArrayList<ArrayList<Position>> pointBuffers = new ArrayList<ArrayList<Position>>();
     private ArrayList<ArrayList<Line>> lineBuffers = new ArrayList<ArrayList<Line>>();
-    private ArrayList<Line> lineRepository = new ArrayList<Line>();
+    //private ArrayList<Line> lineRepository = new ArrayList<Line>();
+    private List<Line> lineRepository;
     
     /**
      * Constructor for the GridMap class
@@ -94,7 +97,7 @@ public class GridMap{
                 pointBuffers.add(new ArrayList<Position>());
                 lineBuffers.add(new ArrayList<Line>());
             }
-            
+            lineRepository = Collections.synchronizedList(new ArrayList<Line>());
         }
     }
     
@@ -106,7 +109,7 @@ public class GridMap{
         return lineBuffers;
     }
     
-    public ArrayList<Line> getLineRepository() {
+    public List<Line> getLineRepository() {
         return lineRepository;
     }
     

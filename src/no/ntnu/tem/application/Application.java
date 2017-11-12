@@ -64,7 +64,8 @@ public final class Application {
         this.MAPLOCATION = new File("maps\\big_map.txt").getAbsolutePath();
         this.rc = new RobotController();
         this.com = new Communication(this, rc);
-        this.worldMap = new GridMap(2, 50, 50);
+        //this.worldMap = new GridMap(2, 50, 50);
+        this.worldMap = new GridMap(1, 50, 50);
         this.worldMapGraphic = new MapGraphic(worldMap, rc);
         this.slam = new MappingController(rc, worldMap);
         this.navigation = new NavigationController(rc, this, worldMap);
