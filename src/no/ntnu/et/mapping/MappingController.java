@@ -37,6 +37,10 @@ public class MappingController extends Thread {
     private boolean paused;
     private Thread mapCleaner;
     private boolean debug = false;
+    
+    ArrayList<ArrayList<Position>> pointBuffers;
+    ArrayList<ArrayList<Line>> lineBuffers;
+    ArrayList<Line> lineRepository;
 
     /**
      * Constructor
@@ -53,6 +57,10 @@ public class MappingController extends Thread {
         mapCleaner = new Thread(new MapCleaningWorker());
         mapCleaner.start();
         mapCleaner.setName("Map Cleaner");
+        pointBuffers = map.getPointBuffers();
+        lineBuffers = map.getLineBuffers();
+        lineRepository = map.getLineRepository();
+        
     }
     
     /**
@@ -178,28 +186,31 @@ public class MappingController extends Thread {
                 // 2D list of positions should be ok
 
                 if (robot.getName().equals("SLAM")) {
-                    ArrayList<ArrayList<Position>> pointBuffers = map.getPointBuffers();
-                    ArrayList<ArrayList<Line>> lineBuffers = map.getLineBuffers();
+                    
                     for (int j = 0; j < 4; j++) {
                         if (sensors[j].isMeasurement()) {
                             Position measurementPoint = sensors[j].getPosition();
                             pointBuffers.get(j).add(measurementPoint);
                         } else {
                             // If no obstacle is measured, set the point values av infinity
-                            Position inf = new Position(Double.MAX_VALUE, Double.MAX_VALUE);
-                            pointBuffers.get(j).add(inf);
+                            //Position inf = new Position(Double.MAX_VALUE, Double.MAX_VALUE);
+                            //pointBuffers.get(j).add(inf);
                         }
                     }
                     
                     if (counter > 20) {
-                        for (ArrayList<Position> pointBuffer : pointBuffers) {
-                            for (ArrayList<Line> lineBuffer : lineBuffers) {
-                                Line.lineMerge(pointBuffer, lineBuffer);
-                            }
+                        for (int k = 0; k < 4; k++) {
+                            Line.lineCreate(pointBuffers.get(k), lineBuffers.get(k));
                         }
-                        System.out.println("Lines merged.");
+                        for (int l = 0; l < 4; l++) {
+                            Line.lineMerge(lineBuffers.get(l), lineRepository);
+                        }
+                        
                         System.out.println("pointBuffer0 size: " + pointBuffers.get(0).size());
-                        //System.out.println("lineBuffer0 size: " + lineBuffers.get(0).size());
+                        System.out.println("Lines created.");
+                        System.out.println("lineBuffer0 size: " + lineBuffers.get(0).size());
+                        System.out.println("Lines merged.");
+                        System.out.println("lineRepository size: " + lineRepository.size());
                         counter = 0;
                     }
                     counter++;

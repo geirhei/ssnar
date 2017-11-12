@@ -7,6 +7,7 @@
 package no.ntnu.et.general;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 import no.ntnu.et.map.MapLocation;
 import no.ntnu.et.simulator.Feature;
 
@@ -73,6 +74,18 @@ public class Line {
         return length;
     }
     
+    private double getSlope() {
+        return (b.getYValue() - a.getYValue()) / (b.getXValue() - a.getXValue());
+    }
+    
+    private Position getA() {
+        return a;
+    }
+    
+    private Position getB() {
+        return b;
+    }
+    
     /**
      * Creates a new Line object similar to the input Feature object. The Line
      * object starts in the start position of the feature and ends in its end 
@@ -112,7 +125,7 @@ public class Line {
         return new Line(start, vector, length);
     }
     
-    public static void lineMerge(ArrayList<Position> pointBuffer, ArrayList<Line> lineBuffer) {
+    public static void lineCreate(ArrayList<Position> pointBuffer, ArrayList<Line> lineBuffer) {
         if (pointBuffer.size() <= 1) {
             pointBuffer.clear();
             return;
@@ -162,6 +175,43 @@ public class Line {
         
         }
         pointBuffer.clear();
+    }
+    
+    public static void lineMerge(ArrayList<Line> lineBuffer, ArrayList<Line> lineRepository) {
+        // Array size check here
+        if (lineRepository.size() == 0) {
+            for (Line bufferLine : lineBuffer) {
+                lineRepository.add(bufferLine);
+            }
+            lineBuffer.clear();
+            return;
+        }
+        
+        double u = 1;
+        double d = 200;
+        for (Line bufferLine : lineBuffer) {
+            double m1 = bufferLine.getSlope();
+            
+            ListIterator<Line> iter = lineRepository.listIterator();
+            while (iter.hasNext()) {
+                Line line = iter.next();
+                double m2 = line.getSlope();
+                double m = Math.abs(m1 - m2);
+                double dist1 = Position.distanceBetween(bufferLine.getA(), line.getA());
+                double dist2 = Position.distanceBetween(bufferLine.getA(), line.getB());
+                double dist3 = Position.distanceBetween(bufferLine.getB(), line.getA());
+                double dist4 = Position.distanceBetween(bufferLine.getB(), line.getB());
+                if ( (m <= u) && (dist1 <= d || dist2 <= d || dist3 <= d || dist4 <= d) ) {
+                    // Replace the line in the repo with a new extended line
+                    Line newLine = new Line(bufferLine.getA(), line.getB());
+                    iter.set(newLine);
+                    break;
+                }
+            }
+            lineRepository.add(bufferLine);
+             
+        }
+        lineBuffer.clear();
     }
     
     /**
