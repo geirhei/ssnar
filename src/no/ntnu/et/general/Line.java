@@ -51,6 +51,11 @@ public class Line {
         this.b = b;
         this.length = Math.sqrt( Math.pow(b.getXValue() - a.getXValue(), 2) + Math.pow(b.getYValue() - a.getYValue(), 2) );
     }
+    
+    /**
+     * Empty constructor
+     */
+    private Line() {};
 
     /**
      * Returns the start position of the line
@@ -140,46 +145,43 @@ public class Line {
         
         Position a = pointBuffer.get(0);
         Position b = pointBuffer.get(1);
-
+        
         int i = 2;
         while (i < pointBuffer.size()) {
+            Line line;
             if (i == pointBuffer.size() - 1) {
-                if (isCollinear(a, b, pointBuffer.get(i))) {
-                    Line line = new Line(a, pointBuffer.get(i));
-                    lineBuffer.add(line);
+                if (!isCollinear(a, b, pointBuffer.get(i))) {
+                    line = new Line(a, pointBuffer.get(i-1));
                 } else {
-                    Line line = new Line(a, pointBuffer.get(i-1));
-                    lineBuffer.add(line);
+                    line = new Line(a, pointBuffer.get(i));
                 }
-                break;
+                i++;
             } else if (i == pointBuffer.size() - 2) {
                 if (!isCollinear(a, b, pointBuffer.get(i))) {
-                    Line line1 = new Line(a, pointBuffer.get(i-1));
-                    Line line2 = new Line(pointBuffer.get(i), pointBuffer.get(i+1));
-                    lineBuffer.add(line1);
-                    lineBuffer.add(line2);
-                    break;
-                } else {
-                    i++;
-                }
-                /*else {
-                    Line line = new Line(a, pointBuffer.get(i));
-                    lineBuffer.add(line);
-                }
-                i = pointBuffer.size();
-                */
-            } else {
-                if (!isCollinear(a, b, pointBuffer.get(i))) {
-                    Line line = new Line(a, pointBuffer.get(i-1));
-                    lineBuffer.add(line);
+                    line = new Line(a, pointBuffer.get(i-1));
                     a = pointBuffer.get(i);
                     b = pointBuffer.get(i+1);
-                    i = i+2;
+                    i++;
                 } else {
                     i++;
+                    break;
+                }
+            } else {
+                if (!isCollinear(a, b, pointBuffer.get(i))) {
+                    line = new Line(a, pointBuffer.get(i-1));
+                    a = pointBuffer.get(i);
+                    b = pointBuffer.get(i+1);
+                    i += 2;
+                } else {
+                    i++;
+                    break;
                 }
             }
-        
+            
+            // Discard lines that are too long
+            if (line.getLength() < 20) {
+                lineBuffer.add(line);
+            }
         }
         pointBuffer.clear();
     }
