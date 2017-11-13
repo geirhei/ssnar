@@ -49,6 +49,7 @@ public class Line {
     public Line(Position a, Position b) {
         this.a = a;
         this.b = b;
+        this.length = Math.sqrt( Math.pow(b.getXValue() - a.getXValue(), 2) + Math.pow(b.getYValue() - a.getYValue(), 2) );
     }
 
     /**
@@ -175,7 +176,7 @@ public class Line {
                     b = pointBuffer.get(i+1);
                     i = i+2;
                 } else {
-                    i = i+1;
+                    i++;
                 }
             }
         
