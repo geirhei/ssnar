@@ -188,45 +188,74 @@ public class Line {
     
     public static void lineMerge(ArrayList<Line> lineBuffer, List<Line> lineRepository) {
         // Array size check here
-        /*
-        if (lineRepository.size() == 0) {
-            for (Line bufferLine : lineBuffer) {
-                synchronized (lineRepository) {
+
+        if (lineRepository.isEmpty()) {
+            synchronized (lineRepository) {
+                for (Line bufferLine : lineBuffer) {
                     lineRepository.add(bufferLine);
                 }
             }
             lineBuffer.clear();
             return;
         }
-        */
         
-        double u = 0.05; // slope tolerance
-        double d = 0.5; // distance tolerance
-        for (Line bufferLine : lineBuffer) {
+        double u = 20; // slope tolerance
+        double d = 20; // distance tolerance
+        
+        ArrayList<Line> toAdd = new ArrayList<Line>();
+        ListIterator<Line> iter1 = lineBuffer.listIterator();
+        while (iter1.hasNext()) {
+            Line bufferLine = iter1.next();
             double m1 = bufferLine.getSlope();
-            synchronized(lineRepository) {
-                ListIterator<Line> iter = lineRepository.listIterator();
-                while (iter.hasNext()) {
-                    Line line = iter.next();
+            synchronized (lineRepository) {
+                ListIterator<Line> iter2 = lineBuffer.listIterator();
+                while (iter2.hasNext()) {
+                    Line line = iter2.next();
                     double m2 = line.getSlope();
-                    double m = Math.abs(m1 - m2);
+                    if (!(Math.abs(m1 - m2) <= u)) {
+                        break;
+                    }
                     double dist1 = Position.distanceBetween(bufferLine.getA(), line.getA());
                     double dist2 = Position.distanceBetween(bufferLine.getA(), line.getB());
                     double dist3 = Position.distanceBetween(bufferLine.getB(), line.getA());
                     double dist4 = Position.distanceBetween(bufferLine.getB(), line.getB());
-                    if ( (m <= u) && (dist1 <= d || dist2 <= d || dist3 <= d || dist4 <= d) ) {
-                        // Replace the line in the repo with a new extended line
+                    if (dist1 <= d || dist4 <= d) {
+                        Line newLine = bufferLine;
+                        iter2.set(newLine);
+                    } else if (dist2 <= d) {
+                        Line newLine = new Line(line.getA(), bufferLine.getB());
+                        iter2.set(newLine);
+                    } else if (dist3 <= d) {
                         Line newLine = new Line(bufferLine.getA(), line.getB());
-                        iter.set(newLine);
+                        iter2.set(newLine);
+                    } else {
                         break;
                     }
                 }
-            lineRepository.add(bufferLine);
+                if (!iter2.hasNext()) {
+                    toAdd.add(bufferLine);
+                }
             }
-            
-             
+        }
+        
+        // Add non-merged lines to end of lineRepository
+        synchronized (lineRepository) {
+            for (Line bufferLine : toAdd) {
+                lineRepository.add(bufferLine);
+            }
         }
         lineBuffer.clear();
+    }
+    
+    private static boolean isMergeable(Line line1, Line line2, double u, double d) {
+        double m1 = line1.getSlope();
+        double m2 = line2.getSlope();
+        double m = Math.abs(m1 - m2);
+        double dist1 = Position.distanceBetween(line1.getA(), line2.getA());
+        double dist2 = Position.distanceBetween(line1.getA(), line2.getB());
+        double dist3 = Position.distanceBetween(line1.getB(), line2.getA());
+        double dist4 = Position.distanceBetween(line1.getB(), line2.getB());
+        return ( (m <= u) && (dist1 <= d || dist2 <= d || dist3 <= d || dist4 <= d) );
     }
     
     /**
