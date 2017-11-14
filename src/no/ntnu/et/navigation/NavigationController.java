@@ -14,14 +14,18 @@ package no.ntnu.et.navigation;
  *
  * @author Eirik Thon
  */
+import static java.lang.Integer.MAX_VALUE;
 import no.ntnu.et.navigation.RobotTaskManager;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import no.ntnu.et.general.Angle;
 import no.ntnu.et.general.Position;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.et.map.MapLocation;
 import no.ntnu.tem.application.Application;
 import no.ntnu.tem.application.RobotController;
+import no.ntnu.tem.robot.Measurement;
 import no.ntnu.tem.robot.Robot;
 import org.ejml.simple.SimpleMatrix;
 
@@ -46,6 +50,9 @@ public class NavigationController extends Thread {
     private boolean paused;
 
     private boolean debug = false;
+    
+    //private ConcurrentLinkedQueue<Measurement> slamMeasurements;
+    private int[] distances;
 
     public NavigationController(RobotController robotController, Application application, GridMap map) {
         this.robotController = robotController;
@@ -55,6 +62,9 @@ public class NavigationController extends Thread {
         collisionManager.setName("Collision management");
         robotNames = new ArrayList<String>();
         navigationRobots = new HashMap<String, NavigationRobot>();
+        
+        //slamMeasurements = new ConcurrentLinkedQueue<>();
+        distances = new int[]{80, 80, 80, 80};
     }
 
     public void addRobot(String robotName, int id) {
@@ -173,6 +183,53 @@ public class NavigationController extends Thread {
                     }
                 }
                 */
+                
+                
+                if (name.equals("SLAM")) {
+                    int[] nextCommand = {30, 30};
+                    application.writeCommandToRobot(id, name, nextCommand[0], nextCommand[1]);
+                    Measurement m = applicationRobot.getSlamMeasurement();
+                    while (m != null) {
+                        // Distance to obstacles in each direction, counting anti-clockwise
+                        //Angle irHeading = new Angle(m.getIRHeading()[0]);
+                        //Angle robotHeading = new Angle(m.getTheta());
+                        //int towerRotation = (int) Angle.difference(robotHeading, irHeading);
+                        int irHeading = m.getIRHeading()[0];
+//                        System.out.println("irHeading: " + irHeading);
+                        int robotHeading = m.getTheta();
+                        //System.out.println("robotHeading: " + robotHeading);
+                        int towerRotation = 0;
+                        System.out.println(irHeading - robotHeading);
+                        
+                        //System.out.println("towerRotation: " + towerRotation);
+                        int []data = m.getIRdata();
+                        int theta1 = 18;
+                        int theta2 = 90 - theta1;
+                        for (int j = 0; j < data.length; j++) {
+                            if (data[j] == 0) {
+                                distances[j] = 80;
+                                continue;
+                            }
+                            if (towerRotation > 0 && towerRotation <= theta1) {
+                                distances[j] = (int) (Math.cos(towerRotation)*Math.abs(data[j]));
+                            } else if (towerRotation >= theta2 && towerRotation <= 90) {
+                                if (j == 0) {
+                                    distances[j] = (int) (Math.cos(90-towerRotation)*Math.abs(data[3]));
+                                } else {
+                                    distances[j] = (int) (Math.cos(90-towerRotation)*Math.abs(data[j-1]));
+                                }
+                            } else {
+                                // Do nothing
+                            }
+                        }
+                        m = applicationRobot.getSlamMeasurement();
+                    }
+
+                   // System.out.println("Distances: " + distances[0] + ", " + distances[1] + ", " + distances[2] + ", " + distances[3]);
+                    
+                    break;
+                }
+                
                 if (navigationRobots.get(name).hasNewPriorityCommand()) {
                     int[] nextCommand = navigationRobots.get(name).getPriorityCommand();
                     if (debug) {
