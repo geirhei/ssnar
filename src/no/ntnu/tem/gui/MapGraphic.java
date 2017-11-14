@@ -153,16 +153,14 @@ public class MapGraphic extends JPanel {
      */
     private void paintLines(Graphics2D g2D) {
         g2D.setPaint(Color.black);
-        //List<Line> lines = gridmap.getLineRepository();
-        ArrayList<ArrayList<Line>> lineBuffers = gridmap.getLineBuffers();
-        for (List<Line> buffer : lineBuffers) {
-            //synchronized (lines) {
-            ListIterator<Line> iter = buffer.listIterator();
+        List<Line> lines = gridmap.getLineRepository();
+        //ArrayList<ArrayList<Line>> lineBuffers = gridmap.getLineBuffers();
+        synchronized (lines) {
+            ListIterator<Line> iter = lines.listIterator();
             while (iter.hasNext()) {
                 Line line = iter.next();
                 g2D.drawLine((int) line.getA().getXValue(), (int) line.getA().getYValue(), (int) line.getB().getXValue(), (int) line.getB().getYValue());
             }
-        //}
         }
     }
     
