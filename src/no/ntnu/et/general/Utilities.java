@@ -165,6 +165,28 @@ public class Utilities {
     }
     
     /**
+     * Calculates the global headings of the IR-tower
+     * 
+     * @param robotHeading the heading of the robot
+     * @param towerHeadings array with the angles of each sensor tower, relative
+     * to the robot heading.
+     * @return int[4] newHeadings
+     */
+    public static int[] getMeasurementHeadings(int robotHeading, int[] towerHeadings) {
+        int[] newHeadings = new int[4];
+        for (int i = 0; i < towerHeadings.length; i++) {
+            int angle = (i-1)*90 + towerHeadings[i];
+            if (angle >= 360) {
+                angle -= 360;
+            } else if (angle < 0) {
+                angle += 360;
+            }
+            newHeadings[i] = angle;
+        }
+        return newHeadings;
+    }
+    
+    /**
      * The method projects the input position onto the Line object and returns
      * the projected Position.
      * @param point
