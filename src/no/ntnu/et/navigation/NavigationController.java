@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import no.ntnu.et.general.Angle;
 import no.ntnu.et.general.Position;
+import static no.ntnu.et.general.Utilities.getMeasurementHeadings;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.et.map.MapLocation;
 import no.ntnu.tem.application.Application;
@@ -64,7 +65,10 @@ public class NavigationController extends Thread {
         navigationRobots = new HashMap<String, NavigationRobot>();
         
         //slamMeasurements = new ConcurrentLinkedQueue<>();
-        distances = new int[]{80, 80, 80, 80};
+        distances = new int[360];
+        for (int i = 0; i < distances.length; i++) {
+            distances[i] = Integer.MAX_VALUE;
+        }
     }
 
     public void addRobot(String robotName, int id) {
@@ -186,47 +190,30 @@ public class NavigationController extends Thread {
                 
                 
                 if (name.equals("SLAM")) {
-                    int[] nextCommand = {30, 30};
+                    int max = Integer.MAX_VALUE;
+                    int[] nextCommand = {10, 0};
                     application.writeCommandToRobot(id, name, nextCommand[0], nextCommand[1]);
                     Measurement m = applicationRobot.getSlamMeasurement();
                     while (m != null) {
-                        // Distance to obstacles in each direction, counting anti-clockwise
-                        //Angle irHeading = new Angle(m.getIRHeading()[0]);
-                        //Angle robotHeading = new Angle(m.getTheta());
-                        //int towerRotation = (int) Angle.difference(robotHeading, irHeading);
-                        int irHeading = m.getIRHeading()[0];
-//                        System.out.println("irHeading: " + irHeading);
+                        int[] irHeadings = m.getIRHeading();
                         int robotHeading = m.getTheta();
-                        //System.out.println("robotHeading: " + robotHeading);
-                        int towerRotation = 0;
-                        System.out.println(irHeading - robotHeading);
-                        
-                        //System.out.println("towerRotation: " + towerRotation);
-                        int []data = m.getIRdata();
-                        int theta1 = 18;
-                        int theta2 = 90 - theta1;
-                        for (int j = 0; j < data.length; j++) {
-                            if (data[j] == 0) {
-                                distances[j] = 80;
-                                continue;
-                            }
-                            if (towerRotation > 0 && towerRotation <= theta1) {
-                                distances[j] = (int) (Math.cos(towerRotation)*Math.abs(data[j]));
-                            } else if (towerRotation >= theta2 && towerRotation <= 90) {
-                                if (j == 0) {
-                                    distances[j] = (int) (Math.cos(90-towerRotation)*Math.abs(data[3]));
-                                } else {
-                                    distances[j] = (int) (Math.cos(90-towerRotation)*Math.abs(data[j-1]));
-                                }
+                        int[] measurementHeadings = getMeasurementHeadings(robotHeading, irHeadings);
+                        int[] irData = m.getIRdata();
+                        //System.out.println(irData[0] + ", " + irData[1]+ ", " + irData[2]+ ", " + irData[3]);
+                        for (int j = 0; j < measurementHeadings.length; j++) {
+                            if (irData[j] == 0 || irData[j] > 80) {
+                                distances[measurementHeadings[j]] = max;
                             } else {
-                                // Do nothing
+                                if (irData[j] == 0) {
+                                    System.out.println(irData[j]);
+                                }
+                                distances[measurementHeadings[j]] = irData[j];
                             }
                         }
                         m = applicationRobot.getSlamMeasurement();
                     }
-
-                   // System.out.println("Distances: " + distances[0] + ", " + distances[1] + ", " + distances[2] + ", " + distances[3]);
                     
+                    System.out.println("Distances: " + distances[88] + ", " + distances[89] + ", " + distances[90] + ", " + distances[91]);
                     break;
                 }
                 
