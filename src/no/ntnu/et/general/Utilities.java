@@ -11,6 +11,9 @@ import no.ntnu.et.general.Position;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import no.ntnu.et.general.Line;
 
 /**
@@ -172,7 +175,7 @@ public class Utilities {
      * to the robot heading.
      * @return int[4] newHeadings
      */
-    public static int[] getMeasurementHeadings(int robotHeading, int[] towerHeadings) {
+    public static int[] getMeasurementHeadings(int[] towerHeadings) {
         int[] newHeadings = new int[4];
         for (int i = 0; i < towerHeadings.length; i++) {
             int angle = (i-1)*90 + towerHeadings[i];
@@ -208,5 +211,20 @@ public class Utilities {
         }
 
         return null;
+    }
+    
+    /*
+    public static void createLines(ArrayList<Position> pointBuffer, ArrayList<Line> lineBuffer) {
+        removeDuplicates(pointBuffer);
+        Arrays.sort()
+    }
+*/    
+
+    private static void removeDuplicates(ArrayList<Position> buffer) {
+        //List<Position> temp = new ArrayList<Position>();
+        Set<Position> temp = new HashSet<>();
+        temp.addAll(buffer);
+        buffer.clear();
+        buffer.addAll(temp);
     }
 }

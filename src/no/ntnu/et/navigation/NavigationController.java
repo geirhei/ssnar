@@ -191,13 +191,13 @@ public class NavigationController extends Thread {
                 
                 if (name.equals("SLAM")) {
                     int max = Integer.MAX_VALUE;
-                    int[] nextCommand = {10, 0};
-                    application.writeCommandToRobot(id, name, nextCommand[0], nextCommand[1]);
+                    
+                    /* Measurement handling ************/
                     Measurement m = applicationRobot.getSlamMeasurement();
                     while (m != null) {
                         int[] irHeadings = m.getIRHeading();
-                        int robotHeading = m.getTheta();
-                        int[] measurementHeadings = getMeasurementHeadings(robotHeading, irHeadings);
+                        //int robotHeading = m.getTheta();
+                        int[] measurementHeadings = getMeasurementHeadings(irHeadings);
                         int[] irData = m.getIRdata();
                         //System.out.println(irData[0] + ", " + irData[1]+ ", " + irData[2]+ ", " + irData[3]);
                         for (int j = 0; j < measurementHeadings.length; j++) {
@@ -212,8 +212,18 @@ public class NavigationController extends Thread {
                         }
                         m = applicationRobot.getSlamMeasurement();
                     }
+                    /**********************************/
                     
-                    System.out.println("Distances: " + distances[88] + ", " + distances[89] + ", " + distances[90] + ", " + distances[91]);
+                    
+                    int[] nextCommand;
+                    if (distances[90] < 60) {
+                        nextCommand = applicationRobot.getPosition();
+                    } else {
+                        nextCommand = new int[]{50, 0};
+                    }
+                    application.writeCommandToRobot(id, name, nextCommand[0], nextCommand[1]);
+                    
+                    System.out.println("Distances: " + distances[267] + ", " + distances[268] + ", " + distances[269] + ", " + distances[270] + ", "+ distances[271] + ", " + distances[272] + ", " + distances[273] + ", " + distances[274]);
                     break;
                 }
                 
