@@ -26,6 +26,7 @@ import no.ntnu.tem.communication.Communication;
 import no.ntnu.tem.gui.MainGUI;
 import no.ntnu.et.simulator.Simulator;
 import no.ntnu.et.mapping.MappingController;
+import no.ntnu.et.navigation.SlamNavigationController;
 import no.ntnu.tem.robot.Robot;
 import no.ntnu.hkm.particlefilter.Particlefilter;
 import no.ntnu.hkm.particlefilter.MapMerger;
@@ -45,6 +46,7 @@ public final class Application {
     private final MainGUI gui;
     private Simulator sim;
     private final NavigationController navigation;
+    private final SlamNavigationController slamNavigation;
     private final MappingController slam;
     private final MapGraphic worldMapGraphic;
     private final GridMap worldMap;
@@ -69,6 +71,7 @@ public final class Application {
         this.worldMapGraphic = new MapGraphic(worldMap, rc);
         this.slam = new MappingController(rc, worldMap);
         this.navigation = new NavigationController(rc, this, worldMap);
+        this.slamNavigation = new SlamNavigationController(rc, this, worldMap);
         this.gui = new MainGUI(this);
         if (System.getProperty("os.name").startsWith("Windows")) {
             getPDFList();
@@ -81,8 +84,12 @@ public final class Application {
             sim.unpauseRobot(r.getName());
         }
         r.setConnected(true);
+        if (r.getName().equals("SLAM")) {
+            slamNavigation.addRobot(r.getId());
+        } else {
+            navigation.addRobot(r.getName(), r.getId());
+        }
         slam.addRobot(r.getName());
-        navigation.addRobot(r.getName(), r.getId());
     }
     /**
      * Opens a PDF using the default PDF viewer, the PDF should be in a manuals
@@ -149,9 +156,11 @@ public final class Application {
     public void startSystem() {
         slam.start();
         navigation.start();
+        slamNavigation.start();
         if(activateParticlefilter){
             for(Robot robot : rc.getRobotList()){
                 if(robot.getName().equals("Drone")){continue;} //Drone does not need PF
+                if(robot.getName().equals("SLAM")){continue;}
                 Particlefilter p = new Particlefilter(robot, worldMap,particleFilterOptions);
                 robot.setParticleFilter(p);
             } 
@@ -261,6 +270,7 @@ public final class Application {
         rc.removeRobot(name);
         slam.removeRobot(name);
         navigation.removeRobot(name);
+        slamNavigation.removeRobot("SLAM");
     }
 
     /**
@@ -383,6 +393,7 @@ public final class Application {
      */
     public void stopSystem() {
         navigation.pause();
+        slamNavigation.pause();
         slam.pause();
         for(Robot robot : rc.getRobotList()){
             if(robot.getParticleFilter() != null){

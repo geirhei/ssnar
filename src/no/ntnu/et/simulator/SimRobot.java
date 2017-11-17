@@ -42,8 +42,10 @@ public class SimRobot {
     public boolean translationFinished;
     private Angle towerAngle;
     final private double turnSpeed = 0.5;
+    //final private double turnSpeed = 1;
     final private double moveSpeed = 0.1;
-    final private double towerSpeed = 0.25;
+    final private double towerSpeed = 0.25; // = 5 deg resolution
+    //final private double towerSpeed = 0.05; // = 1 deg resolution
     private int towerDirection;
     final private Object movementLock = new Object();
     final private double maxVisualLength = 80;
@@ -192,6 +194,7 @@ public class SimRobot {
         measurement[1] = (int) Math.round(estimatedPose.getPosition().getYValue());
         measurement[2] = (int) Math.round(estimatedPose.getHeading().getValue());
         measurement[3] = (int) Math.round(towerAngle.getValue());
+        System.out.println("Angle: " + measurement[3]);
         for (int i = 4; i < 8; i++) {
             measurement[i] = (int) Math.round(lastIrMeasurement[i - 4]);
         }

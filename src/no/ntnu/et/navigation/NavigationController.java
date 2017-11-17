@@ -14,16 +14,12 @@ package no.ntnu.et.navigation;
  *
  * @author Eirik Thon
  */
-import static java.lang.Integer.MAX_VALUE;
-import no.ntnu.et.navigation.RobotTaskManager;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import no.ntnu.et.general.Angle;
+import static no.ntnu.et.general.Navigation.getShortestDistanceAngle;
 import no.ntnu.et.general.Position;
 import static no.ntnu.et.general.Utilities.getMeasurementHeadings;
 import no.ntnu.et.map.GridMap;
-import no.ntnu.et.map.MapLocation;
 import no.ntnu.tem.application.Application;
 import no.ntnu.tem.application.RobotController;
 import no.ntnu.tem.robot.Measurement;
@@ -52,8 +48,7 @@ public class NavigationController extends Thread {
 
     private boolean debug = false;
     
-    //private ConcurrentLinkedQueue<Measurement> slamMeasurements;
-    private int[] distances;
+    
 
     public NavigationController(RobotController robotController, Application application, GridMap map) {
         this.robotController = robotController;
@@ -64,11 +59,7 @@ public class NavigationController extends Thread {
         robotNames = new ArrayList<String>();
         navigationRobots = new HashMap<String, NavigationRobot>();
         
-        //slamMeasurements = new ConcurrentLinkedQueue<>();
-        distances = new int[360];
-        for (int i = 0; i < distances.length; i++) {
-            distances[i] = Integer.MAX_VALUE;
-        }
+        
     }
 
     public void addRobot(String robotName, int id) {
@@ -101,9 +92,29 @@ public class NavigationController extends Thread {
         stopAllRobots();
         paused = true;
     }
+    
+    boolean isPaused() {
+        return paused;
+    }
 
     public void quit() {
         paused = true;
+    }
+    
+    boolean debugEnabled() {
+        return debug;
+    }
+    
+    NavigationRobot getNavigationRobot(String name) {
+        return navigationRobots.get(name);
+    }
+    
+    RobotTaskManager getRobotTaskManager() {
+        return robotTaskManager;
+    }
+    
+    void writeCommandToRobot(int id, String name, int x, int y) {
+        application.writeCommandToRobot(id, name, x, y);
     }
 
     private void stopAllRobots() {
@@ -122,6 +133,14 @@ public class NavigationController extends Thread {
             int id = robot.getId();
             application.unPauseRobot(id);
         }
+    }
+    
+    RobotController getRobotController() {
+        return robotController;
+    }
+    
+    Application getApplication() {
+        return application;
     }
 
     @Override
@@ -189,43 +208,7 @@ public class NavigationController extends Thread {
                 */
                 
                 
-                if (name.equals("SLAM")) {
-                    int max = Integer.MAX_VALUE;
-                    
-                    /* Measurement handling ************/
-                    Measurement m = applicationRobot.getSlamMeasurement();
-                    while (m != null) {
-                        int[] irHeadings = m.getIRHeading();
-                        //int robotHeading = m.getTheta();
-                        int[] measurementHeadings = getMeasurementHeadings(irHeadings);
-                        int[] irData = m.getIRdata();
-                        //System.out.println(irData[0] + ", " + irData[1]+ ", " + irData[2]+ ", " + irData[3]);
-                        for (int j = 0; j < measurementHeadings.length; j++) {
-                            if (irData[j] == 0 || irData[j] > 80) {
-                                distances[measurementHeadings[j]] = max;
-                            } else {
-                                if (irData[j] == 0) {
-                                    System.out.println(irData[j]);
-                                }
-                                distances[measurementHeadings[j]] = irData[j];
-                            }
-                        }
-                        m = applicationRobot.getSlamMeasurement();
-                    }
-                    /**********************************/
-                    
-                    
-                    int[] nextCommand;
-                    if (distances[90] < 60) {
-                        nextCommand = applicationRobot.getPosition();
-                    } else {
-                        nextCommand = new int[]{50, 0};
-                    }
-                    application.writeCommandToRobot(id, name, nextCommand[0], nextCommand[1]);
-                    
-                    System.out.println("Distances: " + distances[267] + ", " + distances[268] + ", " + distances[269] + ", " + distances[270] + ", "+ distances[271] + ", " + distances[272] + ", " + distances[273] + ", " + distances[274]);
-                    break;
-                }
+                
                 
                 if (navigationRobots.get(name).hasNewPriorityCommand()) {
                     int[] nextCommand = navigationRobots.get(name).getPriorityCommand();
