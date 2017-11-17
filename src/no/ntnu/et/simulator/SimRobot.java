@@ -194,7 +194,7 @@ public class SimRobot {
         measurement[1] = (int) Math.round(estimatedPose.getPosition().getYValue());
         measurement[2] = (int) Math.round(estimatedPose.getHeading().getValue());
         measurement[3] = (int) Math.round(towerAngle.getValue());
-        System.out.println("Angle: " + measurement[3]);
+        //System.out.println("Angle: " + measurement[3]);
         for (int i = 4; i < 8; i++) {
             measurement[i] = (int) Math.round(lastIrMeasurement[i - 4]);
         }

@@ -26,6 +26,7 @@ public class SlamNavigationController extends NavigationController {
     //private final Robot applicationRobot;
     private NavigationRobot navigationRobot;
     private int id;
+    private boolean busy = false;
     
     private boolean paused; // hides superclass field
     private final boolean debug = false; // hides superclass field
@@ -89,7 +90,6 @@ public class SlamNavigationController extends NavigationController {
             }
             
             Robot applicationRobot = super.getRobotController().getRobot(robotName);
-            int max = Integer.MAX_VALUE;
 
             /* Measurement handling ************/
             Measurement m = applicationRobot.getSlamMeasurement();
@@ -101,7 +101,7 @@ public class SlamNavigationController extends NavigationController {
                 //System.out.println(irData[0] + ", " + irData[1]+ ", " + irData[2]+ ", " + irData[3]);
                 for (int j = 0; j < measurementHeadings.length; j++) {
                     if (irData[j] == 0 || irData[j] > 80) {
-                        distances[measurementHeadings[j]] = max;
+                        distances[measurementHeadings[j]] = Integer.MAX_VALUE;
                     } else {
                         if (irData[j] == 0) {
                             //System.out.println(irData[j]);
@@ -113,6 +113,24 @@ public class SlamNavigationController extends NavigationController {
             }
             /**********************************/
 
+            if (!busy) {
+                int[] newCommand = new int[]{50, -50};
+                super.writeCommandToRobot(id, robotName, newCommand[0], newCommand[1]);
+            }
+            
+            
+            while (true) {
+                for (int i = 0; i < 6; i++) {
+                    if (distances[267 + i] < 30) {
+                        break;
+                    }
+                }
+                break;
+            }
+            
+            int[] newCommand = new int[]{0, 0};
+            super.writeCommandToRobot(id, robotName, newCommand[0], newCommand[1]);
+            busy = true;
             /*
             int[] nextCommand;
             if (distances[90] < 60) {
@@ -128,7 +146,9 @@ public class SlamNavigationController extends NavigationController {
             //System.out.println("Angle: " + shortestAngle);
             //System.out.println("distances[120]: " + distances[120]);
             //break;
-
+            
+            
+            /**************** Original algorithm ******************
             if (navigationRobot.hasNewPriorityCommand()) {
                 int[] nextCommand = navigationRobot.getPriorityCommand();
                 if (debug) {
@@ -151,6 +171,7 @@ public class SlamNavigationController extends NavigationController {
                     getRobotTaskManager().createNewTask(applicationRobot, navigationRobot, robotName);
                 }
             }
+            */
         }
     }
 }
