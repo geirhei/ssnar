@@ -54,6 +54,8 @@ public class SimRobot {
     private Position targetPosition;
     private int diameter = 10;
     private final int address;
+    
+    private final double[] distances;
 
     /**
      * Constructor for Robot.
@@ -82,8 +84,20 @@ public class SimRobot {
         rotationFinished = true;
         translationFinished = true;
         targetPosition = Position.copy(pose.getPosition());
+        
+        distances = new double[360];
+        for (int i = 0; i < distances.length; i++) {
+            distances[i] = Double.MAX_VALUE;
+        }   
     }
 
+    void updateDistances() {
+        int towerAngle = (int) Math.round(this.towerAngle.getValue()); // round necessary?
+        for (int i = 0; i < lastIrMeasurement.length; i++) {
+            int currentAngle = 
+        }
+    }
+    
     double getMaxSensorDistance() {
         return maxVisualLength;
     }

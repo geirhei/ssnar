@@ -266,7 +266,17 @@ public class Simulator {
                     }
                     myRobot.measureIR(sensorNoise);
                     int[] update = myRobot.createMeasurement();
-                    if (myName.equals("Drone")) {
+                    
+                    if (myName.equals("SLAM")) {
+                        myRobot.updateDistances();
+                        
+                        UpdateMessage um = SimRobot.generateUpdate(update[0], update[1], update[2], update[3], update[4], update[5], update[6], update[7]);
+                        byte[] umBytes = um.getBytes();
+                        byte[] umMessageBytes = new byte[umBytes.length + 1];
+                        umMessageBytes[0] = Message.UPDATE;
+                        System.arraycopy(umBytes, 0, umMessageBytes, 1, umBytes.length);
+                        inbox.add(new Message(myRobot.getAddress(), umMessageBytes));
+                    } else if (myName.equals("Drone")) {
                         DroneUpdateMessage um = SimRobot.generateDroneUpdate(update[0], update[1], update[2], update[4], update[5], update[6], update[7]);
                         byte[] umBytes = um.getBytes();
                         byte[] umMessageBytes = new byte[umBytes.length + 1];

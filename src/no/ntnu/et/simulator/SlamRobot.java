@@ -6,19 +6,14 @@
  */
 package no.ntnu.et.simulator;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
 import no.ntnu.et.general.Pose;
-import no.ntnu.et.map.Cell;
-import no.ntnu.et.map.MapLocation;
 
 /**
  *
  * @author geirhei
  */
 public class SlamRobot extends SimRobot {
-    private SimWorld world;
-
+    
     
     /**
      * Constructor for SlamRobot.
@@ -31,8 +26,6 @@ public class SlamRobot extends SimRobot {
      */
     SlamRobot(SimWorld world, Pose initialPose, String name, int id, int address) {
         super(world, initialPose, name, id, address);
-        this.world = world;
-        
         
     }
     
