@@ -105,6 +105,14 @@ public class SimRobot {
         }
     }
     
+    void stop() {
+        setMovement(0, 0);
+    }
+    
+    double[] getDistances() {
+        return distances;
+    }
+    
     double getMaxSensorDistance() {
         return maxVisualLength;
     }
@@ -163,7 +171,34 @@ public class SimRobot {
             translationFinished = false;
         }
     }
+    
+    /**
+     * Specify an angle for the robot to rotate and a distance to translate
+     * 
+     * @param theta number of degrees to rotate
+     * @param distance number of cm to translate
+     */
+    void setMovement(int thetaTarget, double distance) {
+        synchronized (movementLock) {
+            Angle targetAngle = new Angle(thetaTarget);
+            Position offset = Utilities.polar2cart(targetAngle, distance);
+            targetRotation = Angle.difference(pose.getHeading(), targetAngle); //deg
+            targetDistance = distance;
+            measuredRotation = 0;
+            measuredDistance = 0;
+            rotationDirection = (int) Math.signum(thetaTarget);
+            movementDirection = (int) Math.signum(distance);
+            
+            targetPosition = Position.sum(pose.getPosition(), offset);
+            rotationFinished = false;
+            translationFinished = false;
+        }
+    }
 
+    boolean isTranslationFinished() {
+        return translationFinished;
+    }
+    
     /**
      * Creates and returns a copy of the pose
      *
