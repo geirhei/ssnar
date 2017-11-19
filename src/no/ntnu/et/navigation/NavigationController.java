@@ -165,6 +165,7 @@ public class NavigationController extends Thread {
 
             for (int i = 0; i < robotNames.size(); i++) {
                 String name = robotNames.get(i);
+                if (name.equals("SLAM")){continue;}
                 Robot applicationRobot = robotController.getRobot(name);
                 int id = applicationRobot.getId();
                 /*

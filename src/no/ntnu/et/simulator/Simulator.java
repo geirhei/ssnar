@@ -34,6 +34,8 @@ public class Simulator {
     private ConcurrentLinkedQueue<Message> inbox;
     private int mode;
     private HashMap<Integer, String> idNameMapping;
+    
+    private BoundaryFollowingController boundaryFollowingController;
 
     /**
      * Constructor. Creates an instance of the Simulator class with a number of
@@ -64,6 +66,7 @@ public class Simulator {
             }
         });
         this.inbox = inbox;
+        
     }
 
     double getSimulationSpeed() {
@@ -185,12 +188,11 @@ public class Simulator {
         }
     }
 
+    /**
+    * Controller object for a robot. This class contains a SimRobot object
+    * and is responsible for making that robot run.
+    */
     private class RobotHandler extends Thread {
-
-        /**
-         * Controller object for a robot. This class contains a SimRobot object
-         * and is responsible for making that robot run.
-         */
         final private SimRobot myRobot;
         final private String myName;
         final private int myID;
@@ -198,6 +200,8 @@ public class Simulator {
         private double sensorNoise;
         private final Random noiseGenerator;
         private boolean paused;
+        
+        private final BoundaryFollowingController boundaryFollowingController;
 
         /**
          * Constructor
@@ -210,6 +214,7 @@ public class Simulator {
             myID = robot.getId();
             noiseGenerator = new Random();
             paused = false;
+            boundaryFollowingController = new BoundaryFollowingController();
         }
 
         void pause() {
@@ -226,6 +231,7 @@ public class Simulator {
          */
         @Override
         public void run() {
+            //boundaryFollowingController.run();
             int counter = 0;
 
             HandshakeMessage hm = myRobot.generateHandshake();
@@ -298,4 +304,6 @@ public class Simulator {
             }
         }
     }
+    
+    
 }

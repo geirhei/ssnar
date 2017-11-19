@@ -46,7 +46,7 @@ public final class Application {
     private final MainGUI gui;
     private Simulator sim;
     private final NavigationController navigation;
-    private final SlamNavigationController slamNavigation;
+    //private final SlamNavigationController slamNavigation;
     private final MappingController slam;
     private final MapGraphic worldMapGraphic;
     private final GridMap worldMap;
@@ -71,7 +71,7 @@ public final class Application {
         this.worldMapGraphic = new MapGraphic(worldMap, rc);
         this.slam = new MappingController(rc, worldMap);
         this.navigation = new NavigationController(rc, this, worldMap);
-        this.slamNavigation = new SlamNavigationController(rc, this, worldMap);
+        //this.slamNavigation = new SlamNavigationController(rc, this, worldMap);
         this.gui = new MainGUI(this);
         if (System.getProperty("os.name").startsWith("Windows")) {
             getPDFList();
@@ -84,11 +84,7 @@ public final class Application {
             sim.unpauseRobot(r.getName());
         }
         r.setConnected(true);
-        if (r.getName().equals("SLAM")) {
-            slamNavigation.addRobot(r.getId());
-        } else {
-            navigation.addRobot(r.getName(), r.getId());
-        }
+        navigation.addRobot(r.getName(), r.getId());
         slam.addRobot(r.getName());
     }
     /**
@@ -156,7 +152,7 @@ public final class Application {
     public void startSystem() {
         slam.start();
         navigation.start();
-        slamNavigation.start();
+        //slamNavigation.start();
         if(activateParticlefilter){
             for(Robot robot : rc.getRobotList()){
                 if(robot.getName().equals("Drone")){continue;} //Drone does not need PF
@@ -270,7 +266,7 @@ public final class Application {
         rc.removeRobot(name);
         slam.removeRobot(name);
         navigation.removeRobot(name);
-        slamNavigation.removeRobot("SLAM");
+        //slamNavigation.removeRobot("SLAM");
     }
 
     /**
@@ -393,7 +389,7 @@ public final class Application {
      */
     public void stopSystem() {
         navigation.pause();
-        slamNavigation.pause();
+        //slamNavigation.pause();
         slam.pause();
         for(Robot robot : rc.getRobotList()){
             if(robot.getParticleFilter() != null){

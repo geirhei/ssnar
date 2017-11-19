@@ -92,9 +92,16 @@ public class SimRobot {
     }
 
     void updateDistances() {
-        int towerAngle = (int) Math.round(this.towerAngle.getValue()); // round necessary?
+        double towerHeading = towerAngle.getValue();
+        double robotHeading = estimatedPose.getHeading().getValue();
         for (int i = 0; i < lastIrMeasurement.length; i++) {
-            int currentAngle = 
+            int currentAngle = (int) (robotHeading + towerHeading + (i-1) * 90);
+            if (currentAngle >= 360) {
+                currentAngle -= 360;
+            } else if (currentAngle < 0) {
+                currentAngle += 360;
+            }
+            distances[currentAngle] = lastIrMeasurement[i];
         }
     }
     
