@@ -23,7 +23,7 @@ public class BoundaryFollowingController extends Thread {
     private final static int FOLLOWING = 2;
     private final int stepDistance = 10; // cm
     private int targetHeading = -1;
-    private final int distanceThreshold = 40; //cm
+    private final double distanceThreshold = 20; //cm
     
     
     public BoundaryFollowingController(SimRobot robot) {
@@ -57,7 +57,7 @@ public class BoundaryFollowingController extends Thread {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
-                //stopAllRobots();
+                robot.stop();
                 break;
             }
             if (paused) {
@@ -101,7 +101,7 @@ public class BoundaryFollowingController extends Thread {
     }
     
     private double getShortestDistance() {
-        double shortestDistance = Double.MAX_VALUE;
+        double shortestDistance = Double.POSITIVE_INFINITY;
         for (int i = 0; i < distances.length; i++) {
             if (distances[i] < shortestDistance) {
                 shortestDistance = distances[i];
@@ -117,7 +117,7 @@ public class BoundaryFollowingController extends Thread {
      */
     private int getShortestDistanceHeading() {
         int shortestDistanceHeading = -1;
-        double currentDistance = Double.MAX_VALUE;
+        double currentDistance = Double.POSITIVE_INFINITY;
         for (int i = 0; i < distances.length; i++) {
             if (distances[i] < currentDistance) {
                 currentDistance = distances[i];

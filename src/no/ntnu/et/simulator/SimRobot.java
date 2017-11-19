@@ -87,7 +87,7 @@ public class SimRobot {
         
         distances = new double[360];
         for (int i = 0; i < distances.length; i++) {
-            distances[i] = Double.MAX_VALUE;
+            distances[i] = Double.POSITIVE_INFINITY;
         }   
     }
 
@@ -101,7 +101,11 @@ public class SimRobot {
             } else if (currentAngle < 0) {
                 currentAngle += 360;
             }
-            distances[currentAngle] = lastIrMeasurement[i];
+            if (lastIrMeasurement[i] >= 0) {
+                distances[currentAngle] = Double.POSITIVE_INFINITY;
+            } else {
+                distances[currentAngle] = lastIrMeasurement[i];
+            }
         }
     }
     
