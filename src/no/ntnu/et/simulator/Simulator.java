@@ -214,7 +214,7 @@ public class Simulator {
             myID = robot.getId();
             noiseGenerator = new Random();
             paused = false;
-            boundaryFollowingController = new BoundaryFollowingController();
+            boundaryFollowingController = new BoundaryFollowingController(myRobot);
         }
 
         void pause() {
@@ -231,7 +231,7 @@ public class Simulator {
          */
         @Override
         public void run() {
-            //boundaryFollowingController.run();
+            boundaryFollowingController.start();
             int counter = 0;
 
             HandshakeMessage hm = myRobot.generateHandshake();
