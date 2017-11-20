@@ -124,7 +124,7 @@ public class MapGraphic extends JPanel {
             Cell cell = entry.getValue();
             if (!cell.isPreviouslyObserved()) {
                 g2D.setPaint(Color.gray);
-            } /*else if (cell.isOccupied()) {
+            } else if (cell.isOccupied()) {
                 g2D.setPaint(Color.black);
             } else if (cell.isRestricted()) {
                 g2D.setPaint(Color.lightGray);
