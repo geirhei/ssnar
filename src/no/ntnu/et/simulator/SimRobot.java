@@ -43,7 +43,7 @@ public class SimRobot {
     private Angle towerAngle;
     final private double turnSpeed = 0.5;
     //final private double turnSpeed = 1;
-    final private double moveSpeed = 0.1;
+    private double moveSpeed;
     final private double towerSpeed = 0.25; // = 5 deg resolution
     //final private double towerSpeed = 0.05; // = 1 deg resolution
     private int towerDirection;
@@ -88,7 +88,13 @@ public class SimRobot {
         distances = new double[360];
         for (int i = 0; i < distances.length; i++) {
             distances[i] = Double.POSITIVE_INFINITY;
-        }   
+        }
+        
+        if (name.equals("SLAM")) {
+            moveSpeed = 0.05;
+        } else {
+            moveSpeed = 0.1;
+        }
     }
 
     void updateDistances() {

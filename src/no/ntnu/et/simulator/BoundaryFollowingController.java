@@ -6,7 +6,12 @@
  */
 package no.ntnu.et.simulator;
 
+import static java.lang.Math.random;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
+import no.ntnu.et.general.Pose;
+import no.ntnu.et.general.Position;
 
 /**
  *
@@ -24,12 +29,17 @@ public class BoundaryFollowingController extends Thread {
     private final int stepDistance = 10; // cm
     private int targetHeading = -1;
     private final double distanceThreshold = 20; //cm
+    private LinkedList<Position> positionHistory;
+    private Random ran = new Random();
+    
+    private final boolean debug = true;
     
     
     public BoundaryFollowingController(SimRobot robot) {
         this.robot = robot;
         distances = robot.getDistances();
         mode = LOST;
+        positionHistory = new LinkedList<Position>();
     }
     
     @Override
@@ -64,39 +74,71 @@ public class BoundaryFollowingController extends Thread {
                 continue;
             }
             
+            
+            
             switch (mode)
             {
                 case LOST: // No obstacles measured nearby
+                    if (debug) {
+                        System.out.println("LOST entered.");
+                    }
                     // Get the direction to the boundary that is closest to the robot
                     int shortestDistanceHeading = getShortestDistanceHeading();
                     if (shortestDistanceHeading == -1) {
                         // Get random heading in the interval [0, 360)
-                        Random ran = new Random();
                         targetHeading = ran.nextInt(359 + 1);
                     } else {
                         targetHeading = shortestDistanceHeading;
                     }
                     
-                    robot.setMovement(targetHeading, stepDistance);
                     mode = TRANSLATING;
                     break;
                 case TRANSLATING:
-                    if (robot.isTranslationFinished()) {
-                        mode = LOST;
+                    if (debug) {
+                        System.out.println("TRANSLATING entered.");
                     }
                     if (getShortestDistance() < distanceThreshold) {
                         robot.stop();
+                        int obstacleHeading = getShortestDistanceHeading();
+                        Pose robotPose = robot.getPose();
+                        int robotHeading = (int) robotPose.getHeading().getValue();
+                        setFollowHeading(obstacleHeading, robotHeading);
                         mode = FOLLOWING;
+                    } else if (robot.isTranslationFinished()) {
+                        robot.setMovement(targetHeading, stepDistance);
                     }
                     break;
                 case FOLLOWING: // Wall-following mode
-                    
+                    if (debug) {
+                        System.out.println("FOLLOWING entered.");
+                    }
+                    robot.setMovement(targetHeading, stepDistance);
                     break;
                 default:
+                    if (debug) {
+                        System.out.println("default reached.");
+                    }
                     // should not reach here
                     break;
             }
             
+        }
+    }
+    
+    private void setFollowHeading(int obstacleHeading, int robotHeading) {
+        if (obstacleHeading > robotHeading) {
+            targetHeading = obstacleHeading - 90;
+            if (targetHeading < 0) {
+                targetHeading += 360;
+            }
+        } else if (obstacleHeading < robotHeading) {
+            targetHeading = obstacleHeading + 90;
+            if (targetHeading >= 360) {
+                targetHeading -= 360;
+            }
+        } else {
+            int turnDirection = ran.nextBoolean() ? 1 : -1;
+            targetHeading = turnDirection * 90;
         }
     }
     
