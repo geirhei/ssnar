@@ -21,7 +21,7 @@ public class RobotInfoGUI extends javax.swing.JFrame {
 
     private Robot robot;
     private MainGUI mainGUI;
-    private ManualDriveGUI manualDriveGUI;
+    private ManualDriveCoordinatesGUI manualDriveGUI;
 
     /**
      * Constructor of the class RobotInfoGUI
@@ -42,7 +42,7 @@ public class RobotInfoGUI extends javax.swing.JFrame {
         lblRobotName.setText(robot.getName());
         setLocationRelativeTo(mainGUI);
         setTitle(r.getName());
-        manualDriveGUI = new ManualDriveGUI(robot, mainGUI);
+        manualDriveGUI = new ManualDriveCoordinatesGUI(robot, mainGUI);
         this.mainGUI = mainGUI;
     }
 
