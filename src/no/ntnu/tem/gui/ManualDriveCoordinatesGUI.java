@@ -55,7 +55,7 @@ public class ManualDriveCoordinatesGUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setText("Angle:");
+        jLabel3.setText("X:");
 
         ftxtfX.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
         ftxtfX.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
@@ -70,7 +70,7 @@ public class ManualDriveCoordinatesGUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setText("Distance");
+        jLabel4.setText("Y:");
 
         ftxtfY.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
         ftxtfY.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));

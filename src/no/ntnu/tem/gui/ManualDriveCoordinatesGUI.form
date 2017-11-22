@@ -71,7 +71,7 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Angle:"/>
+        <Property name="text" type="java.lang.String" value="X:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="ftxtfX">
@@ -90,7 +90,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Distance"/>
+        <Property name="text" type="java.lang.String" value="Y:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="ftxtfY">
