@@ -68,6 +68,8 @@ public class Robot {
 
     private int batteryLevel;
     private final int[] basePosition;
+    
+    private boolean manualMode = false;
 
     /**
      * Constructor of the class Robot
@@ -115,6 +117,14 @@ public class Robot {
         this.basePosition = new int[]{0, 35, 0};
     }
 
+    public void setManualMode(boolean b) {
+        manualMode = b;
+    }
+    
+    public boolean isInManualMode() {
+        return manualMode;
+    }
+    
     public boolean isConnected() {
         return connected;
     }

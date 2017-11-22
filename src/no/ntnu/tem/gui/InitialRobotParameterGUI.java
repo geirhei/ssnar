@@ -268,7 +268,7 @@ public class InitialRobotParameterGUI extends javax.swing.JDialog {
     }//GEN-LAST:event_ftxtfOrientationKeyPressed
 
     private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
-        // TODO add your handling code here:
+        updateManualMode();
     }//GEN-LAST:event_jCheckBox2ActionPerformed
 
     private void ftxtfXPosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ftxtfXPosActionPerformed
@@ -313,5 +313,9 @@ public class InitialRobotParameterGUI extends javax.swing.JDialog {
                 Integer.parseInt(ftxtfYPos.getText()),
                 Integer.parseInt(ftxtfOrientation.getText()));
         this.dispose();
+    }
+    
+    private void updateManualMode() {
+        robot.setManualMode(jCheckBox2.isSelected());
     }
 }
