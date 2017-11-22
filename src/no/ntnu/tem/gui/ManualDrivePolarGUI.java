@@ -13,18 +13,18 @@ import no.ntnu.tem.robot.Robot;
  *
  * @author Thor Eivind and Mats (Master 2016 @ NTNU)
  */
-public class ManualDriveCoordinatesGUI extends javax.swing.JFrame {
+public class ManualDrivePolarGUI extends javax.swing.JFrame {
 
     private final MainGUI mainGUI;
     private final Robot robot;
 
     /**
-     * Constructor for the class ManualDriveGUI
+     * Constructor for the class ManualDrivePolarGUI
      *
      * @param robot the robot to control
      * @param mainGUI the systems mainGUI.
      */
-    ManualDriveCoordinatesGUI(Robot robot, MainGUI mainGUI) {
+    ManualDrivePolarGUI(Robot robot, MainGUI mainGUI) {
         initComponents();
         this.mainGUI = mainGUI;
         this.robot = robot;
@@ -43,9 +43,9 @@ public class ManualDriveCoordinatesGUI extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel3 = new javax.swing.JLabel();
-        ftxtfX = new javax.swing.JFormattedTextField();
+        ftxtfAngle = new javax.swing.JFormattedTextField();
         jLabel4 = new javax.swing.JLabel();
-        ftxtfY = new javax.swing.JFormattedTextField();
+        ftxtfDistance = new javax.swing.JFormattedTextField();
         btnSendCommand = new javax.swing.JButton();
         lblRobotName = new javax.swing.JLabel();
 
@@ -55,28 +55,23 @@ public class ManualDriveCoordinatesGUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setText("X:");
+        jLabel3.setText("Angle:");
 
-        ftxtfX.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        ftxtfX.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        ftxtfX.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ftxtfXActionPerformed(evt);
-            }
-        });
-        ftxtfX.addKeyListener(new java.awt.event.KeyAdapter() {
+        ftxtfAngle.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        ftxtfAngle.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        ftxtfAngle.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                ftxtfXKeyPressed(evt);
+                ftxtfAngleKeyPressed(evt);
             }
         });
 
-        jLabel4.setText("Y:");
+        jLabel4.setText("Distance");
 
-        ftxtfY.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        ftxtfY.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        ftxtfY.addKeyListener(new java.awt.event.KeyAdapter() {
+        ftxtfDistance.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        ftxtfDistance.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        ftxtfDistance.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                ftxtfYKeyPressed(evt);
+                ftxtfDistanceKeyPressed(evt);
             }
         });
 
@@ -103,13 +98,13 @@ public class ManualDriveCoordinatesGUI extends javax.swing.JFrame {
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel4)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(ftxtfY, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(ftxtfDistance, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addComponent(btnSendCommand))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ftxtfX, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(ftxtfAngle, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(38, Short.MAX_VALUE))
             .addComponent(lblRobotName, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -121,11 +116,11 @@ public class ManualDriveCoordinatesGUI extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(ftxtfX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ftxtfAngle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(ftxtfY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ftxtfDistance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSendCommand)
                 .addContainerGap(24, Short.MAX_VALUE))
@@ -135,15 +130,16 @@ public class ManualDriveCoordinatesGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSendCommandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendCommandActionPerformed
-        ftxtfX.requestFocus();
-        ftxtfY.requestFocus();
+        ftxtfDistance.requestFocus();
+        ftxtfAngle.requestFocus();
         try {
-            int x = Integer.parseInt(ftxtfX.getText());
-            int y = Integer.parseInt(ftxtfY.getText());
-            System.out.println("X: " + x + ", Y: " + y);
-            mainGUI.getApplication().writeCommandToRobot(robot.getId(), robot.getName(), x, y);
-            ftxtfX.setText("0");
-            ftxtfY.setText("0");
+            int angle = Integer.parseInt(ftxtfAngle.getText());
+            int distance = Integer.parseInt(ftxtfDistance.getText());
+            System.out.println("angle " + angle);
+            System.out.println("Distance " + distance);
+            mainGUI.getApplication().writeCommandToRobot(robot.getId(), robot.getName(), angle, distance);
+            ftxtfDistance.setText("0");
+            ftxtfAngle.setText("0");
         } catch (NumberFormatException nfe) {
 
         }
@@ -153,17 +149,13 @@ public class ManualDriveCoordinatesGUI extends javax.swing.JFrame {
 
     }//GEN-LAST:event_formKeyPressed
 
-    private void ftxtfXKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ftxtfXKeyPressed
+    private void ftxtfAngleKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ftxtfAngleKeyPressed
         isEnter(evt.getKeyCode());
-    }//GEN-LAST:event_ftxtfXKeyPressed
+    }//GEN-LAST:event_ftxtfAngleKeyPressed
 
-    private void ftxtfYKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ftxtfYKeyPressed
+    private void ftxtfDistanceKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ftxtfDistanceKeyPressed
         isEnter(evt.getKeyCode());
-    }//GEN-LAST:event_ftxtfYKeyPressed
-
-    private void ftxtfXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ftxtfXActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ftxtfXActionPerformed
+    }//GEN-LAST:event_ftxtfDistanceKeyPressed
 
     /**
      * Checks whether the KeyCode is the EnterCode or not, if it is Enter, the
@@ -179,8 +171,8 @@ public class ManualDriveCoordinatesGUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSendCommand;
-    private javax.swing.JFormattedTextField ftxtfX;
-    private javax.swing.JFormattedTextField ftxtfY;
+    private javax.swing.JFormattedTextField ftxtfAngle;
+    private javax.swing.JFormattedTextField ftxtfDistance;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel lblRobotName;
