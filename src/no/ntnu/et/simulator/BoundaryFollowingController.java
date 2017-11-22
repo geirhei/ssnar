@@ -142,6 +142,11 @@ public class BoundaryFollowingController extends Thread {
         }
     }
     
+    /**
+     * Checks the distances in every direction and returns the nearest one.
+     * 
+     * @return double the distance to the closest obstacle
+     */
     private double getShortestDistance() {
         double shortestDistance = Double.POSITIVE_INFINITY;
         for (int i = 0; i < distances.length; i++) {
@@ -155,7 +160,7 @@ public class BoundaryFollowingController extends Thread {
     /**
      * Returns -1 if all fields in []distances have the same infinity value
      * 
-     * @return int
+     * @return int in range [0,360) or -1
      */
     private int getShortestDistanceHeading() {
         int shortestDistanceHeading = -1;
