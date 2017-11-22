@@ -23,3 +23,5 @@ SSNAR/build/built-jar.properties
 SSNAR/nbproject/private/private.properties
 /SSNAR/SSNAR/build/
 build/built-jar.properties
+dist/SSNAR.jar
+nbproject/private/private.xml

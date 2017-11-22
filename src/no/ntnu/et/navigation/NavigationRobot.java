@@ -37,6 +37,11 @@ public class NavigationRobot {
         waypoints = new ArrayList<Position>();
         priorityCommand = new int[2];
     }
+    
+    /**
+     * Empty constructor
+     */
+    NavigationRobot() {}
    
     
     public void addWaypoints(ArrayList<Position> newWaypoints) {

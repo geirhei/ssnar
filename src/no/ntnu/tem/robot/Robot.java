@@ -31,6 +31,7 @@ public class Robot {
     private final int[] towerOffset, sensorOffset;
     private final IR irSensors;
     private final ConcurrentLinkedQueue<Measurement> measurements;
+    private final ConcurrentLinkedQueue<Measurement> slamMeasurements;
 
     private int[] initialPosition;
     private int[] estimatedPosition;
@@ -94,6 +95,7 @@ public class Robot {
         this.irSensors = new IR(irHeading);
         this.batteryLevel = 1023;
         this.measurements = new ConcurrentLinkedQueue<>();
+        this.slamMeasurements = new ConcurrentLinkedQueue<>();
         this.address = address;
         this.initialPosition = new int[]{0, 0, 0};
         this.estimatedPosition = new int[]{0, 0};
@@ -163,6 +165,7 @@ public class Robot {
             irHeading[i] = (towerHeading + irSensors.getSpreading()[i]) % 360;
         }
         Measurement measurment = new Measurement(measuredOrientation, measuredPosition, irHeading, irData);
+        slamMeasurements.offer(measurment); // Separate queue for the boundary robot
         return measurements.offer(measurment);
     }
 
@@ -180,6 +183,11 @@ public class Robot {
         if (p != null && m != null) {
             p.updateMeasurement(m);
         }
+        return m;
+    }
+    
+    public Measurement getSlamMeasurement() {
+        Measurement m = slamMeasurements.poll();
         return m;
     }
 

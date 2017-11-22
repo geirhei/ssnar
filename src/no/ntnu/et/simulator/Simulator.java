@@ -34,6 +34,8 @@ public class Simulator {
     private ConcurrentLinkedQueue<Message> inbox;
     private int mode;
     private HashMap<Integer, String> idNameMapping;
+    
+    private BoundaryFollowingController boundaryFollowingController;
 
     /**
      * Constructor. Creates an instance of the Simulator class with a number of
@@ -64,6 +66,7 @@ public class Simulator {
             }
         });
         this.inbox = inbox;
+        
     }
 
     double getSimulationSpeed() {
@@ -148,12 +151,12 @@ public class Simulator {
     }
 
     /**
-     * Gives the command ("rotation", "angle") to the robot with name "name"
+     * Gives the command to the robot with name "name"
      * (changed to (x,y))
      *
      * @param name String
-     * @param rotation double
-     * @param distance double
+     * @param x double
+     * @param y double
      */
     public void setRobotCommand(String name, double x, double y) {
         world.getRobot(name).setTarget(x, y);
@@ -185,12 +188,11 @@ public class Simulator {
         }
     }
 
+    /**
+    * Controller object for a robot. This class contains a SimRobot object
+    * and is responsible for making that robot run.
+    */
     private class RobotHandler extends Thread {
-
-        /**
-         * Controller object for a robot. This class contains a SimRobot object
-         * and is responsible for making that robot run.
-         */
         final private SimRobot myRobot;
         final private String myName;
         final private int myID;
@@ -198,6 +200,8 @@ public class Simulator {
         private double sensorNoise;
         private final Random noiseGenerator;
         private boolean paused;
+        
+        private final BoundaryFollowingController boundaryFollowingController;
 
         /**
          * Constructor
@@ -210,6 +214,7 @@ public class Simulator {
             myID = robot.getId();
             noiseGenerator = new Random();
             paused = false;
+            boundaryFollowingController = new BoundaryFollowingController(myRobot);
         }
 
         void pause() {
@@ -226,6 +231,7 @@ public class Simulator {
          */
         @Override
         public void run() {
+            boundaryFollowingController.start();
             int counter = 0;
 
             HandshakeMessage hm = myRobot.generateHandshake();
@@ -247,7 +253,8 @@ public class Simulator {
 
                 // Move robot
                 if (estimateNoiseEnabled) {
-                    estimateNoise = noiseGenerator.nextGaussian() * 0.1;
+                    //estimateNoise = noiseGenerator.nextGaussian() * 0.1;
+                    estimateNoise = noiseGenerator.nextGaussian() * 0.01;
                 } else {
                     estimateNoise = 0;
                 }
@@ -265,7 +272,17 @@ public class Simulator {
                     }
                     myRobot.measureIR(sensorNoise);
                     int[] update = myRobot.createMeasurement();
-                    if (myName.equals("Drone")) {
+                    
+                    if (myName.equals("SLAM")) {
+                        myRobot.updateDistances();
+                        
+                        UpdateMessage um = SimRobot.generateUpdate(update[0], update[1], update[2], update[3], update[4], update[5], update[6], update[7]);
+                        byte[] umBytes = um.getBytes();
+                        byte[] umMessageBytes = new byte[umBytes.length + 1];
+                        umMessageBytes[0] = Message.UPDATE;
+                        System.arraycopy(umBytes, 0, umMessageBytes, 1, umBytes.length);
+                        inbox.add(new Message(myRobot.getAddress(), umMessageBytes));
+                    } else if (myName.equals("Drone")) {
                         DroneUpdateMessage um = SimRobot.generateDroneUpdate(update[0], update[1], update[2], update[4], update[5], update[6], update[7]);
                         byte[] umBytes = um.getBytes();
                         byte[] umMessageBytes = new byte[umBytes.length + 1];
@@ -287,4 +304,6 @@ public class Simulator {
             }
         }
     }
+    
+    
 }

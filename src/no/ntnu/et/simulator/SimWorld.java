@@ -32,6 +32,7 @@ public class SimWorld {
     private Integer ArduinoCounter = 0;
     private Integer NXTCounter = 0;
     private Integer AVRCounter = 0;
+    private boolean SLAMadded = false;
     private boolean Droneadded = false;
 
     /**
@@ -103,7 +104,15 @@ public class SimWorld {
             AVRCounter++;
             Integer id = 4*AVRCounter; //4 and 8
             identification = new String[]{id.toString(), "AVR"+AVRCounter.toString()};
-        }        
+        }
+        if(!SLAMadded && RobotType == 5){
+            identification = new String[]{"7", "SLAM"};
+            SLAMadded = true;
+        }
+        else if(SLAMadded && RobotType == 5){
+            System.out.println("Only one SLAMrobot supported");
+            return null;
+        }
         int id = Integer.parseInt(identification[0]);
         if(id > 9){
             System.out.println("Cant have more of this unit!");
@@ -114,6 +123,9 @@ public class SimWorld {
         if(name.equals("Drone")){
             newRobot = new Drone(this, initialPose, "Drone", id, addressCounter++);
             System.out.println("Drone created");
+        } else if (name.equals("SLAM")) {
+            newRobot = new SlamRobot(this, initialPose, "SLAM", id, addressCounter++);
+            System.out.println("SLAMrobot created");
         } else {
             newRobot = new SimRobot(this, initialPose, name, id, addressCounter++);
             System.out.println("SimRobot created");

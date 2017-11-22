@@ -16,11 +16,16 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JPanel;
+import no.ntnu.et.general.Line;
+import no.ntnu.et.general.Vertex;
 import no.ntnu.et.map.Cell;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.et.map.MapLocation;
+import no.ntnu.et.simulator.SimRobot;
 import no.ntnu.tem.application.RobotController;
 import no.ntnu.tem.robot.Robot;
 
@@ -31,17 +36,17 @@ import no.ntnu.tem.robot.Robot;
  */
 public class MapGraphic extends JPanel {
 
-    private GridMap gridmap;
+    protected GridMap gridmap;
     private RobotController rc;
-    private Dimension d;
+    protected Dimension d;
     boolean debug = false;
     int numberOfRows;
     int numberOfColumns;
     int cellSize;
-    private Double scrollSize = 1.0;
+    protected Double scrollSize = 1.0;
     int origo;
-    private AffineTransform temp;
-    private AffineTransform initial;
+    protected AffineTransform temp;
+    protected AffineTransform initial;
 
     /**
      * Constructor for the class MapGraphic
@@ -100,6 +105,7 @@ public class MapGraphic extends JPanel {
         numberOfColumns = gridmap.getNumberOfColumns();
         cellSize = gridmap.getCellSize();
         paintMap(g2D);
+        paintLines(g2D);
         paintRobots(g2D);
         g2D.setTransform(initial);
 
@@ -139,13 +145,31 @@ public class MapGraphic extends JPanel {
             g2D.fillRect((entry.getKey().getColumn() - leftmost) * cellSize * scrollSize.intValue(), (entry.getKey().getRow() - lowest) * cellSize * scrollSize.intValue(), cellSize * scrollSize.intValue(), cellSize * scrollSize.intValue());
         }
     }
-
+    
+    /**
+     * Paint all lines in the line repository
+     * 
+     * @param g2D 
+     */
+    private void paintLines(Graphics2D g2D) {
+        g2D.setPaint(Color.black);
+        List<Line> lines = gridmap.getLineRepository();
+        //ArrayList<ArrayList<Line>> lineBuffers = gridmap.getLineBuffers();
+        synchronized (lines) {
+            ListIterator<Line> iter = lines.listIterator();
+            while (iter.hasNext()) {
+                Line line = iter.next();
+                g2D.drawLine((int) line.getA().getXValue(), (int) line.getA().getYValue(), (int) line.getB().getXValue(), (int) line.getB().getYValue());
+            }
+        }
+    }
+    
     /**
      * Paints the robots
      *
      * @param g2D The Graphics2D object
      */
-    private void paintRobots(Graphics2D g2D) {
+    protected void paintRobots(Graphics2D g2D) {
         for (Robot robot : rc.getRobotList()) {
 
             Color robotColor = selectRobotColor(g2D, robot.getId());

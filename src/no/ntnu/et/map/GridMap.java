@@ -7,8 +7,13 @@
 package no.ntnu.et.map;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import no.ntnu.et.general.Line;
+import no.ntnu.et.general.Observation;
 import no.ntnu.et.general.Position;
+import no.ntnu.et.general.Vertex;
 import no.ntnu.et.mapping.MappingController;
 
 /**
@@ -46,6 +51,24 @@ public class GridMap{
     private int rightColumn;
     private int leftColumn;
     
+    private ArrayList<Vertex> vertices = new ArrayList();
+    
+    //SLAMrobot simulation
+    private ArrayList<MapLocation> obstructed = new ArrayList();
+    private ArrayList<MapLocation> frontiers = new ArrayList();
+    
+    private ArrayList<Position> StateSpace = new ArrayList();
+    private ArrayList<Observation> observationHistory = new ArrayList();
+    private ArrayList<int[]> actionHistory = new ArrayList();
+    private ArrayList<Position> PointBufferF = new ArrayList();
+    private ArrayList<Position> PointBufferL = new ArrayList();
+    private ArrayList<Position> PointBufferB = new ArrayList();
+    private ArrayList<Position> PointBufferR = new ArrayList();
+    private ArrayList<ArrayList<Position>> pointBuffers = new ArrayList<ArrayList<Position>>();
+    private ArrayList<ArrayList<Line>> lineBuffers = new ArrayList<ArrayList<Line>>();
+    //private ArrayList<Line> lineRepository = new ArrayList<Line>();
+    private List<Line> lineRepository;
+    
     /**
      * Constructor for the GridMap class
      * @param cellSize Specifies the size of cells in cm. Cells are quadratic
@@ -68,7 +91,61 @@ public class GridMap{
                     map.put(new MapLocation(i, j), new Cell());
                 }
             }
+            
+            vertices.add( new Vertex(Vertex.INTERIOR, new Position(25, 25)) );
+            for (int k = 0; k < 4; k++) {
+                pointBuffers.add(new ArrayList<Position>());
+                lineBuffers.add(new ArrayList<Line>());
+            }
+            lineRepository = Collections.synchronizedList(new ArrayList<Line>());
         }
+    }
+    
+    public ArrayList<ArrayList<Position>> getPointBuffers() {
+        return pointBuffers;
+    }
+    
+    public ArrayList<ArrayList<Line>> getLineBuffers() {
+        return lineBuffers;
+    }
+    
+    public List<Line> getLineRepository() {
+        return lineRepository;
+    }
+    
+    public ArrayList<MapLocation> getObstructed() {
+        return obstructed;
+    }
+    
+    public ArrayList<MapLocation> getFrontiers() {
+        return frontiers;
+    }
+    
+    public void setFrontier(MapLocation loc) {
+        obstructed.remove(loc);
+        if (!frontiers.contains(loc)) {
+            frontiers.add(loc);
+        }
+    }
+    
+    public void setObstructed(MapLocation loc) {
+        frontiers.remove(loc);
+        if (!obstructed.contains(loc)) {
+            obstructed.add(loc);
+        }
+    }
+    
+    public void clearLocation(MapLocation loc) {
+        frontiers.remove(loc);
+        obstructed.remove(loc);
+    }
+    
+    public void addVertex(Vertex vertex) {
+        vertices.add(vertex);
+    }
+    
+    public ArrayList<Vertex> getVertices() {
+        return vertices;
     }
     
     /**
@@ -226,6 +303,62 @@ public class GridMap{
             }
         }
         return frontierLocations;
+    }
+    
+    /**
+     * Checks if there are any occupied locations in a given radius around
+     * the given location. Used by the SLAMrobot. Radius may have to be
+     * adjusted.
+     * 
+     * @param location
+     * @return whether the location is restricted
+     */
+    public boolean isRestricted(MapLocation location){
+        int radius = 15; // cm. 
+        radius = radius/cellSize;
+        int row = location.getRow();
+        int column = location.getColumn();
+        int top = row + radius;
+        int bottom = row - radius;
+        int right = column + radius;
+        int left = column - radius;
+        for (int i = bottom; i <= top; i++) {
+            for (int j = left; j <= right; j++) {
+                MapLocation otherLocation = new MapLocation(i, j);
+                if (obstructed.contains(otherLocation)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Returns the number of frontier locations in the map.
+     * 
+     * @return 
+     */
+    public int getFrontierCount() {
+        ArrayList<MapLocation> frontierLocations = getFrontierLocations();
+        return frontierLocations.size();
+    }
+    
+    /**
+     * Returns the number of occupied cells in the map.
+     * 
+     * @return 
+     */
+    public int getOccupiedCount() {
+        int count = 0;
+        for (int i = bottomRow; i <= topRow; i++) {
+            for (int j = 0; j <= rightColumn; j++) {
+                MapLocation location = new MapLocation(i, j);
+                if (map.get(location).isOccupied()) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
     
     /**
@@ -629,5 +762,16 @@ public class GridMap{
             Cell measuredCell = map.get(location);
             measuredCell.removeParticle();
         }
+    }
+    
+    /**
+     * Add discovered vertice to the map.
+     * 
+     * @param location
+     * @param type 0 = exterior, 1 = interior
+     */
+    public void addVertice(MapLocation location, int type) {
+        int radius = 5;
+        ArrayList<MapLocation> circle = createCircle(location, 5);
     }
 }

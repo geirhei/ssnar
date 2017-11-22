@@ -42,8 +42,10 @@ public class SimRobot {
     public boolean translationFinished;
     private Angle towerAngle;
     final private double turnSpeed = 0.5;
-    final private double moveSpeed = 0.1;
-    final private double towerSpeed = 0.25;
+    //final private double turnSpeed = 1;
+    private double moveSpeed;
+    final private double towerSpeed = 0.25; // = 5 deg resolution
+    //final private double towerSpeed = 0.05; // = 1 deg resolution
     private int towerDirection;
     final private Object movementLock = new Object();
     final private double maxVisualLength = 80;
@@ -52,6 +54,8 @@ public class SimRobot {
     private Position targetPosition;
     private int diameter = 10;
     private final int address;
+    
+    private final double[] distances;
 
     /**
      * Constructor for Robot.
@@ -80,8 +84,45 @@ public class SimRobot {
         rotationFinished = true;
         translationFinished = true;
         targetPosition = Position.copy(pose.getPosition());
+        
+        distances = new double[360];
+        for (int i = 0; i < distances.length; i++) {
+            distances[i] = Double.POSITIVE_INFINITY;
+        }
+        
+        if (name.equals("SLAM")) {
+            moveSpeed = 0.05;
+        } else {
+            moveSpeed = 0.1;
+        }
     }
 
+    void updateDistances() {
+        double towerHeading = towerAngle.getValue();
+        double robotHeading = estimatedPose.getHeading().getValue();
+        for (int i = 0; i < lastIrMeasurement.length; i++) {
+            int currentAngle = (int) (robotHeading + towerHeading + (i-1) * 90);
+            if (currentAngle >= 360) {
+                currentAngle -= 360;
+            } else if (currentAngle < 0) {
+                currentAngle += 360;
+            }
+            if (lastIrMeasurement[i] >= 0) {
+                distances[currentAngle] = Double.POSITIVE_INFINITY;
+            } else {
+                distances[currentAngle] = lastIrMeasurement[i];
+            }
+        }
+    }
+    
+    void stop() {
+        setMovement(0, 0);
+    }
+    
+    double[] getDistances() {
+        return distances;
+    }
+    
     double getMaxSensorDistance() {
         return maxVisualLength;
     }
@@ -111,32 +152,63 @@ public class SimRobot {
     String getName() {
         return name;
     }
-
+    
     /**
      * Sets the target rotation and target heading. Also resets the measured
      * rotation and distance.
-     * 
-     * Needs to be fixed because of conversion to (x,y)
      *
-     * @param theta
-     * @param distance
+     * @param x
+     * @param y
      */
-    void setTarget(double theta, double distance) {
+    void setTarget(double x, double y) {
         synchronized (movementLock) {
-            targetRotation = theta;
+            targetPosition = new Position(x, y);
+            targetDistance = Position.distanceBetween(targetPosition, pose.getPosition()); //cm
+            
+            Angle targetAngle = Position.angleBetween(pose.getPosition(), targetPosition); //deg
+            targetRotation = Angle.difference(pose.getHeading(), targetAngle); //deg
+            // Determine if robot should rotate left or right
+            if ((pose.getHeading().getValue() - targetAngle.getValue() + 360) % 360 > 180) {
+                rotationDirection = 1;
+            } else {
+                rotationDirection = -1;
+            }
+            
+            measuredRotation = 0;
+            measuredDistance = 0;
+            movementDirection = 1; // cludged
+            rotationFinished = false;
+            translationFinished = false;
+        }
+    }
+    
+    /**
+     * Specify an angle for the robot to rotate and a distance to translate
+     * 
+     * @param theta number of degrees to rotate
+     * @param distance number of cm to translate
+     */
+    void setMovement(int thetaTarget, double distance) {
+        synchronized (movementLock) {
+            Angle targetAngle = new Angle(thetaTarget);
+            Position offset = Utilities.polar2cart(targetAngle, distance);
+            targetRotation = Angle.difference(pose.getHeading(), targetAngle); //deg
             targetDistance = distance;
             measuredRotation = 0;
             measuredDistance = 0;
-            rotationDirection = (int) Math.signum(theta);
+            rotationDirection = (int) Math.signum(thetaTarget);
             movementDirection = (int) Math.signum(distance);
-            Angle targetAngle = Angle.sum(pose.getHeading(), new Angle(theta));
-            Position offset = Utilities.polar2cart(targetAngle, distance);
+            
             targetPosition = Position.sum(pose.getPosition(), offset);
             rotationFinished = false;
             translationFinished = false;
         }
     }
 
+    boolean isTranslationFinished() {
+        return translationFinished;
+    }
+    
     /**
      * Creates and returns a copy of the pose
      *
@@ -188,6 +260,7 @@ public class SimRobot {
         measurement[1] = (int) Math.round(estimatedPose.getPosition().getYValue());
         measurement[2] = (int) Math.round(estimatedPose.getHeading().getValue());
         measurement[3] = (int) Math.round(towerAngle.getValue());
+        //System.out.println("Angle: " + measurement[3]);
         for (int i = 4; i < 8; i++) {
             measurement[i] = (int) Math.round(lastIrMeasurement[i - 4]);
         }
@@ -228,6 +301,7 @@ public class SimRobot {
                     pose.move(moveSpeed * movementDirection);
                 }
             }
+            //System.out.println("SimRobot orientation: " + pose.getHeading().getValue());
             return false;
         }
     }

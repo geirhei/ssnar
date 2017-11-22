@@ -6,6 +6,7 @@
  */
 package no.ntnu.et.mapping;
 
+import java.util.ArrayList;
 import no.ntnu.et.general.Angle;
 import no.ntnu.et.general.Position;
 import no.ntnu.et.general.Pose;

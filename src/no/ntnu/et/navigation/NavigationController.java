@@ -14,14 +14,15 @@ package no.ntnu.et.navigation;
  *
  * @author Eirik Thon
  */
-import no.ntnu.et.navigation.RobotTaskManager;
 import java.util.ArrayList;
 import java.util.HashMap;
+import static no.ntnu.et.general.Navigation.getShortestDistanceAngle;
 import no.ntnu.et.general.Position;
+import static no.ntnu.et.general.Utilities.getMeasurementHeadings;
 import no.ntnu.et.map.GridMap;
-import no.ntnu.et.map.MapLocation;
 import no.ntnu.tem.application.Application;
 import no.ntnu.tem.application.RobotController;
+import no.ntnu.tem.robot.Measurement;
 import no.ntnu.tem.robot.Robot;
 import org.ejml.simple.SimpleMatrix;
 
@@ -46,6 +47,8 @@ public class NavigationController extends Thread {
     private boolean paused;
 
     private boolean debug = false;
+    
+    
 
     public NavigationController(RobotController robotController, Application application, GridMap map) {
         this.robotController = robotController;
@@ -55,6 +58,8 @@ public class NavigationController extends Thread {
         collisionManager.setName("Collision management");
         robotNames = new ArrayList<String>();
         navigationRobots = new HashMap<String, NavigationRobot>();
+        
+        
     }
 
     public void addRobot(String robotName, int id) {
@@ -87,9 +92,29 @@ public class NavigationController extends Thread {
         stopAllRobots();
         paused = true;
     }
+    
+    boolean isPaused() {
+        return paused;
+    }
 
     public void quit() {
         paused = true;
+    }
+    
+    boolean debugEnabled() {
+        return debug;
+    }
+    
+    NavigationRobot getNavigationRobot(String name) {
+        return navigationRobots.get(name);
+    }
+    
+    RobotTaskManager getRobotTaskManager() {
+        return robotTaskManager;
+    }
+    
+    void writeCommandToRobot(int id, String name, int x, int y) {
+        application.writeCommandToRobot(id, name, x, y);
     }
 
     private void stopAllRobots() {
@@ -108,6 +133,14 @@ public class NavigationController extends Thread {
             int id = robot.getId();
             application.unPauseRobot(id);
         }
+    }
+    
+    RobotController getRobotController() {
+        return robotController;
+    }
+    
+    Application getApplication() {
+        return application;
     }
 
     @Override
@@ -132,6 +165,7 @@ public class NavigationController extends Thread {
 
             for (int i = 0; i < robotNames.size(); i++) {
                 String name = robotNames.get(i);
+                if (name.equals("SLAM")){continue;}
                 Robot applicationRobot = robotController.getRobot(name);
                 int id = applicationRobot.getId();
                 /*
@@ -173,6 +207,10 @@ public class NavigationController extends Thread {
                     }
                 }
                 */
+                
+                
+                
+                
                 if (navigationRobots.get(name).hasNewPriorityCommand()) {
                     int[] nextCommand = navigationRobots.get(name).getPriorityCommand();
                     if (debug) {

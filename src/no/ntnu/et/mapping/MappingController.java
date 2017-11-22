@@ -14,6 +14,7 @@ import no.ntnu.tem.application.RobotController;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.et.map.MapLocation;
 import no.ntnu.et.general.Angle;
+import no.ntnu.et.general.Line;
 import no.ntnu.et.general.Pose;
 import no.ntnu.et.general.Position;
 import no.ntnu.et.navigation.NavigationRobot;
@@ -36,6 +37,11 @@ public class MappingController extends Thread {
     private boolean paused;
     private Thread mapCleaner;
     private boolean debug = false;
+    private boolean mergeNeeded = false;
+    
+    ArrayList<ArrayList<Position>> pointBuffers;
+    ArrayList<ArrayList<Line>> lineBuffers;
+    List<Line> lineRepository;
 
     /**
      * Constructor
@@ -52,6 +58,10 @@ public class MappingController extends Thread {
         mapCleaner = new Thread(new MapCleaningWorker());
         mapCleaner.start();
         mapCleaner.setName("Map Cleaner");
+        pointBuffers = map.getPointBuffers();
+        lineBuffers = map.getLineBuffers();
+        lineRepository = map.getLineRepository();
+        
     }
     
     /**
@@ -121,6 +131,7 @@ public class MappingController extends Thread {
         int numberOfScans = 200;
         int battery = 0;
         int ICPCount = 0;
+        int counter = 0;
         while (true) {
             try {
                 Thread.sleep(10);
@@ -170,6 +181,47 @@ public class MappingController extends Thread {
                         map.addMeasurement(location, true);
                     });
                     continue;
+                }
+                
+                // SLAMrobot handling. Does not currently care about other robots.
+                // 2D list of positions should be ok
+
+                if (robot.getName().equals("SLAM")) {
+                    
+                    for (int j = 0; j < 4; j++) {
+                        if (sensors[j].isMeasurement()) {
+                            Position measurementPoint = sensors[j].getPosition();
+                            pointBuffers.get(j).add(measurementPoint);
+                        } else {
+                            // If no obstacle is measured, set the point values av infinity
+                            //Position inf = new Position(Double.MAX_VALUE, Double.MAX_VALUE);
+                            //pointBuffers.get(j).add(inf);
+                        }
+                        if (pointBuffers.get(j).size() > 50) {
+                            mergeNeeded = true;
+                        }
+                    }
+                    
+                    if (mergeNeeded) {
+                        for (int k = 0; k < 4; k++) {
+                            Line.lineCreate(pointBuffers.get(k), lineBuffers.get(k));
+                        }
+                        
+                        for (int l = 0; l < 4; l++) {
+                            Line.lineMerge(lineBuffers.get(l), lineRepository);
+                        }
+                        
+                        System.out.println("pointBuffer0 size: " + pointBuffers.get(0).size());
+                        System.out.println("Lines created.");
+                        System.out.println("lineBuffer0 size: " + lineBuffers.get(0).size());
+                        System.out.println("Lines merged.");
+                        System.out.println("lineRepository size: " + lineRepository.size());
+                        mergeNeeded = false;
+                    }
+                    
+                    //System.out.println("Point buffer 1 length: " + pointBuffers.get(0).size());
+                    
+                    //continue;
                 }
                 
                 int sensorOneValue = 0;
