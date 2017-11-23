@@ -90,7 +90,10 @@ public class SlamNavigationController extends NavigationController {
             }
             
             Robot applicationRobot = super.getRobotController().getRobot(robotName);
-
+            if (applicationRobot.isInManualMode()) {
+                continue;
+            }
+            
             /* Measurement handling ************/
             Measurement m = applicationRobot.getSlamMeasurement();
             while (m != null) {

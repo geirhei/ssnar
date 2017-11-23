@@ -102,6 +102,10 @@ public class CollisionManager extends Thread {
                 if(handlers.containsKey(robot1Name)){
                     continue;
                 }
+                // Robots in manual mode are excluded from collision management
+                if (robotControl.getRobot(robot1Name).isInManualMode()) {
+                    continue;
+                }
                 // Check for collisions on current route
                 checkWaypoints(robot1Name);
                 
