@@ -97,6 +97,10 @@ public class SimRobot {
         }
     }
 
+    double[] getMeasurement() {
+        return lastIrMeasurement;
+    }
+    
     void updateDistances() {
         double towerHeading = towerAngle.getValue();
         double robotHeading = estimatedPose.getHeading().getValue();

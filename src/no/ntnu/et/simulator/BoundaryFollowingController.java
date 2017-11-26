@@ -10,6 +10,8 @@ import static java.lang.Math.random;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import no.ntnu.et.general.Angle;
+import no.ntnu.et.general.Navigation;
 import no.ntnu.et.general.Pose;
 import no.ntnu.et.general.Position;
 
@@ -22,10 +24,12 @@ public class BoundaryFollowingController extends Thread {
     private final double[] distances;
     private boolean paused = false;
     private boolean roaming = false;
-    private static int mode;
-    private final static int LOST = 0;
+    private int state;
+    private int lastState;
+    private final static int IDLE = 0;
     private final static int TRANSLATING = 1;
     private final static int FOLLOWING = 2;
+    private final static int WALL_FOLLOWING = 3;
     private final int stepDistance = 10; // cm
     private int targetHeading = -1;
     private final double distanceThreshold = 20; //cm
@@ -38,7 +42,8 @@ public class BoundaryFollowingController extends Thread {
     public BoundaryFollowingController(SimRobot robot) {
         this.robot = robot;
         distances = robot.getDistances();
-        mode = LOST;
+        state = IDLE;
+        lastState = state;
         positionHistory = new LinkedList<Position>();
     }
     
@@ -76,13 +81,13 @@ public class BoundaryFollowingController extends Thread {
             
             
             
-            switch (mode)
+            switch (state)
             {
-                case LOST: // No obstacles measured nearby
+                case IDLE: // No obstacles measured nearby
                     if (debug) {
-                        System.out.println("LOST entered.");
+                        System.out.println("IDLE entered.");
                     }
-                    // Get the direction to the boundary that is closest to the robot
+                    // Get the heading to the boundary that is closest to the robot
                     int shortestDistanceHeading = getShortestDistanceHeading();
                     if (shortestDistanceHeading == -1) {
                         // Get random heading in the interval [0, 360)
@@ -90,29 +95,29 @@ public class BoundaryFollowingController extends Thread {
                     } else {
                         targetHeading = shortestDistanceHeading;
                     }
-                    
-                    mode = TRANSLATING;
-                    break;
+                    state = TRANSLATING;
                 case TRANSLATING:
                     if (debug) {
                         System.out.println("TRANSLATING entered.");
                     }
-                    if (getShortestDistance() < distanceThreshold) {
-                        robot.stop();
-                        int obstacleHeading = getShortestDistanceHeading();
-                        Pose robotPose = robot.getPose();
-                        int robotHeading = (int) robotPose.getHeading().getValue();
-                        setFollowHeading(obstacleHeading, robotHeading);
-                        mode = FOLLOWING;
-                    } else if (robot.isTranslationFinished()) {
+                    if (robot.isTranslationFinished()) {
                         robot.setMovement(targetHeading, stepDistance);
                     }
-                    break;
-                case FOLLOWING: // Wall-following mode
-                    if (debug) {
-                        System.out.println("FOLLOWING entered.");
+                    
+                    Angle towerAngle = robot.getTowerAngle();
+                    double[] measurements = robot.getMeasurement();
+                    
+                    if (Navigation.checkCollision(towerAngle, (int) measurements[0], (int) measurements[1]) != 0) {
+                        robot.stop();
+                        state = WALL_FOLLOWING;
                     }
-                    robot.setMovement(targetHeading, stepDistance);
+                    
+                    break;
+                case WALL_FOLLOWING:
+                    if (debug) {
+                        System.out.println("WALL_FOLLOWING entered.");
+                    }
+                    
                     break;
                 default:
                     if (debug) {

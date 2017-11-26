@@ -28,4 +28,30 @@ public class Navigation {
         }
         return angle;
     }
+    
+    /**
+     * Checks if the robot is in collision range with an obstacle, and return
+     * which side the obstacle is on. 1 for left and -1 for right. 0 if no collision.
+     * 
+     * @param towerAngle relative to the robot
+     * @param forwardSensor ir-data
+     * @param rightSensor ir-data
+     * @return true if it is close enough, false otherwise
+     */
+    public static int checkCollision(final Angle towerAngle, final int rightSensor, final int forwardSensor) {
+        int distance = 0;
+        if (towerAngle.getValue() <= 30) {
+            distance = forwardSensor;
+        } else if (towerAngle.getValue() >= 60) {
+            distance = rightSensor;
+        }
+        if (distance > 0 && distance < 20) {
+            if (towerAngle.getValue() <= 30) {
+                return 1;
+            } else if (towerAngle.getValue() <= 60) {
+                return -1;
+            }
+        }
+        return 0;
+    }
 }
