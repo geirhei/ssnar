@@ -38,7 +38,7 @@ public class Navigation {
      * @param rightSensor ir-data
      * @return true if it is close enough, false otherwise
      */
-    public static int checkCollision(final Angle towerAngle, final int rightSensor, final int forwardSensor) {
+    public static int checkCollision(final Angle towerAngle, int rightSensor, int forwardSensor) {
         int distance = 0;
         if (towerAngle.getValue() <= 30) {
             distance = forwardSensor;
@@ -48,7 +48,7 @@ public class Navigation {
         if (distance > 0 && distance < 20) {
             if (towerAngle.getValue() <= 30) {
                 return 1;
-            } else if (towerAngle.getValue() <= 60) {
+            } else if (towerAngle.getValue() >= 60) {
                 return -1;
             }
         }

@@ -38,6 +38,7 @@ public class BoundaryFollowingController extends Thread {
     private LinkedList<Position> positionHistory;
     private Random ran = new Random();
     private Angle towerAngle;
+    private double[] measurement;
     
     private final boolean debug = true;
     
@@ -48,6 +49,7 @@ public class BoundaryFollowingController extends Thread {
         state = IDLE;
         lastState = state;
         positionHistory = new LinkedList<Position>();
+        measurement = this.robot.getMeasurement();
     }
     
     @Override
@@ -73,7 +75,7 @@ public class BoundaryFollowingController extends Thread {
         boolean finished = false;
         while (!finished) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 robot.stop();
                 break;
@@ -104,13 +106,14 @@ public class BoundaryFollowingController extends Thread {
                         System.out.println("TRANSLATING entered.");
                     }
                     if (robot.isTranslationFinished()) {
-                        robot.setMovement(targetHeading, stepDistance);
+                        //robot.setMovement(targetHeading, stepDistance);
+                        robot.setMovement(180, stepDistance);
                     }
                     
                     towerAngle = robot.getTowerAngle();
-                    double[] measurements = robot.getMeasurement();
+                    measurement = robot.getMeasurement();
                     
-                    int obstacleLocation = Navigation.checkCollision(towerAngle, (int) measurements[0], (int) measurements[1]);
+                    int obstacleLocation = Navigation.checkCollision(towerAngle, (int) measurement[0], (int) measurement[1]);
                     if (obstacleLocation != 0) {
                         robot.stop();
                         state = WALL_FOLLOWING;
@@ -121,8 +124,9 @@ public class BoundaryFollowingController extends Thread {
                         System.out.println("WALL_FOLLOWING entered.");
                     }
                     
-                    measurements = robot.getMeasurement();
-                    int wallSide = Navigation.checkCollision(towerAngle, (int) measurements[0], (int) measurements[1]);
+                    robot.stop();
+                    //measurement = robot.getMeasurement();
+                    //int wallSide = Navigation.checkCollision(towerAngle, (int) measurement[0], (int) measurement[1]);
                     
                     
                     break;

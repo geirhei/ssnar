@@ -55,22 +55,34 @@ public class NavigationTest {
     /**
      * Test of checkCollision method, of class Navigation.
      */
-    //@Test
+    @Test
     public void testIsInCollision() {
         System.out.println("isInCollision");
         Angle towerAngle = new Angle(70);
         int forwardSensor = 15;
         int rightSensor = 15;
-        boolean expResult = true;
-        boolean result = Navigation.checkCollision(towerAngle, forwardSensor, rightSensor);
-        assertEquals(expResult, result);
-        forwardSensor = 50;
-        rightSensor = 50;
-        expResult = false;
-        result = Navigation.checkCollision(towerAngle, forwardSensor, rightSensor);
+        int expResult = -1;
+        int result = Navigation.checkCollision(towerAngle, forwardSensor, rightSensor);
         assertEquals(expResult, result);
         
+        
         //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of checkCollision method, of class Navigation.
+     */
+    //@Test
+    public void testCheckCollision() {
+        System.out.println("checkCollision");
+        Angle towerAngle = null;
+        int rightSensor = 0;
+        int forwardSensor = 0;
+        int expResult = 0;
+        int result = Navigation.checkCollision(towerAngle, rightSensor, forwardSensor);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
     }
     
 }
