@@ -54,4 +54,12 @@ public class Navigation {
         }
         return 0;
     }
+    
+    /*
+    public static int determineDirection(Angle towerAngle, int[] distances) {
+        int objectHeading = getShortestDistanceAngle(distances);
+        int towerHeading = (int) towerAngle.getValue();
+        
+    }
+*/
 }

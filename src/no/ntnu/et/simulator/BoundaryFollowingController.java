@@ -30,11 +30,14 @@ public class BoundaryFollowingController extends Thread {
     private final static int TRANSLATING = 1;
     private final static int FOLLOWING = 2;
     private final static int WALL_FOLLOWING = 3;
+    private final static int LEFT = 1;
+    private final static int RIGHT = -1;
     private final int stepDistance = 10; // cm
     private int targetHeading = -1;
     private final double distanceThreshold = 20; //cm
     private LinkedList<Position> positionHistory;
     private Random ran = new Random();
+    private Angle towerAngle;
     
     private final boolean debug = true;
     
@@ -104,19 +107,23 @@ public class BoundaryFollowingController extends Thread {
                         robot.setMovement(targetHeading, stepDistance);
                     }
                     
-                    Angle towerAngle = robot.getTowerAngle();
+                    towerAngle = robot.getTowerAngle();
                     double[] measurements = robot.getMeasurement();
                     
-                    if (Navigation.checkCollision(towerAngle, (int) measurements[0], (int) measurements[1]) != 0) {
+                    int obstacleLocation = Navigation.checkCollision(towerAngle, (int) measurements[0], (int) measurements[1]);
+                    if (obstacleLocation != 0) {
                         robot.stop();
                         state = WALL_FOLLOWING;
                     }
-                    
                     break;
                 case WALL_FOLLOWING:
                     if (debug) {
                         System.out.println("WALL_FOLLOWING entered.");
                     }
+                    
+                    measurements = robot.getMeasurement();
+                    int wallSide = Navigation.checkCollision(towerAngle, (int) measurements[0], (int) measurements[1]);
+                    
                     
                     break;
                 default:
