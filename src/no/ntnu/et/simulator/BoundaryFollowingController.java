@@ -21,7 +21,7 @@ import no.ntnu.et.general.Position;
  */
 public class BoundaryFollowingController extends Thread {
     private final SimRobot robot;
-    private final double[] distances;
+    private double[] distances;
     private boolean paused = false;
     private boolean roaming = false;
     private int state;
@@ -38,14 +38,16 @@ public class BoundaryFollowingController extends Thread {
     private LinkedList<Position> positionHistory;
     private Random ran = new Random();
     private Angle towerAngle;
+    private Angle robotHeading;
     private double[] measurement;
+    private int obstacleLocation = 0;
     
-    private final boolean debug = true;
+    private final boolean debug = false;
     
     
-    public BoundaryFollowingController(SimRobot robot) {
+    public BoundaryFollowingController(SimRobot robot, double[] distances) {
         this.robot = robot;
-        distances = robot.getDistances();
+        this.distances = distances;
         state = IDLE;
         lastState = state;
         positionHistory = new LinkedList<Position>();
@@ -93,7 +95,7 @@ public class BoundaryFollowingController extends Thread {
                     // Get the heading to the boundary that is closest to the robot
                     int shortestDistanceHeading = getShortestDistanceHeading();
                     if (shortestDistanceHeading == -1) {
-                        targetHeading = 120; // hard coded, should be random
+                        targetHeading = 270; // hard coded, should be random
                     }
                     /*
                         targetHeading = ran.nextInt(359 + 1);
@@ -110,22 +112,43 @@ public class BoundaryFollowingController extends Thread {
                         //robot.setMovement(180, stepDistance);
                     }
                     
-                    towerAngle = robot.getTowerAngle();
+                    //towerAngle = robot.getTowerAngle();
+                    robotHeading = robot.getPose().getHeading();
                     measurement = robot.getMeasurement();
                     
-                    int obstacleLocation = Navigation.checkCollision(towerAngle, (int) measurement[0], (int) measurement[1]);
+                    //obstacleLocation = Navigation.checkCollision(towerAngle, (int) measurement[0], (int) measurement[1]);
+                    obstacleLocation = Navigation.checkCollision(robotHeading, distances);
                     if (obstacleLocation != 0) {
                         robot.stop();
                         state = WALL_FOLLOWING;
                     }
+                    for (int i = 240; i <= 300; i++) {
+                        System.out.print(distances[i] + " ");
+                    }
+                    System.out.println();
                     break;
                 case WALL_FOLLOWING:
                     if (debug) {System.out.println("WALL_FOLLOWING entered.");}
                     
                     robot.stop();
-                    //measurement = robot.getMeasurement();
-                    //int wallSide = Navigation.checkCollision(towerAngle, (int) measurement[0], (int) measurement[1]);
+                    int directionToWall = getShortestDistanceHeading();
                     
+                    //int wallSide = Navigation.checkCollision(towerAngle, (int) measurement[0], (int) measurement[1]);
+                    int wallSide = Navigation.checkCollision(robotHeading, distances);
+                    if (wallSide == RIGHT) {
+                        targetHeading = directionToWall + 90;
+                    } else if (wallSide == LEFT) {
+                        targetHeading = directionToWall - 90;
+                    }
+                    robot.setMovement(targetHeading - robot.getPose().getHeading().getValue(), stepDistance);
+                    while (!robot.isTranslationFinished()) {
+                        
+                    }
+                    robot.setMovement(0, stepDistance);
+                    while (!robot.isTranslationFinished()) {
+                        
+                    }
+                    robot.stop();
                     
                     break;
                 default:

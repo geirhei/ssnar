@@ -38,6 +38,7 @@ public class Navigation {
      * @param rightSensor ir-data
      * @return true if it is close enough, false otherwise
      */
+    /*
     public static int checkCollision(final Angle towerAngle, int rightSensor, int forwardSensor) {
         int distance = 0;
         if (towerAngle.getValue() <= 30) {
@@ -53,6 +54,40 @@ public class Navigation {
             }
         }
         return 0;
+    }
+    */
+    
+    public static int checkCollision(Angle robotHeading, double[] distances) {
+        if (distances.length != 360) {
+            return -2;
+        }
+        Angle robotHeadingMax = Angle.copy(robotHeading);
+        Angle robotHeadingMin = Angle.copy(robotHeading);
+        robotHeadingMax.add(30);
+        robotHeadingMin.add(-30);
+        int max = (int) robotHeadingMax.getValue();
+        int min = (int) robotHeadingMin.getValue();
+        //System.out.println("Max: " + max + ", " + "Min: " + min);
+        int distanceHeading = -1;
+        double threshold = 25;
+        double current = Double.POSITIVE_INFINITY;
+        for (int i = min; i <= max; i++) {
+            //System.out.print(distances[i] + " ");
+            if (distances[i] < current && distances[i] < threshold) {
+                current = distances[i];
+                distanceHeading = i;
+            }
+        }
+        //System.out.println();
+        if (distanceHeading == -1) {
+            return 0;  
+        } else if (distanceHeading >= robotHeading.getValue()) {
+            return 1;
+        } else if (distanceHeading < robotHeading.getValue()) {
+            return -1;
+        } else {
+            return -2;
+        }
     }
     
     /*

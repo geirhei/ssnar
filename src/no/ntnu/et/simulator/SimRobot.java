@@ -55,7 +55,7 @@ public class SimRobot {
     private int diameter = 10;
     private final int address;
     
-    private final double[] distances;
+    private double[] distances = new double[360];
 
     /**
      * Constructor for Robot.
@@ -85,7 +85,7 @@ public class SimRobot {
         translationFinished = true;
         targetPosition = Position.copy(pose.getPosition());
         
-        distances = new double[360];
+        
         for (int i = 0; i < distances.length; i++) {
             distances[i] = Double.POSITIVE_INFINITY;
         }
