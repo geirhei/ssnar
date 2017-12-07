@@ -45,7 +45,7 @@ public class Navigation {
         } else if (towerAngle.getValue() >= 60) {
             distance = rightSensor;
         }
-        if (distance > 0 && distance < 20) {
+        if (distance > 0 && distance < 25) {
             if (towerAngle.getValue() <= 30) {
                 return 1;
             } else if (towerAngle.getValue() >= 60) {
