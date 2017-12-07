@@ -75,7 +75,7 @@ public class BoundaryFollowingController extends Thread {
         boolean finished = false;
         while (!finished) {
             try {
-                Thread.sleep(200);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 robot.stop();
                 break;
@@ -89,25 +89,25 @@ public class BoundaryFollowingController extends Thread {
             switch (state)
             {
                 case IDLE: // No obstacles measured nearby
-                    if (debug) {
-                        System.out.println("IDLE entered.");
-                    }
+                    if (debug) {System.out.println("IDLE entered.");}
                     // Get the heading to the boundary that is closest to the robot
                     int shortestDistanceHeading = getShortestDistanceHeading();
                     if (shortestDistanceHeading == -1) {
-                        // Get random heading in the interval [0, 360)
+                        targetHeading = 120; // hard coded, should be random
+                    }
+                    /*
                         targetHeading = ran.nextInt(359 + 1);
                     } else {
                         targetHeading = shortestDistanceHeading;
                     }
+                    */
                     state = TRANSLATING;
                 case TRANSLATING:
-                    if (debug) {
-                        System.out.println("TRANSLATING entered.");
-                    }
+                    if (debug) {System.out.println("TRANSLATING entered.");}
+                    
                     if (robot.isTranslationFinished()) {
-                        //robot.setMovement(targetHeading, stepDistance);
-                        robot.setMovement(180, stepDistance);
+                        robot.setMovement(targetHeading - robot.getPose().getHeading().getValue(), stepDistance);
+                        //robot.setMovement(180, stepDistance);
                     }
                     
                     towerAngle = robot.getTowerAngle();
@@ -120,9 +120,7 @@ public class BoundaryFollowingController extends Thread {
                     }
                     break;
                 case WALL_FOLLOWING:
-                    if (debug) {
-                        System.out.println("WALL_FOLLOWING entered.");
-                    }
+                    if (debug) {System.out.println("WALL_FOLLOWING entered.");}
                     
                     robot.stop();
                     //measurement = robot.getMeasurement();
@@ -131,9 +129,7 @@ public class BoundaryFollowingController extends Thread {
                     
                     break;
                 default:
-                    if (debug) {
-                        System.out.println("default reached.");
-                    }
+                    if (debug) {System.out.println("default reached.");}
                     // should not reach here
                     break;
             }

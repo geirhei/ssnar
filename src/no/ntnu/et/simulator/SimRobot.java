@@ -192,6 +192,7 @@ public class SimRobot {
      * @param theta number of degrees to rotate
      * @param distance number of cm to translate
      */
+    /*
     void setMovement(int thetaTarget, double distance) {
         synchronized (movementLock) {
             Angle targetAngle = new Angle(thetaTarget);
@@ -203,6 +204,30 @@ public class SimRobot {
             rotationDirection = (int) Math.signum(thetaTarget);
             movementDirection = (int) Math.signum(distance);
             
+            targetPosition = Position.sum(pose.getPosition(), offset);
+            rotationFinished = false;
+            translationFinished = false;
+        }
+    }
+    */
+    
+    /**
+     * Sets the target rotation and target heading. Also resets the measured
+     * rotation and distance.
+     *
+     * @param theta
+     * @param distance
+     */
+    void setMovement(double theta, double distance) {
+        synchronized (movementLock) {
+            targetRotation = theta;
+            targetDistance = distance;
+            measuredRotation = 0;
+            measuredDistance = 0;
+            rotationDirection = (int) Math.signum(theta);
+            movementDirection = (int) Math.signum(distance);
+            Angle targetAngle = Angle.sum(pose.getHeading(), new Angle(theta));
+            Position offset = Utilities.polar2cart(targetAngle, distance);
             targetPosition = Position.sum(pose.getPosition(), offset);
             rotationFinished = false;
             translationFinished = false;
