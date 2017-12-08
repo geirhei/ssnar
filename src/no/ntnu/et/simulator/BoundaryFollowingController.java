@@ -30,6 +30,7 @@ public class BoundaryFollowingController extends Thread {
     private final static int TRANSLATING = 1;
     private final static int FOLLOWING = 2;
     private final static int WALL_FOLLOWING = 3;
+    private final static int GRAZING = 4;
     private final static int LEFT = 1;
     private final static int RIGHT = -1;
     private final int stepDistance = 10; // cm
@@ -41,17 +42,20 @@ public class BoundaryFollowingController extends Thread {
     private Angle robotHeading;
     private double[] measurement;
     private int obstacleLocation = 0;
+    private Position targetPos;
+    private int wallSide = -1;
     
-    private final boolean debug = false;
+    private final boolean debug = true;
     
     
-    public BoundaryFollowingController(SimRobot robot, double[] distances) {
+    public BoundaryFollowingController(SimRobot robot) {
         this.robot = robot;
-        this.distances = distances;
+        this.distances = robot.getDistances();
         state = IDLE;
         lastState = state;
         positionHistory = new LinkedList<Position>();
-        measurement = this.robot.getMeasurement();
+        targetPos = Position.copy(robot.getPose().getPosition());
+        //measurement = this.robot.getMeasurement();
     }
     
     @Override
@@ -94,8 +98,12 @@ public class BoundaryFollowingController extends Thread {
                     if (debug) {System.out.println("IDLE entered.");}
                     // Get the heading to the boundary that is closest to the robot
                     int shortestDistanceHeading = getShortestDistanceHeading();
+                    //System.out.println("shortestDistance: " + shortestDistanceHeading);
+                    //System.out.println("distances[5]: " + distances[5]);
                     if (shortestDistanceHeading == -1) {
-                        targetHeading = 270; // hard coded, should be random
+                        //targetHeading = 170; // hard coded, should be random
+                        targetPos = Navigation.getTarget(new Angle(180), robot.getPose(), stepDistance);
+                        //System.out.println("reached?");
                     }
                     /*
                         targetHeading = ran.nextInt(359 + 1);
@@ -108,48 +116,44 @@ public class BoundaryFollowingController extends Thread {
                     if (debug) {System.out.println("TRANSLATING entered.");}
                     
                     if (robot.isTranslationFinished()) {
-                        robot.setMovement(targetHeading - robot.getPose().getHeading().getValue(), stepDistance);
-                        //robot.setMovement(180, stepDistance);
+                        targetPos = Navigation.getTarget(new Angle(175), robot.getPose(), stepDistance);
+                        robot.setTarget(targetPos.getXValue(), targetPos.getYValue());
                     }
-                    
-                    //towerAngle = robot.getTowerAngle();
                     robotHeading = robot.getPose().getHeading();
-                    measurement = robot.getMeasurement();
-                    
-                    //obstacleLocation = Navigation.checkCollision(towerAngle, (int) measurement[0], (int) measurement[1]);
                     obstacleLocation = Navigation.checkCollision(robotHeading, distances);
+                    
                     if (obstacleLocation != 0) {
+                        if (debug) {System.out.println("Stop!");}
                         robot.stop();
                         state = WALL_FOLLOWING;
                     }
-                    for (int i = 240; i <= 300; i++) {
-                        System.out.print(distances[i] + " ");
-                    }
-                    System.out.println();
+                    
                     break;
                 case WALL_FOLLOWING:
                     if (debug) {System.out.println("WALL_FOLLOWING entered.");}
                     
-                    robot.stop();
+                    if (wallSide == -1) {
+                        wallSide = Navigation.checkCollision(robotHeading, distances);
+                    }
                     int directionToWall = getShortestDistanceHeading();
                     
-                    //int wallSide = Navigation.checkCollision(towerAngle, (int) measurement[0], (int) measurement[1]);
-                    int wallSide = Navigation.checkCollision(robotHeading, distances);
                     if (wallSide == RIGHT) {
-                        targetHeading = directionToWall + 90;
+                        //targetHeading = directionToWall + 90;
                     } else if (wallSide == LEFT) {
-                        targetHeading = directionToWall - 90;
+                        
+                        //targetHeading = directionToWall - 90;
                     }
-                    robot.setMovement(targetHeading - robot.getPose().getHeading().getValue(), stepDistance);
-                    while (!robot.isTranslationFinished()) {
+                    
+                    targetPos = Navigation.getTarget(new Angle(targetHeading), robot.getPose(), stepDistance);
+                    robot.setTarget(targetPos.getXValue(), targetPos.getYValue());
+                    if (robot.isTranslationFinished()) {
                         
                     }
-                    robot.setMovement(0, stepDistance);
-                    while (!robot.isTranslationFinished()) {
-                        
-                    }
+                    
                     robot.stop();
                     
+                    break;
+                case GRAZING:
                     break;
                 default:
                     if (debug) {System.out.println("default reached.");}

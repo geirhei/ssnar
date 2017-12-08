@@ -74,7 +74,7 @@ public class NavigationTest {
     /**
      * Test of checkCollision method, of class Navigation.
      */
-    @Test
+    //@Test
     public void testCheckCollision() {
         System.out.println("checkCollision");
         double[] distances = new double[360];
@@ -89,6 +89,67 @@ public class NavigationTest {
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of getTarget method, of class Navigation.
+     */
+    //@Test
+    public void testGetTarget() {
+        System.out.println("getTarget");
+        Angle heading = new Angle(90);
+        Pose currentPose = new Pose(0, 0, 0);
+        double stepDistance = 10;
+        Position expResult = new Position(10, 20);
+        Position result = Navigation.getTarget(heading, currentPose, stepDistance);
+        //assertEquals(expResult, result);
+        System.out.println("x: " + result.getXValue() + ", " + "y: " + result.getYValue());
+        currentPose = new Pose(0, 0, 0);
+        heading = new Angle(91);
+        result = Navigation.getTarget(heading, currentPose, stepDistance);
+        System.out.println("x: " + result.getXValue() + ", " + "y: " + result.getYValue());
+        currentPose = new Pose(0, 0, 0);
+        heading = new Angle(180);
+        result = Navigation.getTarget(heading, currentPose, stepDistance);
+        System.out.println("x: " + result.getXValue() + ", " + "y: " + result.getYValue());
+        currentPose = new Pose(50, 50, 90);
+        heading = new Angle(180);
+        result = Navigation.getTarget(heading, currentPose, stepDistance);
+        System.out.println("x: " + result.getXValue() + ", " + "y: " + result.getYValue());
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of calculateNewTarget method, of class Navigation.
+     */
+    @Test
+    public void testCalculateNewTarget() {
+        System.out.println("calculateNewTarget");
+        Angle shortestHeading = new Angle(90);
+        Position currentPos = new Position(0, 0);
+        double stepDistance = 10;
+        int wallSide = -1;
+        Position expResult = null;
+        Position result = Navigation.calculateNewTarget(shortestHeading, currentPos, stepDistance, wallSide);
+        System.out.println("x: " + result.getXValue() + ", y: " + result.getYValue());
+        //assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of getShortestDistanceHeading method, of class Navigation.
+     */
+    //@Test
+    public void testGetShortestDistanceHeading() {
+        System.out.println("getShortestDistanceHeading");
+        double[] distances = null;
+        int expResult = 0;
+        int result = Navigation.getShortestDistanceHeading(distances);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
     }
     
 }

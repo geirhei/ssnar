@@ -103,24 +103,26 @@ public class SimRobot {
     
     void updateDistances() {
         double towerHeading = towerAngle.getValue();
-        double robotHeading = estimatedPose.getHeading().getValue();
+        double robotHeading = pose.getHeading().getValue();
+        //System.out.println("tower: " + towerHeading + ", robot: " + robotHeading);
         for (int i = 0; i < lastIrMeasurement.length; i++) {
+            //System.out.print(lastIrMeasurement[i] + " ");
             int currentAngle = (int) (robotHeading + towerHeading + (i-1) * 90);
             if (currentAngle >= 360) {
                 currentAngle -= 360;
             } else if (currentAngle < 0) {
                 currentAngle += 360;
             }
-            if (lastIrMeasurement[i] >= 0) {
-                distances[currentAngle] = Double.POSITIVE_INFINITY;
-            } else {
+            if (lastIrMeasurement[i] > 0 && lastIrMeasurement[i] <= maxVisualLength) {
                 distances[currentAngle] = lastIrMeasurement[i];
+            } else {
+                distances[currentAngle] = Double.POSITIVE_INFINITY;
             }
         }
     }
     
     void stop() {
-        setMovement(0, 0);
+        setTarget(pose.getPosition().getXValue(), pose.getPosition().getYValue());
     }
     
     double[] getDistances() {

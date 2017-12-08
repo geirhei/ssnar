@@ -34,8 +34,6 @@ public class Simulator {
     private ConcurrentLinkedQueue<Message> inbox;
     private int mode;
     private HashMap<Integer, String> idNameMapping;
-    
-    private BoundaryFollowingController boundaryFollowingController;
 
     /**
      * Constructor. Creates an instance of the Simulator class with a number of

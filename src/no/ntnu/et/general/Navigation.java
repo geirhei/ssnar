@@ -6,6 +6,9 @@
  */
 package no.ntnu.et.general;
 
+import static no.ntnu.et.general.Angle.sum;
+import static no.ntnu.et.general.Utilities.polar2cart;
+
 /**
  *
  * @author geirhei
@@ -69,7 +72,7 @@ public class Navigation {
         int min = (int) robotHeadingMin.getValue();
         //System.out.println("Max: " + max + ", " + "Min: " + min);
         int distanceHeading = -1;
-        double threshold = 25;
+        double threshold = 30;
         double current = Double.POSITIVE_INFINITY;
         for (int i = min; i <= max; i++) {
             //System.out.print(distances[i] + " ");
@@ -88,6 +91,50 @@ public class Navigation {
         } else {
             return -2;
         }
+    }
+    
+    public static Position getTarget(Angle heading, Pose currentPose, double stepDistance) {
+        //Angle newHeading = sum(heading, currentPose.getHeading());
+        double x = currentPose.getPosition().getXValue();
+        double y = currentPose.getPosition().getYValue();
+        double val = heading.getValue();
+        x += Math.cos(Math.toRadians(val)) * stepDistance;
+        y += Math.sin(Math.toRadians(val)) * stepDistance;
+        return new Position(x, y);
+    }
+    
+    public static Position calculateNewTarget(Angle shortestHeading, Position currentPos, double stepDistance, int wallSide) {
+        if (wallSide != 1 && wallSide != -1) {
+            System.out.println("Invalid wallSide! Must be -1 or 1.");
+            return null;
+        }
+        Position offset = new Position(0, 0);
+        if (wallSide == 1) { //LEFT
+            Angle thetaOffset = Angle.copy(shortestHeading);
+            thetaOffset.add(-90);
+            offset = polar2cart(thetaOffset, stepDistance);
+        } else if (wallSide == -1) { //RIGHT
+            offset = polar2cart(shortestHeading, stepDistance);
+        }
+        Position target = Position.sum(currentPos, offset);
+        return target;
+    }
+    
+    /**
+     * Returns -1 if all fields in []distances have the same infinity value
+     * 
+     * @return int in range [0,360) or -1
+     */
+    public static int getShortestDistanceHeading(double[] distances) {
+        int shortestDistanceHeading = -1;
+        double currentDistance = Double.POSITIVE_INFINITY;
+        for (int i = 0; i < distances.length; i++) {
+            if (distances[i] < currentDistance) {
+                currentDistance = distances[i];
+                shortestDistanceHeading = i;
+            }
+        }
+        return shortestDistanceHeading;
     }
     
     /*
