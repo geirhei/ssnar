@@ -198,6 +198,7 @@ public class Simulator {
         private double sensorNoise;
         private final Random noiseGenerator;
         private boolean paused;
+        public int update[];
         
         private final BoundaryFollowingController boundaryFollowingController;
 
@@ -269,7 +270,7 @@ public class Simulator {
                         sensorNoise = 0;
                     }
                     myRobot.measureIR(sensorNoise);
-                    int[] update = myRobot.createMeasurement();
+                    update = myRobot.createMeasurement();
                     
                     if (myName.equals("SLAM")) {
                         myRobot.updateDistances();

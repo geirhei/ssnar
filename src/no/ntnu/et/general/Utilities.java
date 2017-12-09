@@ -38,6 +38,20 @@ public class Utilities {
     }
     
     /**
+     * Create s new Position object with values given in Cartesian coordinates.
+     * @param theta angle represented by an integer
+     * @param r
+     * @return 
+     */
+    public static Position polar2cart(int theta, double r) {
+        double thetaRad = Math.toRadians(theta);
+        double x = r*Math.cos(thetaRad);
+        double y = r*Math.sin(thetaRad);
+        Position cart = new Position(x,y);
+        return cart;
+    }
+    
+    /**
      * Creates a new Position from data in "string". "string" should be on the
      * format "x,y".
      * @param string

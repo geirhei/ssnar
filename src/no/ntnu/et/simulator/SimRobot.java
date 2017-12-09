@@ -50,7 +50,7 @@ public class SimRobot {
     final private Object movementLock = new Object();
     final private double maxVisualLength = 80;
     final private double minVisualLength = 10;
-    private double[] lastIrMeasurement;
+    public double[] lastIrMeasurement;
     private Position targetPosition;
     private int diameter = 10;
     private final int address;

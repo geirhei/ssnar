@@ -60,6 +60,7 @@ public class Navigation {
     }
     */
     
+    
     public static int checkCollision(Angle robotHeading, double[] distances) {
         if (distances.length != 360) {
             return -2;
@@ -93,6 +94,39 @@ public class Navigation {
         }
     }
     
+    /**
+     * Calculates and fills an int[4] array with the measured distances in all four directions around the robot.
+     * In the order [d_front, d_left, d_back, d_right]
+     * Only updates values when servo step is below 30 and above 60. Else the distances are set to 0.
+     * 
+     * @param measurements double[]
+     * @param servoStep the number of steps the servo tower is rotated
+     * @return array of integer distance values
+     */
+    public static int[] calculateDistances(double[] measurements, int servoStep) {
+        if (measurements.length != 4) {
+            return null;
+        }
+        int[] distances = new int[4];
+        double servoStepRad = Math.toRadians(servoStep);
+        if (servoStep >= 0 && servoStep <= 30) {
+            for (int i = 0; i < measurements.length; i++) {
+                distances[i] = (int) (measurements[i] * Math.cos(servoStepRad));
+            }
+        } else if (servoStep >= 60 && servoStep <= 90) {
+            distances[0] = (int) (measurements[3] * Math.sin(servoStepRad));
+            for (int i = 1; i < measurements.length; i++) {
+                distances[i] = (int) (measurements[i-1] * Math.sin(servoStepRad));
+            }
+        } else {
+            for (int i = 0; i < measurements.length; i++) {
+                distances[i] = 0; // distanceThreshold
+            }
+        }
+        return distances;
+    }
+    
+    
     public static Position getTarget(Angle heading, Pose currentPose, double stepDistance) {
         //Angle newHeading = sum(heading, currentPose.getHeading());
         double x = currentPose.getPosition().getXValue();
@@ -114,7 +148,9 @@ public class Navigation {
             thetaOffset.add(-90);
             offset = polar2cart(thetaOffset, stepDistance);
         } else if (wallSide == -1) { //RIGHT
-            offset = polar2cart(shortestHeading, stepDistance);
+            Angle thetaOffset = Angle.copy(shortestHeading);
+            thetaOffset.add(90);
+            offset = polar2cart(thetaOffset, stepDistance);
         }
         Position target = Position.sum(currentPos, offset);
         return target;

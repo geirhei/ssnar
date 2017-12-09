@@ -42,7 +42,7 @@ public class UtilitiesTest {
     /**
      * Test of polar2cart method, of class Utilities.
      */
-    @Test
+    //@Test
     public void testPolar2cart() {
         System.out.println("polar2cart");
         Angle theta = null;
@@ -57,7 +57,7 @@ public class UtilitiesTest {
     /**
      * Test of string2Position method, of class Utilities.
      */
-    @Test
+    //@Test
     public void testString2Position() {
         System.out.println("string2Position");
         String string = "";
@@ -71,7 +71,7 @@ public class UtilitiesTest {
     /**
      * Test of findPositionAlongLine method, of class Utilities.
      */
-    @Test
+    //@Test
     public void testFindPositionAlongLine() {
         System.out.println("findPositionAlongLine");
         double[] start = null;
@@ -87,7 +87,7 @@ public class UtilitiesTest {
     /**
      * Test of selectColor method, of class Utilities.
      */
-    @Test
+    //@Test
     public void testSelectColor() {
         System.out.println("selectColor");
         int i = 0;
@@ -101,7 +101,7 @@ public class UtilitiesTest {
     /**
      * Test of lineCircleIntersection method, of class Utilities.
      */
-    @Test
+    //@Test
     public void testLineCircleIntersection() {
         System.out.println("lineCircleIntersection");
         Line line = null;
@@ -117,7 +117,7 @@ public class UtilitiesTest {
     /**
      * Test of lineLineIntersection method, of class Utilities.
      */
-    @Test
+    //@Test
     public void testLineLineIntersection() {
         System.out.println("lineLineIntersection");
         Line line1 = null;
@@ -132,7 +132,7 @@ public class UtilitiesTest {
     /**
      * Test of getMeasurementHeadings method, of class Utilities.
      */
-    @Test
+    //@Test
     public void testGetMeasurementHeadings() {
         System.out.println("getMeasurementHeadings");
         int[] towerHeadings = null;
@@ -146,7 +146,7 @@ public class UtilitiesTest {
     /**
      * Test of getOrthogonalProjection method, of class Utilities.
      */
-    @Test
+    //@Test
     public void testGetOrthogonalProjection() {
         System.out.println("getOrthogonalProjection");
         Position point = null;
@@ -156,6 +156,37 @@ public class UtilitiesTest {
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of polar2cart method, of class Utilities.
+     */
+    //@Test
+    public void testPolar2cart_Angle_double() {
+        System.out.println("polar2cart");
+        Angle theta = null;
+        double r = 0.0;
+        Position expResult = null;
+        Position result = Utilities.polar2cart(theta, r);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of polar2cart method, of class Utilities.
+     */
+    @Test
+    public void testPolar2cart_int_double() {
+        System.out.println("polar2cart");
+        int theta = -10;
+        double r = 10;
+        //Position expResult = null;
+        Position result = Utilities.polar2cart(theta, r);
+        System.out.println("x: " + result.getXValue() + ", y: " + result.getYValue());
+        //assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
     }
     
 }

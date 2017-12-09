@@ -94,16 +94,18 @@ public class NavigationTest {
     /**
      * Test of getTarget method, of class Navigation.
      */
-    //@Test
+    @Test
     public void testGetTarget() {
         System.out.println("getTarget");
-        Angle heading = new Angle(90);
-        Pose currentPose = new Pose(0, 0, 0);
+        Angle heading = new Angle(180);
+        Pose currentPose = new Pose(50, 50, 90);
         double stepDistance = 10;
         Position expResult = new Position(10, 20);
         Position result = Navigation.getTarget(heading, currentPose, stepDistance);
         //assertEquals(expResult, result);
+        
         System.out.println("x: " + result.getXValue() + ", " + "y: " + result.getYValue());
+        /*
         currentPose = new Pose(0, 0, 0);
         heading = new Angle(91);
         result = Navigation.getTarget(heading, currentPose, stepDistance);
@@ -118,15 +120,16 @@ public class NavigationTest {
         System.out.println("x: " + result.getXValue() + ", " + "y: " + result.getYValue());
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
+        */
     }
 
     /**
      * Test of calculateNewTarget method, of class Navigation.
      */
-    @Test
+    //@Test
     public void testCalculateNewTarget() {
         System.out.println("calculateNewTarget");
-        Angle shortestHeading = new Angle(90);
+        Angle shortestHeading = new Angle(10);
         Position currentPos = new Position(0, 0);
         double stepDistance = 10;
         int wallSide = -1;
@@ -150,6 +153,24 @@ public class NavigationTest {
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of calculateDistances method, of class Navigation.
+     */
+    //@Test
+    public void testCalculateDistances() {
+        System.out.println("calculateDistances");
+        double[] measurements = {Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY};
+        int servoStep = 90;
+        int[] expResult = null;
+        int[] result = Navigation.calculateDistances(measurements, servoStep);
+        for (int r : result) {
+            System.out.println(r);
+        }
+        //assertArrayEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
     }
     
 }
