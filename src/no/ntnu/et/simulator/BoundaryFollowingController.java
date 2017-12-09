@@ -122,17 +122,14 @@ public class BoundaryFollowingController extends Thread {
                         //targetPos = Navigation.getTarget(new Angle(180), robot.getPose(), stepDistance);
                         //robot.setTarget(targetPos.getXValue(), targetPos.getYValue());
                     }
-                    //robotHeading = robot.getPose().getHeading();
-                    //obstacleLocation = Navigation.checkCollision(robotHeading, distances);
-                    
                     distances = Navigation.calculateDistances(robot.lastIrMeasurement, (int) robot.getTowerAngle().getValue());
-                    System.out.println(distances[0]);
-                    if (distances[0] > 0 && distances[0] < distanceThreshold) {
+                    
+                    int obstacleSide = Navigation.checkCollision(distances, (int) robot.getTowerAngle().getValue(), distanceThreshold);
+                    if (obstacleSide != 0) {
                         if (debug) {System.out.println("Stop!");}
                         robot.stop();
                         state = WALL_FOLLOWING;
                     }
-                    
                     break;
                 case WALL_FOLLOWING:
                     if (debug) {System.out.println("WALL_FOLLOWING entered.");}

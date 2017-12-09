@@ -72,7 +72,7 @@ public class Navigation {
      */
     public static int checkCollision(int[] distances, int towerAngle, int threshold) {
         if (distances.length != 4) {
-            return -1;
+            throw new IllegalArgumentException("Length of distances[] must be 4");
         }
         
         int res = 0;
