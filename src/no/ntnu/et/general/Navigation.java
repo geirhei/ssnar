@@ -60,7 +60,39 @@ public class Navigation {
     }
     */
     
+    /**
+     * Checks if distance value is below threshold, and returns the side of the
+     * robot that is closest to the obstacle. 1 is front, 2 is left, and so on.
+     * 0 represents 'no collision'
+     * 
+     * @param distances
+     * @param towerAngle
+     * @param threshold
+     * @return 
+     */
+    public static int checkCollision(int[] distances, int towerAngle, int threshold) {
+        if (distances.length != 4) {
+            return -1;
+        }
+        
+        int res = 0;
+        if (distances[0] > 0 && distances[0] < threshold) {
+            if (towerAngle == 0) {
+                res = 1;
+            } else if (towerAngle > 0 && towerAngle <= 30) {
+                res = 2;
+            } else if (towerAngle >= 60 && towerAngle <= 90) {
+                res = 4;
+            }
+        } else if (distances[1] > 0 && distances[1] < threshold) {
+            res = 2;
+        } else if (distances[3] > 0 && distances[3] < threshold) {
+            res = 4;
+        }
+        return res;
+    }
     
+    /*
     public static int checkCollision(Angle robotHeading, double[] distances) {
         if (distances.length != 360) {
             return -2;
@@ -93,6 +125,7 @@ public class Navigation {
             return -2;
         }
     }
+    */
     
     /**
      * Calculates and fills an int[4] array with the measured distances in all four directions around the robot.

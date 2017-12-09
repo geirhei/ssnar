@@ -74,18 +74,14 @@ public class NavigationTest {
     /**
      * Test of checkCollision method, of class Navigation.
      */
-    //@Test
+    @Test
     public void testCheckCollision() {
         System.out.println("checkCollision");
-        double[] distances = new double[360];
-        for (int i = 0; i < 360; i++) {
-            distances[i] = 25;
-        }
-        distances[89] = 24;
-        Angle robotHeading = new Angle(90);
-        
-        int expResult = -1;
-        int result = Navigation.checkCollision(robotHeading, distances);
+        int[] distances = new int[]{19, 30, 30, 30};
+        int towerAngle = 59;
+        int threshold = 20;
+        int expResult = 0;
+        int result = Navigation.checkCollision(distances, towerAngle, threshold);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
@@ -94,7 +90,7 @@ public class NavigationTest {
     /**
      * Test of getTarget method, of class Navigation.
      */
-    @Test
+    //@Test
     public void testGetTarget() {
         System.out.println("getTarget");
         Angle heading = new Angle(180);
