@@ -161,12 +161,13 @@ public class Navigation {
     
     
     public static Position calculateNewTarget(Pose currentPose, double error, double stepDistance) {
-        System.out.println("error: " + error);
-        double thetaRad = Math.asin((double)error / (double)stepDistance);
-        System.out.println("thetaRad: " + thetaRad);
-        int theta = (int) (Math.toDegrees(thetaRad) + currentPose.getHeading().getValue());
+        //System.out.println("error: " + error);
+        double thetaOffsetRad = Math.asin((double)error / (double)stepDistance);
+        System.out.println("thetaOffsetRad: " + thetaOffsetRad);
+        double thetaOffset = Math.toDegrees(thetaOffsetRad);
+        double thetaTarget = currentPose.getHeading().getValue() + thetaOffset;
         // System.out.println("theta: " + theta);
-        Position offset = polar2cart(theta, stepDistance);
+        Position offset = polar2cart((int) thetaTarget, stepDistance);
         Position target = Position.sum(currentPose.getPosition(), offset);
         System.out.println("x: " + target.getXValue() + ", y: " + target.getYValue());
         return target;

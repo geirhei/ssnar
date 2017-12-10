@@ -159,10 +159,10 @@ public class NavigationTest {
     @Test
     public void testCalculateNewTarget() {
         System.out.println("calculateNewTarget");
-        Pose currentPose = new Pose(0, 70, 130);
-        int distance = 30;
+        Pose currentPose = new Pose(0, 0, 90);
+        double distance = 21;
         double error = 20 - distance;
-        double stepDistance = 1.0;
+        double stepDistance = 5.0;
         //Position expResult = null;
         Position result = Navigation.calculateNewTarget(currentPose, error, stepDistance);
         System.out.println("x: " + result.getXValue() + ", y: " + result.getYValue());
