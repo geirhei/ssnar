@@ -35,9 +35,9 @@ public class BoundaryFollowingController extends Thread {
     private final static int LEFT = 2;
     private final static int BACKWARDS = 3;
     private final static int RIGHT = 4;
-    private final int stepDistance = 5; // cm
+    private final int stepDistance = 10; // cm
     private int targetHeading = -1;
-    private final int distanceThreshold = 20; //cm
+    private final int distanceThreshold = 30; //cm
     private LinkedList<Position> positionHistory;
     private Random ran = new Random();
     //private Angle towerAngle;
@@ -135,12 +135,11 @@ public class BoundaryFollowingController extends Thread {
                     if (robot.isTranslationFinished()) {
                         if (obstacleSide == LEFT) {
                             //System.out.println("entered obstacleSide == LEFT");
-                            currentDistance = distances[1];
-                            //System.out.println(currentDistance);
-                            int error = targetDistance - currentDistance;
-                            if (error < stepDistance) {
-                                error = stepDistance;
+                            if (distances[1] != 80) {
+                                currentDistance = distances[1];
                             }
+                            System.out.println("currentDistance: " + currentDistance);
+                            int error = targetDistance - currentDistance;
                             Position newTarget = Navigation.calculateNewTarget(robot.getPose(), error, stepDistance);
                             robot.setTarget(newTarget.getXValue(), newTarget.getYValue());
                         } else if (obstacleSide == RIGHT) {

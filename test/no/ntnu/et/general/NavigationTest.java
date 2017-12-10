@@ -160,7 +160,7 @@ public class NavigationTest {
     public void testCalculateNewTarget() {
         System.out.println("calculateNewTarget");
         Pose currentPose = new Pose(0, 0, 90);
-        double distance = 21;
+        double distance = 26;
         double error = 20 - distance;
         double stepDistance = 5.0;
         //Position expResult = null;

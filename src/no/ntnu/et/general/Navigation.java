@@ -153,7 +153,12 @@ public class Navigation {
             }
         } else {
             for (int i = 0; i < measurements.length; i++) {
-                distances[i] = 0; // distanceThreshold
+                distances[i] = 80; // distanceThreshold
+            }
+        }
+        for (int i = 0; i < measurements.length; i++) {
+            if (distances[i] == 0) {
+                distances[i] = 80; // distanceThreshold
             }
         }
         return distances;
@@ -161,10 +166,19 @@ public class Navigation {
     
     
     public static Position calculateNewTarget(Pose currentPose, double error, double stepDistance) {
+        if (Math.abs(error) > stepDistance) {
+            error = (double) stepDistance / 10.0;
+        }
+        
         //System.out.println("error: " + error);
         double thetaOffsetRad = Math.asin((double)error / (double)stepDistance);
         System.out.println("thetaOffsetRad: " + thetaOffsetRad);
         double thetaOffset = Math.toDegrees(thetaOffsetRad);
+        if (thetaOffset < -45) {
+            thetaOffset = -45;
+        } else if (thetaOffset > 45) {
+            thetaOffset = 45;
+        }
         double thetaTarget = currentPose.getHeading().getValue() + thetaOffset;
         // System.out.println("theta: " + theta);
         Position offset = polar2cart((int) thetaTarget, stepDistance);
