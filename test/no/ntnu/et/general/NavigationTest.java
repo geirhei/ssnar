@@ -74,7 +74,7 @@ public class NavigationTest {
     /**
      * Test of checkCollision method, of class Navigation.
      */
-    @Test
+    //@Test
     public void testCheckCollision() {
         System.out.println("checkCollision");
         int[] distances = new int[]{19, 30, 30, 30};
@@ -119,23 +119,7 @@ public class NavigationTest {
         */
     }
 
-    /**
-     * Test of calculateNewTarget method, of class Navigation.
-     */
-    //@Test
-    public void testCalculateNewTarget() {
-        System.out.println("calculateNewTarget");
-        Angle shortestHeading = new Angle(10);
-        Position currentPos = new Position(0, 0);
-        double stepDistance = 10;
-        int wallSide = -1;
-        Position expResult = null;
-        Position result = Navigation.calculateNewTarget(shortestHeading, currentPos, stepDistance, wallSide);
-        System.out.println("x: " + result.getXValue() + ", y: " + result.getYValue());
-        //assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
-    }
+    
 
     /**
      * Test of getShortestDistanceHeading method, of class Navigation.
@@ -165,6 +149,24 @@ public class NavigationTest {
             System.out.println(r);
         }
         //assertArrayEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of calculateNewTarget method, of class Navigation.
+     */
+    @Test
+    public void testCalculateNewTarget() {
+        System.out.println("calculateNewTarget");
+        Pose currentPose = new Pose(0, 70, 130);
+        int distance = 30;
+        double error = 20 - distance;
+        double stepDistance = 1.0;
+        //Position expResult = null;
+        Position result = Navigation.calculateNewTarget(currentPose, error, stepDistance);
+        System.out.println("x: " + result.getXValue() + ", y: " + result.getYValue());
+        //assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }

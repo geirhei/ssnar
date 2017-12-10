@@ -122,7 +122,11 @@ public class SimRobot {
     }
     
     void stop() {
-        setTarget(pose.getPosition().getXValue(), pose.getPosition().getYValue());
+        //setTarget(pose.getPosition().getXValue(), pose.getPosition().getYValue());
+        synchronized (movementLock) {
+            translationFinished = true;
+            rotationFinished = true;
+        }
     }
     
     double[] getDistances() {

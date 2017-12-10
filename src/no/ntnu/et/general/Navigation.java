@@ -160,6 +160,18 @@ public class Navigation {
     }
     
     
+    public static Position calculateNewTarget(Pose currentPose, double error, double stepDistance) {
+        System.out.println("error: " + error);
+        double thetaRad = Math.asin((double)error / (double)stepDistance);
+        System.out.println("thetaRad: " + thetaRad);
+        int theta = (int) (Math.toDegrees(thetaRad) + currentPose.getHeading().getValue());
+        // System.out.println("theta: " + theta);
+        Position offset = polar2cart(theta, stepDistance);
+        Position target = Position.sum(currentPose.getPosition(), offset);
+        System.out.println("x: " + target.getXValue() + ", y: " + target.getYValue());
+        return target;
+    }
+    
     public static Position getTarget(Angle heading, Pose currentPose, double stepDistance) {
         //Angle newHeading = sum(heading, currentPose.getHeading());
         double x = currentPose.getPosition().getXValue();
@@ -170,6 +182,7 @@ public class Navigation {
         return new Position(x, y);
     }
     
+    /*
     public static Position calculateNewTarget(Angle shortestHeading, Position currentPos, double stepDistance, int wallSide) {
         if (wallSide != 1 && wallSide != -1) {
             System.out.println("Invalid wallSide! Must be -1 or 1.");
@@ -188,6 +201,7 @@ public class Navigation {
         Position target = Position.sum(currentPos, offset);
         return target;
     }
+    */
     
     /**
      * Returns -1 if all fields in []distances have the same infinity value
