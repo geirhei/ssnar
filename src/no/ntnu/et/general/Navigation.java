@@ -178,6 +178,7 @@ public class Navigation {
         double thetaOffsetRad = Math.asin((double)error / (double)stepDistance);
         //System.out.println("thetaOffsetRad: " + thetaOffsetRad);
         double thetaOffset = Math.toDegrees(thetaOffsetRad);
+        //System.out.println("thetaOffset: " + thetaOffset);
         /*
         if (thetaOffset < -45) {
             thetaOffset = -45;

@@ -140,8 +140,9 @@ public class BoundaryFollowingController extends Thread {
                             System.out.println();
                             */
                             int currentDistance = distances[1];
-                            System.out.println("currentDistance: " + currentDistance);
+                            //System.out.println("currentDistance: " + currentDistance);
                             double error = 0.1 * (targetDistance - currentDistance);
+                            //System.out.println("error: " + error);
                             Position newTarget = Navigation.calculateNewTarget(robot.getPose(), error, stepDistance);
                             robot.setTarget(newTarget.getXValue(), newTarget.getYValue());
                         } else if (obstacleSide == RIGHT) {
