@@ -35,7 +35,7 @@ public class BoundaryFollowingController extends Thread {
     private final static int LEFT = 2;
     private final static int BACKWARDS = 3;
     private final static int RIGHT = 4;
-    private final int stepDistance = 10; // cm
+    private final int stepDistance = 5; // cm
     private int targetHeading = -1;
     private final int distanceThreshold = 30; //cm
     private LinkedList<Position> positionHistory;
@@ -47,8 +47,6 @@ public class BoundaryFollowingController extends Thread {
     private Position targetPos;
     private final int maxVisualLength = 80;
     private int obstacleSide = -1;
-    private int newDistance = maxVisualLength;
-    private int currentDistance = newDistance;
     private final int targetDistance = 20;
     
     private final boolean debug = true;
@@ -99,7 +97,7 @@ public class BoundaryFollowingController extends Thread {
                 continue;
             }
             
-            distances = Navigation.calculateDistances(robot.lastIrMeasurement, (int) robot.getTowerAngle().getValue());
+            distances = Navigation.calculateDistances(robot.lastIrMeasurement, distances, (int) robot.getTowerAngle().getValue());
             
             switch (state)
             {
@@ -135,15 +133,19 @@ public class BoundaryFollowingController extends Thread {
                     if (robot.isTranslationFinished()) {
                         if (obstacleSide == LEFT) {
                             //System.out.println("entered obstacleSide == LEFT");
-                            if (distances[1] != 80) {
-                                currentDistance = distances[1];
+                            /*
+                            for (int d : distances) {
+                                System.out.print(d + " ");
                             }
+                            System.out.println();
+                            */
+                            int currentDistance = distances[1];
                             System.out.println("currentDistance: " + currentDistance);
-                            int error = targetDistance - currentDistance;
+                            double error = 0.1 * (targetDistance - currentDistance);
                             Position newTarget = Navigation.calculateNewTarget(robot.getPose(), error, stepDistance);
                             robot.setTarget(newTarget.getXValue(), newTarget.getYValue());
                         } else if (obstacleSide == RIGHT) {
-                            currentDistance = distances[3];
+                            int currentDistance = distances[3];
                             int error = -(targetDistance - currentDistance);
                         } else if (obstacleSide == FORWARDS) {
                             

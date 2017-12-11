@@ -138,16 +138,19 @@ public class NavigationTest {
     /**
      * Test of calculateDistances method, of class Navigation.
      */
-    //@Test
+    @Test
     public void testCalculateDistances() {
         System.out.println("calculateDistances");
-        double[] measurements = {Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY};
-        int servoStep = 90;
-        int[] expResult = null;
-        int[] result = Navigation.calculateDistances(measurements, servoStep);
+        //double[] measurements = {Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY};
+        double[] measurements = {10, 40, 40, 40};
+        int[] distances = {34, 34, 34, 34};
+        int servoStep = 91;
+        //int[] expResult = null;
+        int[] result = Navigation.calculateDistances(measurements, distances, servoStep);
         for (int r : result) {
-            System.out.println(r);
+            System.out.print(r + " ");
         }
+        System.out.println();
         //assertArrayEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
@@ -156,7 +159,7 @@ public class NavigationTest {
     /**
      * Test of calculateNewTarget method, of class Navigation.
      */
-    @Test
+    //@Test
     public void testCalculateNewTarget() {
         System.out.println("calculateNewTarget");
         Pose currentPose = new Pose(0, 0, 90);

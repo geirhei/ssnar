@@ -130,17 +130,24 @@ public class Navigation {
     /**
      * Calculates and fills an int[4] array with the measured distances in all four directions around the robot.
      * In the order [d_front, d_left, d_back, d_right]
-     * Only updates values when servo step is below 30 and above 60. Else the distances are set to 0.
+     * Only updates values when servo step is below 30 and above 60. Else the distances are unchanged,
+     * or set to max line of sight if == 0
      * 
      * @param measurements double[]
+     * @param distances int[] containing the distances in the respective distances around the robot.
      * @param servoStep the number of steps the servo tower is rotated
-     * @return array of integer distance values
+     * @return updated distance array of integers
      */
-    public static int[] calculateDistances(double[] measurements, int servoStep) {
+    public static int[] calculateDistances(double[] measurements, int[] distances, int servoStep) {
         if (measurements.length != 4) {
+            System.out.println("Invalid length of []measuremenets.");
             return null;
         }
-        int[] distances = new int[4];
+        if (servoStep < 0 || servoStep > 90) {
+            System.out.println("Servo step out of range.");
+            return null;
+        }
+        
         double servoStepRad = Math.toRadians(servoStep);
         if (servoStep >= 0 && servoStep <= 30) {
             for (int i = 0; i < measurements.length; i++) {
@@ -151,14 +158,10 @@ public class Navigation {
             for (int i = 1; i < measurements.length; i++) {
                 distances[i] = (int) (measurements[i-1] * Math.sin(servoStepRad));
             }
-        } else {
-            for (int i = 0; i < measurements.length; i++) {
-                distances[i] = 80; // distanceThreshold
-            }
         }
-        for (int i = 0; i < measurements.length; i++) {
-            if (distances[i] == 0) {
-                distances[i] = 80; // distanceThreshold
+        for (int i = 0; i < distances.length; i++) {
+            if (distances[i] == 0 || distances[i] > 40) {
+                distances[i] = 40;
             }
         }
         return distances;
@@ -166,24 +169,27 @@ public class Navigation {
     
     
     public static Position calculateNewTarget(Pose currentPose, double error, double stepDistance) {
+        /*
         if (Math.abs(error) > stepDistance) {
             error = (double) stepDistance / 10.0;
         }
-        
+        */
         //System.out.println("error: " + error);
         double thetaOffsetRad = Math.asin((double)error / (double)stepDistance);
-        System.out.println("thetaOffsetRad: " + thetaOffsetRad);
+        //System.out.println("thetaOffsetRad: " + thetaOffsetRad);
         double thetaOffset = Math.toDegrees(thetaOffsetRad);
+        /*
         if (thetaOffset < -45) {
             thetaOffset = -45;
         } else if (thetaOffset > 45) {
             thetaOffset = 45;
         }
+        */
         double thetaTarget = currentPose.getHeading().getValue() + thetaOffset;
         // System.out.println("theta: " + theta);
         Position offset = polar2cart((int) thetaTarget, stepDistance);
         Position target = Position.sum(currentPose.getPosition(), offset);
-        System.out.println("x: " + target.getXValue() + ", y: " + target.getYValue());
+        //System.out.println("x: " + target.getXValue() + ", y: " + target.getYValue());
         return target;
     }
     
