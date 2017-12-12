@@ -197,7 +197,7 @@ public class MappingController extends Thread {
                             //Position inf = new Position(Double.MAX_VALUE, Double.MAX_VALUE);
                             //pointBuffers.get(j).add(inf);
                         }
-                        if (pointBuffers.get(j).size() > 50) {
+                        if (pointBuffers.get(j).size() > 15) {
                             mergeNeeded = true;
                         }
                     }
@@ -212,12 +212,24 @@ public class MappingController extends Thread {
                         }
                         
                         /*
+                        for (int m = 0; m < lineRepository.size(); m++) {
+                            Position start = lineRepository.get(m).getA();
+                            Position end = lineRepository.get(m).getB();
+                            map.resize(start);
+                            map.resize(end);
+                            ArrayList<MapLocation> line = getLineBetweenPoints(map.findLocationInMap(start), map.findLocationInMap(end));
+                            line.forEach((location) -> {
+                                map.addMeasurement(location, true);
+                            });
+                        }
+                        */
+                        
                         System.out.println("pointBuffer0 size: " + pointBuffers.get(0).size());
                         System.out.println("Lines created.");
                         System.out.println("lineBuffer0 size: " + lineBuffers.get(0).size());
                         System.out.println("Lines merged.");
                         System.out.println("lineRepository size: " + lineRepository.size());
-                        */
+                        
                         mergeNeeded = false;
                     }
                     

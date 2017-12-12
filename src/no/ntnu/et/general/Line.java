@@ -178,6 +178,7 @@ public class Line {
                 }
             }
             
+            System.out.println("length :" + line.getLength());
             // Discard lines that are too long
             if (line.getLength() < 20) {
                 lineBuffer.add(line);
@@ -198,8 +199,8 @@ public class Line {
             lineBuffer.clear();
             return;
         }
-        
-        double u = 20; // slope tolerance
+          
+        double u = 0.5; // slope tolerance
         double d = 20; // distance tolerance
         
         ArrayList<Line> toAdd = new ArrayList<Line>();
@@ -219,7 +220,7 @@ public class Line {
                     double dist2 = Position.distanceBetween(bufferLine.getA(), line.getB());
                     double dist3 = Position.distanceBetween(bufferLine.getB(), line.getA());
                     double dist4 = Position.distanceBetween(bufferLine.getB(), line.getB());
-                    if (dist1 <= d || dist4 <= d) {
+                    if (dist1 <= d && dist4 <= d) {
                         Line newLine = bufferLine;
                         iter2.set(newLine);
                     } else if (dist2 <= d) {
@@ -273,7 +274,7 @@ public class Line {
         double y2 = b.getYValue();
         double x3 = c.getXValue();
         double y3 = c.getYValue();
-        return Math.abs((y1 - y2) * (x1 - x3) - (y1 - y3) * (x1 - x2)) <= 1e-9; // epsilon because of float comparison
+        return Math.abs((y1 - y2) * (x1 - x3) - (y1 - y3) * (x1 - x2)) <= 1e-9; // epsilon because of float comparison 1e-9
     }
     
     /**

@@ -49,7 +49,7 @@ public class BoundaryFollowingController extends Thread {
     private int obstacleSide = -1;
     private final int targetDistance = 20;
     
-    private final boolean debug = true;
+    private final boolean debug = false;
     
     
     public BoundaryFollowingController(SimRobot robot) {
@@ -103,7 +103,7 @@ public class BoundaryFollowingController extends Thread {
             {
                 case IDLE: // No obstacles measured nearby
                     if (debug) {System.out.println("IDLE entered.");}
-                    robot.setTarget(0, 80);
+                    robot.setTarget(0, 50);
                     state = TRANSLATING;
                     
                 case TRANSLATING:
@@ -118,7 +118,7 @@ public class BoundaryFollowingController extends Thread {
                     if (obstacleSide != 0) {
                         if (debug) {System.out.println("Stop!");}
                         robot.stop();
-                        state = WALL_FOLLOWING;
+                        //state = WALL_FOLLOWING;
                     }
                     break;
                     
