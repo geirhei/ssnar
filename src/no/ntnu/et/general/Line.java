@@ -187,6 +187,16 @@ public class Line {
         pointBuffer.clear();
     }
     
+    public static ArrayList<Line> mergeSelf(ArrayList<Line> repository) {
+        ArrayList<Line> result = new ArrayList<Line>();
+        ListIterator<Line> iter1 = repository.listIterator();
+        while (iter1.hasNext()) {
+            Line repoLine = iter1.next();
+            
+        }
+        return result;
+    }
+    
     public static void lineMerge(ArrayList<Line> lineBuffer, List<Line> lineRepository) {
         // Array size check here
 
@@ -200,7 +210,7 @@ public class Line {
             return;
         }
           
-        double u = 0.5; // slope tolerance
+        double u = 20; // slope tolerance
         double d = 20; // distance tolerance
         
         ArrayList<Line> toAdd = new ArrayList<Line>();
@@ -233,6 +243,7 @@ public class Line {
                         break;
                     }
                 }
+                
                 if (!iter2.hasNext()) {
                     toAdd.add(bufferLine);
                 }
