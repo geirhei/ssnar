@@ -54,8 +54,9 @@ public class SimRobot {
     private Position targetPosition;
     private int diameter = 10;
     private final int address;
+    private final int maxLineOfSight = 40;
     
-    private double[] distances = new double[360];
+    public int[] circleArr = new int[360];
 
     /**
      * Constructor for Robot.
@@ -85,9 +86,8 @@ public class SimRobot {
         translationFinished = true;
         targetPosition = Position.copy(pose.getPosition());
         
-        
-        for (int i = 0; i < distances.length; i++) {
-            distances[i] = Double.POSITIVE_INFINITY;
+        for (int i : circleArr) {
+            i = maxLineOfSight;
         }
         
         if (name.equals("SLAM")) {
@@ -101,6 +101,7 @@ public class SimRobot {
         return lastIrMeasurement;
     }
     
+    /*
     void updateDistances() {
         double towerHeading = towerAngle.getValue();
         double robotHeading = pose.getHeading().getValue();
@@ -120,6 +121,7 @@ public class SimRobot {
             }
         }
     }
+    */
     
     void stop() {
         //setTarget(pose.getPosition().getXValue(), pose.getPosition().getYValue());
@@ -127,10 +129,6 @@ public class SimRobot {
             translationFinished = true;
             rotationFinished = true;
         }
-    }
-    
-    double[] getDistances() {
-        return distances;
     }
     
     double getMaxSensorDistance() {

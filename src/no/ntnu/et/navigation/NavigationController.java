@@ -16,13 +16,10 @@ package no.ntnu.et.navigation;
  */
 import java.util.ArrayList;
 import java.util.HashMap;
-import static no.ntnu.et.general.Navigation.getShortestDistanceAngle;
 import no.ntnu.et.general.Position;
-import static no.ntnu.et.general.Utilities.getMeasurementHeadings;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.tem.application.Application;
 import no.ntnu.tem.application.RobotController;
-import no.ntnu.tem.robot.Measurement;
 import no.ntnu.tem.robot.Robot;
 import org.ejml.simple.SimpleMatrix;
 

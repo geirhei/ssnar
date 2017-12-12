@@ -39,20 +39,6 @@ public class NavigationTest {
     }
 
     /**
-     * Test of getShortestDistanceAngle method, of class Navigation.
-     */
-    //@Test
-    public void testGetShortestDistanceAngle() {
-        System.out.println("getShortestDistanceAngle");
-        int[] distances = null;
-        int expResult = 0;
-        int result = Navigation.getShortestDistanceAngle(distances);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
      * Test of checkCollision method, of class Navigation.
      */
     //@Test
@@ -124,21 +110,25 @@ public class NavigationTest {
     /**
      * Test of getShortestDistanceHeading method, of class Navigation.
      */
-    //@Test
+    @Test
     public void testGetShortestDistanceHeading() {
         System.out.println("getShortestDistanceHeading");
-        double[] distances = null;
-        int expResult = 0;
-        int result = Navigation.getShortestDistanceHeading(distances);
+        int[] circleArr = new int[360];
+        for (int i = 0; i < circleArr.length; i++) {
+            circleArr[i] = Integer.MAX_VALUE;
+        }
+        circleArr[90] = 39;
+        int expResult = 90;
+        int result = Navigation.getShortestDistanceHeading(circleArr);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //fail("The test case is a prototype.");
     }
 
     /**
      * Test of calculateDistances method, of class Navigation.
      */
-    @Test
+    //@Test
     public void testCalculateDistances() {
         System.out.println("calculateDistances");
         //double[] measurements = {Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY};
@@ -170,6 +160,25 @@ public class NavigationTest {
         Position result = Navigation.calculateNewTarget(currentPose, error, stepDistance);
         System.out.println("x: " + result.getXValue() + ", y: " + result.getYValue());
         //assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of updateCircleArr method, of class Navigation.
+     */
+    //@Test
+    public void testUpdateCircleArr() {
+        System.out.println("updateCircleArr");
+        int[] circleArr = new int[360];
+        for (int i = 0; i < circleArr.length; i++) {
+            circleArr[i] = Integer.MAX_VALUE;
+        }
+        double[] measurement = {20.0, 20.0, 20.0, 20.0};
+        int robotHeading = 90;
+        int servoStep = 20;
+        Navigation.updateCircleArr(circleArr, measurement, robotHeading, servoStep);
+        System.out.print(circleArr[109]);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }

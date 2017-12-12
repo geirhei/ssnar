@@ -18,14 +18,14 @@ public class Navigation {
     /**
      * Method for retrieving the index of the array that has the lowest value
      * 
-     * @param distances array [0,360)
-     * @return int angle [0,360)
+     * @param circleArr array [0,360)
+     * @return int angle [0,360). -1 if no distances are measured in any direction
      */
-    public static int getShortestDistanceAngle(int[] distances) {
+    public static int getShortestDistanceHeading(int[] circleArr) {
         int angle = -1;
-        int shortest = Integer.MAX_VALUE;
-        for (int i = 0; i < distances.length; i++) {
-            if (distances[i] < shortest) {
+        int shortest = 40;
+        for (int i = 0; i < circleArr.length; i++) {
+            if (circleArr[i] < shortest) {
                 angle = i;
             }
         }
@@ -204,6 +204,27 @@ public class Navigation {
         return new Position(x, y);
     }
     
+    public static void updateCircleArr(int[] circleArr, double[] measurement, int robotHeading, int servoStep) {
+        if (circleArr.length != 360 || measurement.length != 4) {
+            System.out.println("Invalid array length.");
+            return;
+        }
+        
+        for (int i = 0; i < measurement.length; i++) {
+            int currentAngle = robotHeading + servoStep + i * 90;
+            if (currentAngle >= 360) {
+                currentAngle -= 360;
+            } else if (currentAngle < 0) {
+                currentAngle += 360;
+            }
+            if (measurement[i] > 0 && measurement[i] <= 40) {
+                circleArr[currentAngle] = (int) measurement[i];
+            } else {
+                circleArr[currentAngle] = Integer.MAX_VALUE;
+            }
+        }
+    }
+    
     /*
     public static Position calculateNewTarget(Angle shortestHeading, Position currentPos, double stepDistance, int wallSide) {
         if (wallSide != 1 && wallSide != -1) {
@@ -230,6 +251,7 @@ public class Navigation {
      * 
      * @return int in range [0,360) or -1
      */
+    /*
     public static int getShortestDistanceHeading(double[] distances) {
         int shortestDistanceHeading = -1;
         double currentDistance = Double.POSITIVE_INFINITY;
@@ -241,6 +263,7 @@ public class Navigation {
         }
         return shortestDistanceHeading;
     }
+    */
     
     /*
     public static int determineDirection(Angle towerAngle, int[] distances) {
