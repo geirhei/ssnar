@@ -132,7 +132,7 @@ public class Line {
         return new Line(start, vector, length);
     }
     
-    public static void lineCreate(ArrayList<Position> pointBuffer, ArrayList<Line> lineBuffer) {
+    public static void lineCreate(ArrayList<Position> pointBuffer, List<Line> lineBuffer) {
         if (pointBuffer.size() <= 1) {
             pointBuffer.clear();
             return;
@@ -183,6 +183,7 @@ public class Line {
             if (line.getLength() < 20) {
                 lineBuffer.add(line);
             }
+            
         }
         pointBuffer.clear();
     }
@@ -230,7 +231,7 @@ public class Line {
                     double dist2 = Position.distanceBetween(bufferLine.getA(), line.getB());
                     double dist3 = Position.distanceBetween(bufferLine.getB(), line.getA());
                     double dist4 = Position.distanceBetween(bufferLine.getB(), line.getB());
-                    if (dist1 <= d && dist4 <= d) {
+                    if (dist1 <= d || dist4 <= d) {
                         Line newLine = bufferLine;
                         iter2.set(newLine);
                     } else if (dist2 <= d) {
@@ -256,7 +257,77 @@ public class Line {
                 lineRepository.add(bufferLine);
             }
         }
-        lineBuffer.clear();
+        //lineBuffer.clear();
+    }
+    
+    public static void lineMerge1(List<Line> buffer, List<Line> repository) {
+        if (repository.isEmpty()) {
+            synchronized (repository) {
+                for (Line bufferLine : buffer) {
+                    repository.add(bufferLine);
+                }
+            }
+            buffer.clear();
+            return;
+        }
+        
+        // is meargeable?
+    }
+    
+    private boolean isMergeable1(Line line1, Line line2) {
+        double a = 10; // deg
+        double b = 20; // deg
+        double c = 10; // mm
+        double d = 30; // mm
+        double e = 60; // mm
+        //double f =  // 
+        //double g = 
+        double h = 10; // mm
+        double i = 20; // mm
+        
+        return true;
+        
+    }
+    
+    /**
+     * Angle between the two line segments.
+     * 
+     * @param angle
+     * @return 
+     */
+    static double u1(double angle) {
+        double a = 10.0;
+        double b = 20.0;
+        double res = 1.0;
+        if (angle >= 0 && angle < a) {
+            res = 1.0 - 0.5 / a * angle;
+        } else if (angle >= a && angle <= b) {
+            res = 0.5 - 0.5 / (b - a) * (angle - a);
+        } else if (angle > b) {
+            res = 0.0;
+        }
+        return res;
+    }
+    
+    /**
+     * Maximum distance of each line's midpoint to the other line.
+     * 
+     * @param dist
+     * @return 
+     */
+    static double u2(double dist) {
+        double c = 10.0;
+        double d = 30.0;
+        double e = 60.0;
+        double res = 1.0;
+        if (dist > c && dist < d) {
+            res = 0.5;
+        } else if (dist >= d && dist <= e) {
+            res = 0.5 - 0.5 / (e - d) * dist;
+        } else if (dist > e) {
+            res = 0.0;
+        }
+        return res;
     }
     
     private static boolean isMergeable(Line line1, Line line2, double u, double d) {
@@ -285,7 +356,7 @@ public class Line {
         double y2 = b.getYValue();
         double x3 = c.getXValue();
         double y3 = c.getYValue();
-        return Math.abs((y1 - y2) * (x1 - x3) - (y1 - y3) * (x1 - x2)) <= 1e-9; // epsilon because of float comparison 1e-9
+        return Math.abs((y1 - y2) * (x1 - x3) - (y1 - y3) * (x1 - x2)) <= 0.5; // epsilon because of float comparison 1e-9
     }
     
     /**

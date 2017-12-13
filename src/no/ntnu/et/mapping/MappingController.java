@@ -40,7 +40,8 @@ public class MappingController extends Thread {
     private boolean mergeNeeded = false;
     
     ArrayList<ArrayList<Position>> pointBuffers;
-    ArrayList<ArrayList<Line>> lineBuffers;
+    //ArrayList<ArrayList<Line>> lineBuffers;
+    List<Line> lineBuffer;
     List<Line> lineRepository;
 
     /**
@@ -59,7 +60,8 @@ public class MappingController extends Thread {
         mapCleaner.start();
         mapCleaner.setName("Map Cleaner");
         pointBuffers = map.getPointBuffers();
-        lineBuffers = map.getLineBuffers();
+        //lineBuffers = map.getLineBuffers();
+        lineBuffer = map.getLineBuffer();
         lineRepository = map.getLineRepository();
         
     }
@@ -204,13 +206,14 @@ public class MappingController extends Thread {
                     
                     if (mergeNeeded) {
                         for (int k = 0; k < 4; k++) {
-                            Line.lineCreate(pointBuffers.get(k), lineBuffers.get(k));
+                            Line.lineCreate(pointBuffers.get(k), lineBuffer);
                         }
                         
+                        /*
                         for (int l = 0; l < 4; l++) {
                             Line.lineMerge(lineBuffers.get(l), lineRepository);
                         }
-                        
+                        */
                         /*
                         for (int m = 0; m < lineRepository.size(); m++) {
                             Position start = lineRepository.get(m).getA();
@@ -226,9 +229,10 @@ public class MappingController extends Thread {
                         
                         System.out.println("pointBuffer0 size: " + pointBuffers.get(0).size());
                         System.out.println("Lines created.");
-                        System.out.println("lineBuffer0 size: " + lineBuffers.get(0).size());
-                        System.out.println("Lines merged.");
-                        System.out.println("lineRepository size: " + lineRepository.size());
+                        System.out.println("lineBuffer size: " + lineBuffer.size());
+                        //System.out.println("lineBuffer0 size: " + lineBuffers.get(0).size());
+                        //System.out.println("Lines merged.");
+                        //System.out.println("lineRepository size: " + lineRepository.size());
                         
                         mergeNeeded = false;
                     }

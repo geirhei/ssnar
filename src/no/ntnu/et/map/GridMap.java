@@ -60,12 +60,13 @@ public class GridMap{
     private ArrayList<Position> StateSpace = new ArrayList();
     private ArrayList<Observation> observationHistory = new ArrayList();
     private ArrayList<int[]> actionHistory = new ArrayList();
-    private ArrayList<Position> PointBufferF = new ArrayList();
-    private ArrayList<Position> PointBufferL = new ArrayList();
-    private ArrayList<Position> PointBufferB = new ArrayList();
-    private ArrayList<Position> PointBufferR = new ArrayList();
+    //private ArrayList<Position> PointBufferF = new ArrayList();
+    //private ArrayList<Position> PointBufferL = new ArrayList();
+    //private ArrayList<Position> PointBufferB = new ArrayList();
+    //private ArrayList<Position> PointBufferR = new ArrayList();
     private ArrayList<ArrayList<Position>> pointBuffers = new ArrayList<ArrayList<Position>>();
-    private ArrayList<ArrayList<Line>> lineBuffers = new ArrayList<ArrayList<Line>>();
+    //private ArrayList<ArrayList<Line>> lineBuffers = new ArrayList<ArrayList<Line>>();
+    private List<Line> lineBuffer;
     //private ArrayList<Line> lineRepository = new ArrayList<Line>();
     private List<Line> lineRepository;
     
@@ -95,8 +96,9 @@ public class GridMap{
             vertices.add( new Vertex(Vertex.INTERIOR, new Position(25, 25)) );
             for (int k = 0; k < 4; k++) {
                 pointBuffers.add(new ArrayList<Position>());
-                lineBuffers.add(new ArrayList<Line>());
+                //lineBuffers.add(new ArrayList<Line>());
             }
+            lineBuffer = Collections.synchronizedList(new ArrayList<Line>());
             lineRepository = Collections.synchronizedList(new ArrayList<Line>());
         }
     }
@@ -105,8 +107,14 @@ public class GridMap{
         return pointBuffers;
     }
     
+    /*
     public ArrayList<ArrayList<Line>> getLineBuffers() {
         return lineBuffers;
+    }
+    */
+    
+    public List<Line> getLineBuffer() {
+        return lineBuffer;
     }
     
     public List<Line> getLineRepository() {

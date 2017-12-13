@@ -178,5 +178,61 @@ public class LineTest {
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
+
+    /**
+     * Test of mergeSelf method, of class Line.
+     */
+    //@Test
+    public void testMergeSelf() {
+        System.out.println("mergeSelf");
+        ArrayList<Line> repository = null;
+        ArrayList<Line> expResult = null;
+        ArrayList<Line> result = Line.mergeSelf(repository);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of lineMerge1 method, of class Line.
+     */
+    //@Test
+    public void testLineMerge1() {
+        System.out.println("lineMerge1");
+        List<Line> buffer = null;
+        List<Line> repository = null;
+        Line.lineMerge1(buffer, repository);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of u1 method, of class Line.
+     */
+    @Test
+    public void testU1() {
+        System.out.println("u1");
+        double angle = 40;
+        double expResult = 0;
+        double result = Line.u1(angle);
+        assertEquals(expResult, result, 0.0);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of u2 method, of class Line.
+     */
+    //@Test
+    public void testU2() {
+        System.out.println("u2");
+        double dist = 0.0;
+        Line instance = null;
+        double expResult = 0.0;
+        double result = instance.u2(dist);
+        assertEquals(expResult, result, 0.0);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
     
 }
