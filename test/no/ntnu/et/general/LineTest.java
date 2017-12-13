@@ -207,61 +207,91 @@ public class LineTest {
     }
 
     /**
-     * Test of u1 method, of class Line.
+     * Test of getMidpoint method, of class Line.
      */
     @Test
-    public void testU1() {
-        System.out.println("u1");
-        double angle = 40;
-        double expResult = 0;
-        double result = Line.u1(angle);
-        assertEquals(expResult, result, 0.0);
+    public void testGetMidpoint() {
+        System.out.println("getMidpoint");
+        Line line = new Line(new Position(2, 2), new Position(-2, -2));
+        //Position expResult = null;
+        Position result = Line.getMidpoint(line);
+        System.out.println("x: " + result.getXValue() + ", y: " + result.getYValue());
+        //assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }
 
     /**
-     * Test of u2 method, of class Line.
+     * Test of isMergeable1 method, of class Line.
      */
-    @Test
-    public void testU2() {
-        System.out.println("u2");
-        double dist = 61;
-        double expResult = 0;
-        double result = Line.u2(dist);
-        assertEquals(expResult, result, 0.0);
+    //@Test
+    public void testIsMergeable1() {
+        System.out.println("isMergeable1");
+        Line line1 = null;
+        Line line2 = null;
+        boolean expResult = false;
+        boolean result = Line.isMergeable1(line1, line2);
+        assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+        fail("The test case is a prototype.");
     }
 
     /**
-     * Test of u3 method, of class Line.
+     * Test of calculateU1 method, of class Line.
      */
-    @Test
-    public void testU3() {
-        System.out.println("u3");
-        double dist = 21;
-        double lenA = 20.0;
-        double lenB = 10.0;
-        double expResult = 0;
-        double result = Line.u3(dist, lenA, lenB);
-        assertEquals(expResult, result, 0.0);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of u4 method, of class Line.
-     */
-    @Test
-    public void testU4() {
-        System.out.println("u4");
-        double dist = 20;
+    //@Test
+    public void testCalculateU1() {
+        System.out.println("calculateU1");
+        double angle = 0.0;
         double expResult = 0.0;
-        double result = Line.u4(dist);
+        double result = Line.calculateU1(angle);
         assertEquals(expResult, result, 0.0);
         // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of calculateU2 method, of class Line.
+     */
+    //@Test
+    public void testCalculateU2() {
+        System.out.println("calculateU2");
+        double dist = 0.0;
+        double expResult = 0.0;
+        double result = Line.calculateU2(dist);
+        assertEquals(expResult, result, 0.0);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of calculateU3 method, of class Line.
+     */
+    //@Test
+    public void testCalculateU3() {
+        System.out.println("calculateU3");
+        double dist = 0.0;
+        double lenA = 0.0;
+        double lenB = 0.0;
+        double expResult = 0.0;
+        double result = Line.calculateU3(dist, lenA, lenB);
+        assertEquals(expResult, result, 0.0);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of calculateU4 method, of class Line.
+     */
+    //@Test
+    public void testCalculateU4() {
+        System.out.println("calculateU4");
+        double dist = 0.0;
+        double expResult = 0.0;
+        double result = Line.calculateU4(dist);
+        assertEquals(expResult, result, 0.0);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
     }
     
 }

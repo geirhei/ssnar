@@ -64,6 +64,12 @@ public class Line {
     public double[] getStart() {
         return start;
     }
+    
+    public static Position getMidpoint(Line line) {
+        double midX = (line.getA().getXValue() + line.getB().getXValue()) / 2;
+        double midY = (line.getA().getYValue() + line.getB().getYValue()) / 2;
+        return new Position(midX, midY);
+    }
 
     /**
      * Returns the two values specifying the direction of the line
@@ -274,16 +280,12 @@ public class Line {
         // is meargeable?
     }
     
-    private boolean isMergeable1(Line line1, Line line2) {
-        double a = 10; // deg
-        double b = 20; // deg
-        double c = 10; // mm
-        double d = 30; // mm
-        double e = 60; // mm
-        //double f =  // 
-        //double g = 
-        double h = 10; // mm
-        double i = 20; // mm
+    static boolean isMergeable1(Line line1, Line line2) {
+        double slope1 = line1.getSlope();
+        double slope2 = line2.getSlope();
+        double angle = Math.abs(slope2 - slope1);
+        double u1 = calculateU1(angle);
+        
         
         return true;
         
@@ -295,7 +297,7 @@ public class Line {
      * @param angle
      * @return 
      */
-    static double u1(double angle) {
+    static double calculateU1(double angle) {
         double a = 10.0;
         double b = 20.0;
         double res = 1.0;
@@ -315,7 +317,7 @@ public class Line {
      * @param dist
      * @return 
      */
-    static double u2(double dist) {
+    static double calculateU2(double dist) {
         double c = 10.0;
         double d = 30.0;
         double e = 60.0;
@@ -338,7 +340,7 @@ public class Line {
      * @param lenB
      * @return 
      */
-    static double u3(double dist, double lenA, double lenB) {
+    static double calculateU3(double dist, double lenA, double lenB) {
         double f;
         if (lenA <= lenB) {
             f = lenA;
@@ -361,7 +363,7 @@ public class Line {
      * @param dist
      * @return 
      */
-    static double u4(double dist) {
+    static double calculateU4(double dist) {
         double h = 10.0;
         double i = 20.0;
         double res = 1.0;
@@ -373,6 +375,7 @@ public class Line {
         return res;
     }
     
+    /*
     private static boolean isMergeable(Line line1, Line line2, double u, double d) {
         double m1 = line1.getSlope();
         double m2 = line2.getSlope();
@@ -383,6 +386,7 @@ public class Line {
         double dist4 = Position.distanceBetween(line1.getB(), line2.getB());
         return ( (m <= u) && (dist1 <= d || dist2 <= d || dist3 <= d || dist4 <= d) );
     }
+    */
     
     /**
      * Determines if 3 given points are collinear
