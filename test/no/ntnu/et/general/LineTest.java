@@ -223,16 +223,15 @@ public class LineTest {
     /**
      * Test of u2 method, of class Line.
      */
-    //@Test
+    @Test
     public void testU2() {
         System.out.println("u2");
-        double dist = 0.0;
-        Line instance = null;
-        double expResult = 0.0;
-        double result = instance.u2(dist);
+        double dist = 61;
+        double expResult = 0;
+        double result = Line.u2(dist);
         assertEquals(expResult, result, 0.0);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //fail("The test case is a prototype.");
     }
     
 }

@@ -320,10 +320,10 @@ public class Line {
         double d = 30.0;
         double e = 60.0;
         double res = 1.0;
-        if (dist > c && dist < d) {
+        if (dist > c && dist <= d) {
             res = 0.5;
-        } else if (dist >= d && dist <= e) {
-            res = 0.5 - 0.5 / (e - d) * dist;
+        } else if (dist > d && dist <= e) {
+            res = 0.5 - 0.5 / (e - d) * (dist - d);
         } else if (dist > e) {
             res = 0.0;
         }
