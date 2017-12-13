@@ -233,5 +233,35 @@ public class LineTest {
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }
+
+    /**
+     * Test of u3 method, of class Line.
+     */
+    @Test
+    public void testU3() {
+        System.out.println("u3");
+        double dist = 21;
+        double lenA = 20.0;
+        double lenB = 10.0;
+        double expResult = 0;
+        double result = Line.u3(dist, lenA, lenB);
+        assertEquals(expResult, result, 0.0);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of u4 method, of class Line.
+     */
+    @Test
+    public void testU4() {
+        System.out.println("u4");
+        double dist = 20;
+        double expResult = 0.0;
+        double result = Line.u4(dist);
+        assertEquals(expResult, result, 0.0);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
     
 }

@@ -330,6 +330,49 @@ public class Line {
         return res;
     }
     
+    /**
+     * Distance between the midpoints of the two-line segments.
+     * 
+     * @param dist
+     * @param lenA
+     * @param lenB
+     * @return 
+     */
+    static double u3(double dist, double lenA, double lenB) {
+        double f;
+        if (lenA <= lenB) {
+            f = lenA;
+        } else {
+            f = lenB;
+        }
+        double g = f + 10.0;
+        double res = 1.0;
+        if (dist > f && dist < g) {
+            res = 1.0 - 1.0 / (g - f) * (dist - f);
+        } else if (dist >= g) {
+            res = 0.0;
+        }
+        return res;
+    }
+    
+    /**
+     * Minimum distance from the endpoint of a line-segment to the other line-segment.
+     * 
+     * @param dist
+     * @return 
+     */
+    static double u4(double dist) {
+        double h = 10.0;
+        double i = 20.0;
+        double res = 1.0;
+        if (dist > h && h < i) {
+            res = 1.0 - 1.0 / (i - h) * (dist - h);
+        } else if (dist >= i) {
+            res = 0.0;
+        }
+        return res;
+    }
+    
     private static boolean isMergeable(Line line1, Line line2, double u, double d) {
         double m1 = line1.getSlope();
         double m2 = line2.getSlope();
