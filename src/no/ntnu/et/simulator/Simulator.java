@@ -200,7 +200,9 @@ public class Simulator {
         private boolean paused;
         public int update[];
         
-        private final BoundaryFollowingController boundaryFollowingController;
+        //private final BoundaryFollowingController boundaryFollowingController;
+        private final NxtNavigation nxtNavigation;
+        private final NxtMapping nxtMapping;
 
         /**
          * Constructor
@@ -213,7 +215,9 @@ public class Simulator {
             myID = robot.getId();
             noiseGenerator = new Random();
             paused = false;
-            boundaryFollowingController = new BoundaryFollowingController(myRobot);
+            //boundaryFollowingController = new BoundaryFollowingController(myRobot);
+            nxtNavigation = new NxtNavigation(myRobot);
+            nxtMapping = new NxtMapping(myRobot);
         }
 
         void pause() {
@@ -231,6 +235,9 @@ public class Simulator {
         @Override
         public void run() {
             //boundaryFollowingController.start();
+            nxtNavigation.start();
+            nxtMapping.start();
+            
             int counter = 0;
 
             HandshakeMessage hm = myRobot.generateHandshake();
