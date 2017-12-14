@@ -204,7 +204,7 @@ public class Line {
         return result;
     }
     
-    public static void lineMerge(ArrayList<Line> lineBuffer, List<Line> lineRepository) {
+    public static void lineMerge(List<Line> lineBuffer, List<Line> lineRepository) {
         // Array size check here
 
         if (lineRepository.isEmpty()) {
@@ -217,13 +217,14 @@ public class Line {
             return;
         }
           
-        double u = 20; // slope tolerance
-        double d = 20; // distance tolerance
+        double u = 0; // slope tolerance
+        double d = 0; // distance tolerance
         
         ArrayList<Line> toAdd = new ArrayList<Line>();
         ListIterator<Line> iter1 = lineBuffer.listIterator();
         while (iter1.hasNext()) {
             Line bufferLine = iter1.next();
+            boolean merged = false;
             double m1 = bufferLine.getSlope();
             synchronized (lineRepository) {
                 ListIterator<Line> iter2 = lineBuffer.listIterator();
@@ -231,12 +232,13 @@ public class Line {
                     Line line = iter2.next();
                     double m2 = line.getSlope();
                     if (!(Math.abs(m1 - m2) <= u)) {
-                        break;
+                        continue;
                     }
                     double dist1 = Position.distanceBetween(bufferLine.getA(), line.getA());
                     double dist2 = Position.distanceBetween(bufferLine.getA(), line.getB());
                     double dist3 = Position.distanceBetween(bufferLine.getB(), line.getA());
                     double dist4 = Position.distanceBetween(bufferLine.getB(), line.getB());
+                    
                     if (dist1 <= d || dist4 <= d) {
                         Line newLine = bufferLine;
                         iter2.set(newLine);
@@ -247,13 +249,13 @@ public class Line {
                         Line newLine = new Line(bufferLine.getA(), line.getB());
                         iter2.set(newLine);
                     } else {
-                        break;
+                        continue;
                     }
+                    merged = true;
                 }
-                
-                if (!iter2.hasNext()) {
-                    toAdd.add(bufferLine);
-                }
+            }
+            if (!merged) {
+                toAdd.add(bufferLine);
             }
         }
         
@@ -263,7 +265,7 @@ public class Line {
                 lineRepository.add(bufferLine);
             }
         }
-        //lineBuffer.clear();
+        lineBuffer.clear();
     }
     
     public static void lineMerge1(List<Line> buffer, List<Line> repository) {
@@ -280,15 +282,31 @@ public class Line {
         // is meargeable?
     }
     
-    static boolean isMergeable1(Line line1, Line line2) {
-        double slope1 = line1.getSlope();
-        double slope2 = line2.getSlope();
-        double angle = Math.abs(slope2 - slope1);
+    static boolean isMergeable(Line lineA, Line lineB) {
+        //u1
+        double slopeA = lineA.getSlope();
+        double slopeB = lineB.getSlope();
+        double angle = Math.abs(slopeB - slopeA);
         double u1 = calculateU1(angle);
+        System.out.println("u1: " + u1);
         
+        // u2
+        Position midA = getMidpoint(lineA);
+        Position midB = getMidpoint(lineB);
+        // double u2 = calculateU2()
         
-        return true;
+        //u3
+        double midPointDist = Position.distanceBetween(midA, midB);
+        double lengthA = lineA.getLength();
+        double lengthB = lineB.getLength();
+        double u3 = calculateU3(midPointDist, lengthA, lengthB);
+        System.out.println("u3: " + u3);
         
+        //u4
+        // double u4 = calculateU4()
+        
+        //double similarityThreshold = 0.6;
+        return (u1 >= 0.6 && u3 >= 0.6); // add u2 and u4
     }
     
     /**

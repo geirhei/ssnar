@@ -105,7 +105,7 @@ public class MapGraphic extends JPanel {
         numberOfColumns = gridmap.getNumberOfColumns();
         cellSize = gridmap.getCellSize();
         paintMap(g2D);
-        paintLines(g2D, gridmap.getLineBuffer());
+        paintLines(g2D, gridmap.getLineRepository());
         
         paintRobots(g2D);
         g2D.setTransform(initial);

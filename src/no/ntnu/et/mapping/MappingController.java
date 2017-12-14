@@ -209,6 +209,8 @@ public class MappingController extends Thread {
                             Line.lineCreate(pointBuffers.get(k), lineBuffer);
                         }
                         
+                        Line.lineMerge(lineBuffer, lineRepository);
+                        
                         /*
                         for (int l = 0; l < 4; l++) {
                             Line.lineMerge(lineBuffers.get(l), lineRepository);
@@ -231,8 +233,8 @@ public class MappingController extends Thread {
                         System.out.println("Lines created.");
                         System.out.println("lineBuffer size: " + lineBuffer.size());
                         //System.out.println("lineBuffer0 size: " + lineBuffers.get(0).size());
-                        //System.out.println("Lines merged.");
-                        //System.out.println("lineRepository size: " + lineRepository.size());
+                        System.out.println("Lines merged.");
+                        System.out.println("lineRepository size: " + lineRepository.size());
                         
                         mergeNeeded = false;
                     }

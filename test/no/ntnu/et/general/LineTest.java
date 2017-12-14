@@ -209,7 +209,7 @@ public class LineTest {
     /**
      * Test of getMidpoint method, of class Line.
      */
-    @Test
+    //@Test
     public void testGetMidpoint() {
         System.out.println("getMidpoint");
         Line line = new Line(new Position(2, 2), new Position(-2, -2));
@@ -224,16 +224,20 @@ public class LineTest {
     /**
      * Test of isMergeable1 method, of class Line.
      */
-    //@Test
-    public void testIsMergeable1() {
-        System.out.println("isMergeable1");
-        Line line1 = null;
-        Line line2 = null;
-        boolean expResult = false;
-        boolean result = Line.isMergeable1(line1, line2);
+    @Test
+    public void testIsMergeable() {
+        System.out.println("isMergeable");
+        Position a = new Position(-10,2);
+        Position b = new Position(2,2);
+        Position c = new Position(-2,-2);
+        Position d = new Position(2,-2);
+        Line line1 = new Line(a, b);
+        Line line2 = new Line(c, d);
+        boolean expResult = true;
+        boolean result = Line.isMergeable(line1, line2);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //fail("The test case is a prototype.");
     }
 
     /**
@@ -293,5 +297,5 @@ public class LineTest {
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
-    
+
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="NTNU04352" name="no.ntnu.et.general.LineTest" skipped="0" tests="1" time="0.046" timestamp="2017-12-13T14:50:55">
+<testsuite errors="0" failures="0" hostname="NTNU04352" name="no.ntnu.et.general.LineTest" skipped="0" tests="1" time="0.047" timestamp="2017-12-13T15:33:01">
   <properties>
     <property name="libs.jsp-compiler.javadoc" value="" />
     <property name="netbeans.autoupdate.country" value="US" />
@@ -62,7 +62,7 @@
     <property name="copylibs.rebase" value="true" />
     <property name="libs.spring-webmvc3.0.maven-pom" value="" />
     <property name="libs.swing-layout.maven-pom" value="" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner no.ntnu.et.general.LineTest skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=true formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\Users\geirhei\Documents\ssnar\SSNAR\build\test\results\TEST-no.ntnu.et.general.LineTest.xml crashfile=C:\Users\geirhei\Documents\ssnar\SSNAR\build\junitvmwatcher2056553459508081165.properties propsfile=C:\Users\geirhei\Documents\ssnar\SSNAR\build\junit2032042555337471345.properties" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner no.ntnu.et.general.LineTest skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=true formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\Users\geirhei\Documents\ssnar\SSNAR\build\test\results\TEST-no.ntnu.et.general.LineTest.xml crashfile=C:\Users\geirhei\Documents\ssnar\SSNAR\build\junitvmwatcher8773157950523234296.properties propsfile=C:\Users\geirhei\Documents\ssnar\SSNAR\build\junit9128141538981327604.properties" />
     <property name="build.classes.dir" value="build/classes" />
     <property name="netbeans.accept_license_class" value="org.netbeans.license.AcceptLicense" />
     <property name="ant.file.type.SSNAR" value="file" />
@@ -112,7 +112,7 @@
     <property name="javadoc.splitindex" value="true" />
     <property name="file.separator" value="\" />
     <property name="libs.Java-EE-GlassFish-v3-Prelude.maven-pom" value="" />
-    <property name="javac.includesfile.binary" value="C:\Users\geirhei\Documents\ssnar\SSNAR\null1913896084" />
+    <property name="javac.includesfile.binary" value="C:\Users\geirhei\Documents\ssnar\SSNAR\null976988041" />
     <property name="libs.junit_4.maven-pom" value="" />
     <property name="mkdist.disabled" value="false" />
     <property name="javac.test.processorpath" value="../libraries/rxtx-2.1.7.jar:../libraries/RXTXcomm.jar:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/Jama-1.0.3.jar:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/absolutelayout/AbsoluteLayout.jar:..\libraries\EJML-core-0.30-sources.jar:..\libraries\EJML-core-0.30.jar:..\libraries\EJML-dense64-0.30-sources.jar:..\libraries\EJML-dense64-0.30.jar:..\libraries\EJML-denseC64-0.30-sources.jar:..\libraries\EJML-denseC64-0.30.jar:..\libraries\EJML-equation-0.30-sources.jar:..\libraries\EJML-equation-0.30.jar:..\libraries\EJML-simple-0.30-sources.jar:..\libraries\EJML-simple-0.30.jar:build/classes:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/junit_4/junit-4.12.jar:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/hamcrest/hamcrest-core-1.3.jar" />
@@ -452,9 +452,10 @@
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit" />
     <property name="libs.javaee-web-api-7.0.javadoc" value="C:\Program Files (x86)\NetBeans 8.2\enterprise\docs\javaee-doc-api.jar" />
   </properties>
-  <testcase classname="no.ntnu.et.general.LineTest" name="testGetMidpoint" time="0.003" />
-  <system-out><![CDATA[getMidpoint
-x: 0.0, y: 0.0
+  <testcase classname="no.ntnu.et.general.LineTest" name="testIsMergeable" time="0.0" />
+  <system-out><![CDATA[isMergeable
+u1: 1.0
+u3: 0.8343145750507619
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
