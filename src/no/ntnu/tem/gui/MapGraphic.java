@@ -105,7 +105,7 @@ public class MapGraphic extends JPanel {
         numberOfColumns = gridmap.getNumberOfColumns();
         cellSize = gridmap.getCellSize();
         paintMap(g2D);
-        paintLines(g2D, gridmap.getLineRepository());
+        paintLines(g2D, gridmap.lineArray);
         
         paintRobots(g2D);
         g2D.setTransform(initial);
@@ -155,6 +155,7 @@ public class MapGraphic extends JPanel {
     private void paintLines(Graphics2D g2D, List<Line> lines) {
         g2D.setPaint(Color.black);
         //ArrayList<ArrayList<Line>> lineBuffers = gridmap.getLineBuffers();
+        System.out.println("lines length: " + lines.size());
         synchronized (lines) {
             ListIterator<Line> iter = lines.listIterator();
             while (iter.hasNext()) {

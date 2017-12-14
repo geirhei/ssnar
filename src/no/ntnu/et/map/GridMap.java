@@ -70,6 +70,8 @@ public class GridMap{
     //private ArrayList<Line> lineRepository = new ArrayList<Line>();
     private List<Line> lineRepository;
     
+    public List<Line> lineArray;
+    
     /**
      * Constructor for the GridMap class
      * @param cellSize Specifies the size of cells in cm. Cells are quadratic
@@ -100,6 +102,7 @@ public class GridMap{
             }
             lineBuffer = Collections.synchronizedList(new ArrayList<Line>());
             lineRepository = Collections.synchronizedList(new ArrayList<Line>());
+            lineArray = Collections.synchronizedList(new ArrayList<Line>());
         }
     }
     

@@ -10,9 +10,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import no.ntnu.et.general.Angle;
+import no.ntnu.et.general.Line;
 import no.ntnu.et.general.Position;
 import static no.ntnu.et.general.Position.angleBetween;
 import no.ntnu.et.general.Utilities;
+import no.ntnu.et.map.GridMap;
+import no.ntnu.tem.application.Application;
 
 /**
  *
@@ -23,10 +26,12 @@ public class NxtMapping extends Thread {
     private final SimRobot robot;
     public List<Position> observations;
     private final double robotWidth = 19.5;
+    private GridMap map;
     
-    public NxtMapping(SimRobot robot) {
+    public NxtMapping(SimRobot robot, GridMap map) {
         this.robot = robot;
         observations = Collections.synchronizedList(new ArrayList<Position>());
+        this.map = map;
     }
     
     @Override
@@ -67,21 +72,52 @@ public class NxtMapping extends Thread {
                 continue;
             }
             
-            Position s_0 = observations.get(0);
-            Position s_1 = observations.get(1);
-            Position s_2 = observations.get(2);
+            Position s0 = observations.get(0);
+            Position s1 = observations.get(1);
+            Position s2 = observations.get(2);
             // Check if distances greater than robotWidth in order to not block the way
             
-            Angle theta_0 = angleBetween(new Position(0, 0), s_0); // returns negative angle, may need to be changed to positive
-            theta_0.add(360);
-            Angle theta_1 = angleBetween(new Position(0, 0), s_1);
-            theta_1.add(360);
-            Angle theta_2 = angleBetween(new Position(0, 0), s_2);
-            theta_2.add(360);
-            System.out.println("theta_0: " + theta_0.getValue());
-            System.out.println("theta_1: " + theta_1.getValue());
-            System.out.println("theta_2: " + theta_2.getValue());
+            Angle theta0 = angleBetween(new Position(0, 0), s0); // returns negative angle, may need to be changed to positive
+            Angle theta1 = angleBetween(new Position(0, 0), s1);
+            Angle theta2 = angleBetween(new Position(0, 0), s2);
+            theta0.add(360);
+            theta1.add(360);
+            theta2.add(360);
+            double theta0Rad = Math.toRadians(theta0.getValue());
+            double theta1Rad = Math.toRadians(theta1.getValue());
+            double theta2Rad = Math.toRadians(theta2.getValue());
             
+            System.out.println("theta0: " + theta0.getValue());
+            System.out.println("theta1: " + theta1.getValue());
+            System.out.println("theta2: " + theta2.getValue());
+            
+            //double a0 = Math.sin(theta0Rad);
+            double a1 = Math.sin(theta1Rad);
+            //double a2 = Math.sin(theta2Rad);
+            //double b0 = -Math.cos(theta0Rad);
+            double b1 = -Math.cos(theta1Rad);
+            //double b2 = -Math.cos(theta2Rad);
+            //double c0 = -a0 * s0.getXValue() + b0 * s0.getYValue();
+            double c1 = -a1 * s1.getXValue() + b1 * s1.getYValue();
+            //double c2 = -a2 * s2.getXValue() + b2 * s2.getYValue();
+            //double e0 = a0 * s0.getXValue() - b0 * s0.getYValue() + c0;
+            double e1 = a1 * s1.getXValue() - b1 * s1.getYValue() + c1;
+            //double e2 = a2 * s2.getXValue() - b2 * s2.getYValue() + c2;
+            System.out.println("e1: " + e1);
+            
+            double var_wi = 1;
+            if (Math.abs(e1) <= var_wi / 2) {
+                Line newLin1 = new Line(s0, s2);
+                Line newLin2 = new Line(new Position(0, -25), new Position(50, 25));
+                synchronized (map.lineArray) {
+                    map.lineArray.add(newLin1);
+                    map.lineArray.add(newLin2);
+                }
+                
+                System.out.println("Length: " + newLin1.getLength());
+                System.out.println("Line added.");
+            }
+            finished = true;
         }
     }
     

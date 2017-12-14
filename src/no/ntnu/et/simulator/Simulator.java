@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.JFrame;
 import no.ntnu.et.general.Pose;
+import no.ntnu.et.map.GridMap;
 import no.ntnu.tem.communication.DroneUpdateMessage;
 import no.ntnu.tem.communication.HandshakeMessage;
 import no.ntnu.tem.communication.Message;
@@ -34,6 +35,7 @@ public class Simulator {
     private ConcurrentLinkedQueue<Message> inbox;
     private int mode;
     private HashMap<Integer, String> idNameMapping;
+    private GridMap worldMap;
 
     /**
      * Constructor. Creates an instance of the Simulator class with a number of
@@ -43,7 +45,7 @@ public class Simulator {
      * @param robotNames String[]
      * @param mapPath String
      */
-    public Simulator(ConcurrentLinkedQueue<Message> inbox) {
+    public Simulator(ConcurrentLinkedQueue<Message> inbox, GridMap worldMap) {
         simulationSpeed = 1;
         world = new SimWorld();
         File mapFolder = new File("maps");
@@ -64,7 +66,7 @@ public class Simulator {
             }
         });
         this.inbox = inbox;
-        
+        this.worldMap = worldMap;
     }
 
     double getSimulationSpeed() {
@@ -217,7 +219,7 @@ public class Simulator {
             paused = false;
             //boundaryFollowingController = new BoundaryFollowingController(myRobot);
             nxtNavigation = new NxtNavigation(myRobot);
-            nxtMapping = new NxtMapping(myRobot);
+            nxtMapping = new NxtMapping(myRobot, worldMap);
         }
 
         void pause() {
@@ -281,6 +283,7 @@ public class Simulator {
                     
                     if (myName.equals("SLAM")) {
                         nxtMapping.addObservation(myRobot.lastIrMeasurement);
+                        
                         
                         UpdateMessage um = SimRobot.generateUpdate(update[0], update[1], update[2], update[3], update[4], update[5], update[6], update[7]);
                         byte[] umBytes = um.getBytes();
