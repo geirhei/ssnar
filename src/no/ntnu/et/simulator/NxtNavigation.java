@@ -6,6 +6,8 @@
  */
 package no.ntnu.et.simulator;
 
+import no.ntnu.et.general.Position;
+
 /**
  *
  * @author geirhei
@@ -49,6 +51,10 @@ public class NxtNavigation extends Thread {
             if (paused) {
                 continue;
             }
+            
+            Position target = new Position(10, 50);
+            robot.setTarget(target.getXValue(), target.getYValue());
+            finished = true;
         }
     }
 }
