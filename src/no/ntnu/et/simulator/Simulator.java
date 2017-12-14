@@ -280,7 +280,7 @@ public class Simulator {
                     update = myRobot.createMeasurement();
                     
                     if (myName.equals("SLAM")) {
-                        //myRobot.updateDistances();
+                        nxtMapping.addObservation(myRobot.lastIrMeasurement);
                         
                         UpdateMessage um = SimRobot.generateUpdate(update[0], update[1], update[2], update[3], update[4], update[5], update[6], update[7]);
                         byte[] umBytes = um.getBytes();

@@ -7,6 +7,7 @@
 package no.ntnu.et.mapping;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import org.ejml.simple.SimpleMatrix;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,8 @@ public class MappingController extends Thread {
     //ArrayList<ArrayList<Line>> lineBuffers;
     List<Line> lineBuffer;
     List<Line> lineRepository;
+    
+    
 
     /**
      * Constructor
@@ -63,6 +66,7 @@ public class MappingController extends Thread {
         //lineBuffers = map.getLineBuffers();
         lineBuffer = map.getLineBuffer();
         lineRepository = map.getLineRepository();
+        
         
     }
     
@@ -193,7 +197,9 @@ public class MappingController extends Thread {
                     for (int j = 0; j < 4; j++) {
                         if (sensors[j].isMeasurement()) {
                             Position measurementPoint = sensors[j].getPosition();
-                            pointBuffers.get(j).add(measurementPoint);
+                            //pointBuffers.get(j).add(measurementPoint);
+                            
+                            
                         } else {
                             // If no obstacle is measured, set the point values av infinity
                             //Position inf = new Position(Double.MAX_VALUE, Double.MAX_VALUE);
