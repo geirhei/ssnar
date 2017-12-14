@@ -9,6 +9,7 @@ package no.ntnu.et.general;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import static no.ntnu.et.general.Position.distanceBetween;
 import no.ntnu.et.map.MapLocation;
 import no.ntnu.et.simulator.Feature;
 
@@ -28,7 +29,29 @@ public class Line {
     
     private Position a;
     private Position b;
-
+    
+    private Position p;
+    private double theta;
+    private double h;
+    private double varTheta;
+    private double varC;
+    private double aPar;
+    private double bPar;
+    private double c;
+    private Position pR;
+    private Position pL;
+    
+    public Line(Position p, double theta, double varTheta, double varC, double c, Position pR, Position pL) {
+        this.p = p;
+        this.theta = theta;
+        this.varTheta = varTheta;
+        this.varC = varC;
+        this.c = c;
+        this.pR = pR;
+        this.pL = pL;
+        h = distanceBetween(pR, pL) / 2;
+    }
+    
     /**
      * Creates a new Line object
      * @param start
