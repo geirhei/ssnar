@@ -126,7 +126,7 @@ public class MapGraphic extends JPanel {
             if (!cell.isPreviouslyObserved()) {
                 g2D.setPaint(Color.gray);
             } else if (cell.isOccupied()) {
-                //g2D.setPaint(Color.black);
+                g2D.setPaint(Color.black);
             } else if (cell.isRestricted()) {
                 g2D.setPaint(Color.lightGray);
             } /*else if (cell.isWeaklyRestricted()) {
@@ -155,7 +155,7 @@ public class MapGraphic extends JPanel {
     private void paintLines(Graphics2D g2D, List<Line> lines) {
         g2D.setPaint(Color.black);
         //ArrayList<ArrayList<Line>> lineBuffers = gridmap.getLineBuffers();
-        System.out.println("lines length: " + lines.size());
+        //System.out.println("lines length: " + lines.size());
         synchronized (lines) {
             ListIterator<Line> iter = lines.listIterator();
             while (iter.hasNext()) {

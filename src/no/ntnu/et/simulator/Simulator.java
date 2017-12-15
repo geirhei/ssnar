@@ -7,11 +7,16 @@
 package no.ntnu.et.simulator;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.JFrame;
+import no.ntnu.et.general.Line;
 import no.ntnu.et.general.Pose;
+import no.ntnu.et.general.Position;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.tem.communication.DroneUpdateMessage;
 import no.ntnu.tem.communication.HandshakeMessage;
@@ -205,6 +210,7 @@ public class Simulator {
         //private final BoundaryFollowingController boundaryFollowingController;
         private final NxtNavigation nxtNavigation;
         private final NxtMapping nxtMapping;
+        
 
         /**
          * Constructor
@@ -238,7 +244,7 @@ public class Simulator {
         public void run() {
             //boundaryFollowingController.start();
             nxtNavigation.start();
-            nxtMapping.start();
+            //nxtMapping.start();
             
             int counter = 0;
 
@@ -248,6 +254,23 @@ public class Simulator {
             hmMessageBytes[0] = Message.HANDSHAKE;
             System.arraycopy(hmBytes, 0, hmMessageBytes, 1, hmBytes.length);
             inbox.add(new Message(myRobot.getAddress(), hmMessageBytes));
+            
+            //
+            Position s0 = new Position(4, 5);
+            Position s1 = new Position(3, 4);
+            Position s2 = new Position(2, 3);
+            Position s3 = new Position(1, 2);
+            Position s4 = new Position(0, 1);
+            synchronized (myRobot.getObservations()) {
+                myRobot.getObservations().add(s0);
+                myRobot.getObservations().add(s1);
+                myRobot.getObservations().add(s2);
+                myRobot.getObservations().add(s3);
+                myRobot.getObservations().add(s4);
+            }
+            
+            //
+            
             while (true) {
                 // Wait between each loop
                 try {
@@ -282,8 +305,7 @@ public class Simulator {
                     update = myRobot.createMeasurement();
                     
                     if (myName.equals("SLAM")) {
-                        nxtMapping.addObservation(myRobot.lastIrMeasurement);
-                        
+                        myRobot.addObservation();
                         
                         UpdateMessage um = SimRobot.generateUpdate(update[0], update[1], update[2], update[3], update[4], update[5], update[6], update[7]);
                         byte[] umBytes = um.getBytes();
@@ -310,6 +332,28 @@ public class Simulator {
                     counter = 0;
                 }
                 counter++;
+                
+                if (myRobot.getObservations().size() >= 5) {
+                    double theta = Math.toDegrees(Math.atan2(s2.getYValue() - s0.getYValue(), s2.getXValue() - s0.getXValue()));
+                    if (theta < 0) {
+                        theta += 360;
+                    }
+                    //System.out.println("theta: " + theta);
+                    
+                    Position a = new Position(4, 5);
+                    Position b = new Position(2, 3);
+                    
+                    /*
+                    DroneUpdateMessage um = SimRobot.generateDroneUpdate((int) myRobot.getPose().getPosition().getXValue(), (int) myRobot.getPose().getPosition().getYValue(), (int) myRobot.getPose().getHeading().getValue(), (int) a.getXValue(), (int) a.getYValue(), (int) b.getXValue(), (int) b.getYValue());
+                    byte[] umBytes = um.getBytes();
+                    byte[] umMessageBytes = new byte[umBytes.length + 1];
+                    umMessageBytes[0] = Message.DRONE_UPDATE;
+                    System.arraycopy(umBytes, 0, umMessageBytes, 1, umBytes.length);
+                    inbox.add(new Message(myRobot.getAddress(), umMessageBytes));
+                    */
+                    myRobot.getObservations().clear();
+                }
+                
             }
         }
     }

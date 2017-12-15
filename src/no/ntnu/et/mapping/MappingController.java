@@ -234,14 +234,14 @@ public class MappingController extends Thread {
                             });
                         }
                         */
-                        
+                        /*
                         System.out.println("pointBuffer0 size: " + pointBuffers.get(0).size());
                         System.out.println("Lines created.");
                         System.out.println("lineBuffer size: " + lineBuffer.size());
                         //System.out.println("lineBuffer0 size: " + lineBuffers.get(0).size());
                         System.out.println("Lines merged.");
                         System.out.println("lineRepository size: " + lineRepository.size());
-                        
+                        */
                         mergeNeeded = false;
                     }
                     

@@ -8,6 +8,9 @@ package no.ntnu.et.simulator;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import no.ntnu.et.general.Utilities;
 import no.ntnu.et.general.Pose;
 import no.ntnu.et.general.Angle;
@@ -55,8 +58,9 @@ public class SimRobot {
     private int diameter = 10;
     private final int address;
     private final int maxLineOfSight = 40;
-    
-    public int[] circleArr = new int[360];
+    //public int[] circleArr = new int[360];
+    private List<Position> observations;
+    private List<Line> lineMap;
 
     /**
      * Constructor for Robot.
@@ -86,42 +90,46 @@ public class SimRobot {
         translationFinished = true;
         targetPosition = Position.copy(pose.getPosition());
         
+        /*
         for (int i : circleArr) {
             i = maxLineOfSight;
         }
+        */
         
         if (name.equals("SLAM")) {
             moveSpeed = 0.05;
         } else {
             moveSpeed = 0.1;
         }
+        observations = Collections.synchronizedList(new ArrayList<Position>());
+        lineMap = Collections.synchronizedList(new ArrayList<Line>());
+    }
+    
+    List<Position> getObservations() {
+        return observations;
+    }
+    
+    List<Line> getLineMap() {
+        return lineMap;
+    }
+    
+    void addObservation() {
+        //double theta = pose.getHeading().getValue() + towerAngle.getValue();
+        Angle theta = Angle.sum(pose.getHeading(), towerAngle);
+        double r = lastIrMeasurement[0];
+        //System.out.println("r: " + r);
+        if (r <= 0 || r > 20) {
+            return;
+        }
+        Position pos = Utilities.polar2cart(theta, r);
+        synchronized (observations) {
+            observations.add(pos);
+        }
     }
 
     double[] getMeasurement() {
         return lastIrMeasurement;
     }
-    
-    /*
-    void updateDistances() {
-        double towerHeading = towerAngle.getValue();
-        double robotHeading = pose.getHeading().getValue();
-        //System.out.println("tower: " + towerHeading + ", robot: " + robotHeading);
-        for (int i = 0; i < lastIrMeasurement.length; i++) {
-            //System.out.print(lastIrMeasurement[i] + " ");
-            int currentAngle = (int) (robotHeading + towerHeading + (i-1) * 90);
-            if (currentAngle >= 360) {
-                currentAngle -= 360;
-            } else if (currentAngle < 0) {
-                currentAngle += 360;
-            }
-            if (lastIrMeasurement[i] > 0 && lastIrMeasurement[i] <= maxVisualLength) {
-                distances[currentAngle] = lastIrMeasurement[i];
-            } else {
-                distances[currentAngle] = Double.POSITIVE_INFINITY;
-            }
-        }
-    }
-    */
     
     void stop() {
         //setTarget(pose.getPosition().getXValue(), pose.getPosition().getYValue());
