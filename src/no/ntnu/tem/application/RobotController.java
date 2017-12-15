@@ -116,6 +116,24 @@ public class RobotController {
         return robot.addMeasurement(measuredOrientation, measuredPosition, 0, line);
     }
     
+    /**
+     * Method that adds a line update to a robot.
+     * 
+     * @param address
+     * @param line
+     * @return 
+     */
+    public void addLineUpdate(int address, int[] line) {
+        Robot robot = getRobotFromAddress(address);
+        if (robot == null) {
+            return;
+        }
+        if (debug) {
+            System.out.println("Robot <" + robot.getName() + "> updated!");
+        }
+        robot.addLine(line);
+    }
+    
             /**
      * Mathod for updating the current battery level of a robot
      * 

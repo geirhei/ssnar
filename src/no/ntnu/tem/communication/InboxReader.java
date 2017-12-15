@@ -81,7 +81,7 @@ public class InboxReader extends Thread {
                         case Message.LINE_UPDATE:
                             LineUpdateMessage lineUpdate = new LineUpdateMessage(message.getData());
                             int[] newLine = lineUpdate.getLine();
-                            //doLineUpdate(address, line);
+                            doLineUpdate(address, newLine);
                             break;
                         case Message.IDLE:
                             doIdleUpdate(address);
@@ -166,6 +166,16 @@ public class InboxReader extends Thread {
      */
     private void doDroneUpdate(int address, int orientation, int[] position, int[] line) {
         rc.addDroneMeasurment(address, orientation, position, line);
+    }
+    
+    /**
+     * Method for updating a robot with a new line.
+     * 
+     * @param address
+     * @param line 
+     */
+    private void doLineUpdate(int address, int[] line) {
+        rc.addLineUpdate(address, line);
     }
     
         private void doBatteryUpdate(int address, int level) {

@@ -105,7 +105,12 @@ public class MapGraphic extends JPanel {
         numberOfColumns = gridmap.getNumberOfColumns();
         cellSize = gridmap.getCellSize();
         paintMap(g2D);
-        paintLines(g2D, gridmap.lineArray);
+        try {
+            List<Line> lines = rc.getRobot("SLAM").getLines();
+            paintLines(g2D, lines);
+        } catch (NullPointerException e) {
+            
+        }
         
         paintRobots(g2D);
         g2D.setTransform(initial);
@@ -153,14 +158,22 @@ public class MapGraphic extends JPanel {
      * @param g2D 
      */
     private void paintLines(Graphics2D g2D, List<Line> lines) {
-        g2D.setPaint(Color.black);
+        if (lines == null) {
+            return;
+        }
+        g2D.setPaint(Color.ORANGE);
+        g2D.setStroke(new BasicStroke(2));
         //ArrayList<ArrayList<Line>> lineBuffers = gridmap.getLineBuffers();
         //System.out.println("lines length: " + lines.size());
         synchronized (lines) {
             ListIterator<Line> iter = lines.listIterator();
             while (iter.hasNext()) {
                 Line line = iter.next();
-                g2D.drawLine((int) line.getA().getXValue(), (int) line.getA().getYValue(), (int) line.getB().getXValue(), (int) line.getB().getYValue());
+                int aX = (int) Math.round(line.getA().getXValue());
+                int aY = (int) Math.round(line.getA().getYValue());
+                int bX = (int) Math.round(line.getB().getXValue());
+                int bY = (int) Math.round(line.getB().getYValue());
+                g2D.drawLine(aX, aY, bX, bY);
             }
         }
     }

@@ -7,7 +7,10 @@
 package no.ntnu.tem.robot;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import no.ntnu.et.general.Line;
 import no.ntnu.et.general.Position;
 import no.ntnu.hkm.particlefilter.Particlefilter;
 import org.ejml.simple.SimpleMatrix;
@@ -70,6 +73,8 @@ public class Robot {
     private final int[] basePosition;
     
     private boolean manualMode = false;
+    
+    private List<Line> lines;
 
     /**
      * Constructor of the class Robot
@@ -115,8 +120,24 @@ public class Robot {
         this.adjustDirection = 0;
         this.backUpDist = 0;
         this.basePosition = new int[]{0, 35, 0};
+
+        // Line array
+        lines = Collections.synchronizedList(new ArrayList<Line>());
     }
 
+    public void addLine(int[] line) {
+        Position a = new Position(line[0], line[1]);
+        Position b = new Position(line[2], line[3]);
+        Line newLine = new Line(a, b);
+        synchronized (lines) {
+            lines.add(newLine);
+        }
+    }
+    
+    public List<Line> getLines() {
+        return lines;
+    }
+    
     public void setManualMode(boolean b) {
         manualMode = b;
     }
