@@ -28,7 +28,7 @@ public class LineUpdateMessage {
         ByteBuffer buffer = ByteBuffer.wrap(data);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         this.data = data;
-        if(buffer.remaining() != 14)  throw new Message.MessageCorruptException();
+        if(buffer.remaining() != 8)  throw new Message.MessageCorruptException();
         
         startX = buffer.getShort();
         startY = buffer.getShort();

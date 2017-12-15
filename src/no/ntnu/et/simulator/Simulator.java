@@ -313,6 +313,24 @@ public class Simulator {
                         umMessageBytes[0] = Message.UPDATE;
                         System.arraycopy(umBytes, 0, umMessageBytes, 1, umBytes.length);
                         inbox.add(new Message(myRobot.getAddress(), umMessageBytes));
+                        
+                        /*
+                        Position a = new Position(10, 20);
+                        Position b = new Position(20, 10);
+                        Line newLine = new Line(a, b);
+                        myRobot.getLineMap().add(newLine);
+                        
+                        if (myRobot.getLineMap().size() >= 1) {
+                            DroneUpdateMessage dum = SimRobot.generateDroneUpdate(update[0], update[1], update[2], (int) a.getXValue(), (int) a.getYValue(), (int) b.getXValue(), (int) b.getYValue());
+                            byte[] dumBytes = dum.getBytes();
+                            byte[] dumMessageBytes = new byte[dumBytes.length + 1];
+                            dumMessageBytes[0] = Message.DRONE_UPDATE;
+                            System.arraycopy(dumBytes, 0, dumMessageBytes, 1, dumBytes.length);
+                            inbox.add(new Message(myRobot.getAddress(), dumMessageBytes));
+                            
+                            myRobot.getLineMap().clear();
+                        }
+                        */
                     } else if (myName.equals("Drone")) {
                         DroneUpdateMessage um = SimRobot.generateDroneUpdate(update[0], update[1], update[2], update[4], update[5], update[6], update[7]);
                         byte[] umBytes = um.getBytes();
@@ -343,14 +361,6 @@ public class Simulator {
                     Position a = new Position(4, 5);
                     Position b = new Position(2, 3);
                     
-                    /*
-                    DroneUpdateMessage um = SimRobot.generateDroneUpdate((int) myRobot.getPose().getPosition().getXValue(), (int) myRobot.getPose().getPosition().getYValue(), (int) myRobot.getPose().getHeading().getValue(), (int) a.getXValue(), (int) a.getYValue(), (int) b.getXValue(), (int) b.getYValue());
-                    byte[] umBytes = um.getBytes();
-                    byte[] umMessageBytes = new byte[umBytes.length + 1];
-                    umMessageBytes[0] = Message.DRONE_UPDATE;
-                    System.arraycopy(umBytes, 0, umMessageBytes, 1, umBytes.length);
-                    inbox.add(new Message(myRobot.getAddress(), umMessageBytes));
-                    */
                     myRobot.getObservations().clear();
                 }
                 

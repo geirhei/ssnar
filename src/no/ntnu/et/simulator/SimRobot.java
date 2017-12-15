@@ -18,6 +18,7 @@ import no.ntnu.et.general.Position;
 import no.ntnu.et.general.Line;
 import no.ntnu.tem.communication.DroneUpdateMessage;
 import no.ntnu.tem.communication.HandshakeMessage;
+import no.ntnu.tem.communication.LineUpdateMessage;
 import no.ntnu.tem.communication.UpdateMessage;
 
 /**
@@ -393,6 +394,26 @@ public class SimRobot {
             byte[] data = new byte[14];
             msg.get(data);
             um = new DroneUpdateMessage(data);
+        } catch (Exception e) {
+        }
+        return um;
+    }
+    
+    static LineUpdateMessage generateLineUpdate(int startX, int startY, int stopX, int stopY) {
+
+        ByteBuffer msg = ByteBuffer.allocate(8);
+        msg.order(ByteOrder.LITTLE_ENDIAN);
+        LineUpdateMessage um = null;
+        try {
+            msg.putShort((short) startX);
+            msg.putShort((short) startY);
+            msg.putShort((short) stopX);
+            msg.putShort((short) stopY);
+
+            msg.rewind();
+            byte[] data = new byte[8];
+            msg.get(data);
+            um = new LineUpdateMessage(data);
         } catch (Exception e) {
         }
         return um;
