@@ -30,18 +30,18 @@ public class Line {
     private Position a;
     private Position b;
     
-    private Position p;
-    private double theta;
-    private double h;
-    private double varTheta;
-    private double varC;
-    private double aPar;
-    private double bPar;
-    private double c;
-    private Position pR;
-    private Position pL;
+    public Position p;
+    public double theta;
+    public double h;
+    public double varTheta;
+    public double varC;
+    public double aPar;
+    public double bPar;
+    public double c;
+    public Position pR;
+    public Position pL;
     
-    public Line(Position p, double theta, double varTheta, double varC, double c, Position pR, Position pL) {
+    public Line(Position p, double theta, double varTheta, double varC, double c, Position pR, Position pL, double h) {
         this.p = p;
         this.theta = theta;
         this.varTheta = varTheta;
@@ -49,7 +49,7 @@ public class Line {
         this.c = c;
         this.pR = pR;
         this.pL = pL;
-        //h = distanceBetween(pR, pL) / 2;
+        this.h = h;
     }
     
     /**
@@ -93,6 +93,12 @@ public class Line {
         double midY = (line.getA().getYValue() + line.getB().getYValue()) / 2;
         return new Position(midX, midY);
     }
+    
+    public static Position getMidpoint(Position a, Position b) {
+        double midX = (a.getXValue() + b.getXValue()) / 2;
+        double midY = (a.getYValue() + b.getYValue()) / 2;
+        return new Position(midX, midY);
+    }
 
     /**
      * Returns the two values specifying the direction of the line
@@ -120,6 +126,61 @@ public class Line {
     
     public Position getB() {
         return b;
+    }
+    
+    /**
+     * Attempts to extend the given line with the given position.
+     * 
+     * @param p Position
+     * @param line Line
+     * @return true if successful, false if not
+     */
+    public static boolean extendLine(Position p, Line line) {
+        double e = 0.0; // cludged
+        double var_wi = 1.0; // cludged
+        if (Math.abs(e) <= var_wi / 2) {
+            line.varC = 0.0; // cludged
+            double k_c = line.varC / (line.varC + var_wi);
+            line.c = line.c - k_c * e;
+            line.varC = line.varC - k_c * line.varC;
+            
+            double dTheta = Math.atan(e / line.h);
+            double var_wj = 0; // cludged
+            double stdThetaj = Math.atan(var_wj / line.h);
+            
+            double k_theta = line.varTheta / (line.varTheta + Math.pow(stdThetaj, 2));
+            line.theta = line.theta - k_theta * dTheta;
+            line.varTheta = line.varTheta - k_theta * line.varTheta;
+            
+            // Project onto new line
+            // Previous
+            double x_k = line.pR.getXValue();
+            double y_k = line.pR.getYValue();
+            double c = -line.aPar * x_k + line.bPar * y_k;
+            double xNewR = x_k * Math.pow(line.bPar, 2) - y_k * line.aPar * line.bPar - line.aPar * c;
+            double yNewR = -x_k * line.aPar * line.bPar + y_k * Math.pow(line.aPar, 2) - line.bPar * c;
+            line.pR = new Position(xNewR, yNewR);
+            
+            // New
+            x_k = p.getXValue();
+            y_k = p.getYValue();
+            c = -line.aPar * x_k + line.bPar * y_k;
+            double xNewL = x_k * Math.pow(line.bPar, 2) - y_k * line.aPar * line.bPar - line.aPar * c;
+            double yNewL = -x_k * line.aPar * line.bPar + y_k * Math.pow(line.aPar, 2) - line.bPar * c;
+            line.pL = new Position(xNewL, yNewL);
+            
+            // Update midpoint and h
+            line.p = getMidpoint(line.pL, line.pR);
+            line.h = distanceBetween(line.pL, line.p);
+            
+            /***
+            Update uncertenties
+            ***/
+            
+            return true;
+        } else {
+            return false;
+        }
     }
     
     /**
@@ -405,19 +466,6 @@ public class Line {
         }
         return res;
     }
-    
-    /*
-    private static boolean isMergeable(Line line1, Line line2, double u, double d) {
-        double m1 = line1.getSlope();
-        double m2 = line2.getSlope();
-        double m = Math.abs(m1 - m2);
-        double dist1 = Position.distanceBetween(line1.getA(), line2.getA());
-        double dist2 = Position.distanceBetween(line1.getA(), line2.getB());
-        double dist3 = Position.distanceBetween(line1.getB(), line2.getA());
-        double dist4 = Position.distanceBetween(line1.getB(), line2.getB());
-        return ( (m <= u) && (dist1 <= d || dist2 <= d || dist3 <= d || dist4 <= d) );
-    }
-    */
     
     /**
      * Determines if 3 given points are collinear
