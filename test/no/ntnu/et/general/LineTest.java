@@ -330,7 +330,7 @@ public class LineTest {
     /**
      * Test of extendLine method, of class Line.
      */
-    @Test
+    //@Test
     public void testExtendLine() {
         System.out.println("extendLine");
         double theta = 180.0;
@@ -338,13 +338,57 @@ public class LineTest {
         Position pR = new Position(6, 2);
         Position pL = new Position(2, 2);
         Line line = new Line(theta, varTheta, pR, pL);
-        Position p = new Position(0, 6);
+        Position p = new Position(1, -1);
         boolean expResult = true;
         boolean result = Line.extendLine(p, line);
         line.print();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of calculateError method, of class Line.
+     */
+    @Test
+    public void testCalculateError() {
+        System.out.println("calculateError");
+        Position p = new Position(0, 2);
+        double theta = 180.0;
+        double expResult = 2.0;
+        double result = Line.calculateError(p, theta);
+        assertEquals(expResult, result, 0.0);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of generateLine method, of class Line.
+     */
+    //@Test
+    public void testGenerateLine() {
+        System.out.println("generateLine");
+        double theta = 0.0;
+        Position p0 = null;
+        Position p1 = null;
+        Position p2 = null;
+        Line expResult = null;
+        Line result = Line.generateLine(theta, p0, p1, p2);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of print1 method, of class Line.
+     */
+    //@Test
+    public void testPrint1() {
+        System.out.println("print1");
+        Line instance = null;
+        instance.print1();
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
     }
 
 }
