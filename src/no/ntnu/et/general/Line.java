@@ -41,15 +41,17 @@ public class Line {
     public Position pR;
     public Position pL;
     
-    public Line(Position p, double theta, double varTheta, double varC, double c, Position pR, Position pL, double h) {
-        this.p = p;
+    public Line(double theta, double varC, Position pR, Position pL) {
         this.theta = theta;
-        this.varTheta = varTheta;
+        this.aPar = Math.sin(Math.toRadians(theta));
+        this.bPar = -Math.cos(Math.toRadians(theta));
         this.varC = varC;
-        this.c = c;
         this.pR = pR;
         this.pL = pL;
-        this.h = h;
+        this.p = getMidpoint(this.pL, this.pR);
+        this.c = -this.aPar * this.p.getXValue() + this.bPar * this.p.getYValue();
+        this.h = distanceBetween(pL, pR) / 2;
+        this.varTheta = Math.toDegrees(Math.atan(this.varC / this.h));
     }
     
     /**
@@ -136,37 +138,40 @@ public class Line {
      * @return true if successful, false if not
      */
     public static boolean extendLine(Position p, Line line) {
-        double e = 0.0; // cludged
-        double var_wi = 1.0; // cludged
-        if (Math.abs(e) <= var_wi / 2) {
-            line.varC = 0.0; // cludged
-            double k_c = line.varC / (line.varC + var_wi);
+        double e = line.aPar * p.getXValue() - line.bPar * p.getYValue() + line.c;
+        double std_w = 10.0; // cludged
+        if (Math.abs(e) <= std_w / 2.0) {
+            line.varC = 0.5; // cludged
+            double k_c = line.varC / (line.varC + Math.pow(std_w, 2));
             line.c = line.c - k_c * e;
             line.varC = line.varC - k_c * line.varC;
             
-            double dTheta = Math.atan(e / line.h);
-            double var_wj = 0; // cludged
-            double stdThetaj = Math.atan(var_wj / line.h);
+            e = 100;
+            double dTheta = Math.toDegrees(Math.atan(e / line.h));
+            double stdTheta = Math.toDegrees(Math.atan(std_w / line.h));
+            line.varTheta = Math.pow(stdTheta, 2);
             
-            double k_theta = line.varTheta / (line.varTheta + Math.pow(stdThetaj, 2));
+            double k_theta = line.varTheta / (line.varTheta + Math.pow(stdTheta, 2));
             line.theta = line.theta - k_theta * dTheta;
             line.varTheta = line.varTheta - k_theta * line.varTheta;
+            
+            // Update parameters
+            line.aPar = Math.sin(Math.toRadians(line.theta));
+            line.bPar = -Math.cos(Math.toRadians(line.theta));
             
             // Project onto new line
             // Previous
             double x_k = line.pR.getXValue();
             double y_k = line.pR.getYValue();
-            double c = -line.aPar * x_k + line.bPar * y_k;
-            double xNewR = x_k * Math.pow(line.bPar, 2) - y_k * line.aPar * line.bPar - line.aPar * c;
-            double yNewR = -x_k * line.aPar * line.bPar + y_k * Math.pow(line.aPar, 2) - line.bPar * c;
+            double xNewR = x_k * Math.pow(line.bPar, 2) - y_k * line.aPar * line.bPar - line.aPar * line.c;
+            double yNewR = x_k * line.aPar * line.bPar - y_k * Math.pow(line.aPar, 2) + line.bPar * line.c;
             line.pR = new Position(xNewR, yNewR);
             
             // New
             x_k = p.getXValue();
             y_k = p.getYValue();
-            c = -line.aPar * x_k + line.bPar * y_k;
-            double xNewL = x_k * Math.pow(line.bPar, 2) - y_k * line.aPar * line.bPar - line.aPar * c;
-            double yNewL = -x_k * line.aPar * line.bPar + y_k * Math.pow(line.aPar, 2) - line.bPar * c;
+            double xNewL = x_k * Math.pow(line.bPar, 2) - y_k * line.aPar * line.bPar - line.aPar * line.c;
+            double yNewL = x_k * line.aPar * line.bPar - y_k * Math.pow(line.aPar, 2) + line.bPar * line.c;
             line.pL = new Position(xNewL, yNewL);
             
             // Update midpoint and h
@@ -488,9 +493,16 @@ public class Line {
     /**
      * Prints all the values of the Line object
      */
-    public void print(){
+    public void print1(){
         System.out.println("Start: " + start[0] + ", " + start[1]);
         System.out.println("Direction: " + direction[0] + ", " + direction[1]);
         System.out.println("Length: " + length);
+    }
+    
+    public void print() {
+        System.out.println("Line:");
+        System.out.println("pL(x: " + pL.getXValue() + ", y: " + pL.getYValue() + "), pR(x: " + pR.getXValue() + ", y: " + pR.getYValue() + ")");
+        System.out.println("theta: " + theta);
+        System.out.println("c: " + c);
     }
 }

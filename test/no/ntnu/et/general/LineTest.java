@@ -187,8 +187,8 @@ public class LineTest {
         System.out.println("mergeSelf");
         ArrayList<Line> repository = null;
         ArrayList<Line> expResult = null;
-        ArrayList<Line> result = Line.mergeSelf(repository);
-        assertEquals(expResult, result);
+        //ArrayList<Line> result = Line.mergeSelf(repository);
+        //assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -224,7 +224,7 @@ public class LineTest {
     /**
      * Test of isMergeable1 method, of class Line.
      */
-    @Test
+    //@Test
     public void testIsMergeable() {
         System.out.println("isMergeable");
         Position a = new Position(-10,2);
@@ -296,6 +296,55 @@ public class LineTest {
         assertEquals(expResult, result, 0.0);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of getMidpoint method, of class Line.
+     */
+    //@Test
+    public void testGetMidpoint_Line() {
+        System.out.println("getMidpoint");
+        Line line = null;
+        Position expResult = null;
+        Position result = Line.getMidpoint(line);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of getMidpoint method, of class Line.
+     */
+    //@Test
+    public void testGetMidpoint_Position_Position() {
+        System.out.println("getMidpoint");
+        Position a = null;
+        Position b = null;
+        Position expResult = null;
+        Position result = Line.getMidpoint(a, b);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of extendLine method, of class Line.
+     */
+    @Test
+    public void testExtendLine() {
+        System.out.println("extendLine");
+        double theta = 180.0;
+        double varTheta = 0.0;
+        Position pR = new Position(6, 2);
+        Position pL = new Position(2, 2);
+        Line line = new Line(theta, varTheta, pR, pL);
+        Position p = new Position(0, 6);
+        boolean expResult = true;
+        boolean result = Line.extendLine(p, line);
+        line.print();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
     }
 
 }
