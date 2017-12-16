@@ -49,7 +49,7 @@ public class Line {
         this.c = c;
         this.pR = pR;
         this.pL = pL;
-        h = distanceBetween(pR, pL) / 2;
+        //h = distanceBetween(pR, pL) / 2;
     }
     
     /**
@@ -215,16 +215,6 @@ public class Line {
             
         }
         pointBuffer.clear();
-    }
-    
-    public static ArrayList<Line> mergeSelf(ArrayList<Line> repository) {
-        ArrayList<Line> result = new ArrayList<Line>();
-        ListIterator<Line> iter1 = repository.listIterator();
-        while (iter1.hasNext()) {
-            Line repoLine = iter1.next();
-            
-        }
-        return result;
     }
     
     public static void lineMerge(List<Line> lineBuffer, List<Line> lineRepository) {
