@@ -353,8 +353,8 @@ public class LineTest {
     @Test
     public void testCalculateError() {
         System.out.println("calculateError");
-        Position p = new Position(0, 2);
-        double theta = 180.0;
+        Position p = new Position(5, 5);
+        double theta = 70.0;
         double expResult = 2.0;
         double result = Line.calculateError(p, theta);
         assertEquals(expResult, result, 0.0);
@@ -389,6 +389,21 @@ public class LineTest {
         instance.print1();
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of calculateTheta method, of class Line.
+     */
+    @Test
+    public void testCalculateTheta() {
+        System.out.println("calculateTheta");
+        Position p0 = new Position(0, 0);
+        Position p1 = new Position(2, 2);
+        double expResult = 45.0;
+        double result = Line.calculateTheta(p0, p1);
+        assertEquals(expResult, result, 0.0);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
     }
 
 }
