@@ -182,33 +182,44 @@ public class Line {
         }
         ArrayList<Line> lines = new ArrayList<Line>();
         
-        for (int i = 0; i < observations.size() - 4; i++) {
-            Position p0 = observations.get(0);
-            Position p1 = observations.get(1);
-            Position p2 = observations.get(2);
-            Position p3 = observations.get(3);
+        int i = 0;
+        while (i < observations.size() - 4) {
+            Position p0 = observations.get(i);
+            Position p1 = observations.get(i+1);
+            Position p2 = observations.get(i+2);
+            Position p3 = observations.get(i+3);
+            
+            // Attempt to start a line
             Line newLine;
+            double e;
             if (isLine(p0, p1, p2)) {
                 newLine = new Line(p0, p2);
-                double e = calculateError(p0, p2, p1);
-                newLine.c -= e;
-                
-                double xPNew = newLine.p.getXValue() - e * newLine.aPar;
-                double yPNew = newLine.p.getYValue() - e * newLine.bPar;
-                newLine.p = new Position(xPNew, yPNew);
+                e = calculateError(p0, p2, p1);
+                i += 3;
             } else if (isLine(p0, p1, p3)) {
                 newLine = new Line(p0, p3);
-                double e = calculateError(p0, p3, p1);
-                newLine.c -= e;
+                e = calculateError(p0, p3, p1);
+                i += 4;
             } else if (isLine(p0, p2, p3)) {
                 newLine = new Line(p0, p3);
-                double e = calculateError(p0, p3, p2);
-                newLine.c -= e;
+                e = calculateError(p0, p3, p2);
+                i += 4;
+            } else {
+                i += 4;
+                continue;
             }
             
+            newLine.c -= e;
+            double xPNew = newLine.p.getXValue() - e * newLine.aPar;
+            double yPNew = newLine.p.getYValue() - e * newLine.bPar;
+            newLine.p = new Position(xPNew, yPNew);
             
+            // Extend line
+            while (i < observations.size() && extendLine(observations.get(i), newLine)) {
+                i++;
+            }
+            lines.add(newLine);
         }
-        
         return lines;
     }
     
