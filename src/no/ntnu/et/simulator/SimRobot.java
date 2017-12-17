@@ -14,6 +14,7 @@ import java.util.List;
 import no.ntnu.et.general.Utilities;
 import no.ntnu.et.general.Pose;
 import no.ntnu.et.general.Angle;
+import static no.ntnu.et.general.Angle.sum;
 import no.ntnu.et.general.Position;
 import no.ntnu.et.general.Line;
 import no.ntnu.tem.communication.DroneUpdateMessage;
@@ -115,16 +116,16 @@ public class SimRobot {
     }
     
     void addObservation() {
-        //double theta = pose.getHeading().getValue() + towerAngle.getValue();
-        Angle theta = Angle.sum(pose.getHeading(), towerAngle);
+        Angle theta = sum(towerAngle, pose.getHeading());
         double r = lastIrMeasurement[0];
-        //System.out.println("r: " + r);
         if (r <= 0 || r > 40) {
             return;
         }
         Position pos = Utilities.polar2cart(theta, r);
+        pos.add(pose.getPosition());
         synchronized (observations) {
             observations.add(pos);
+            //System.out.println("Observation added: (" + pos.getXValue() + ", " + pos.getYValue() + ")");
         }
     }
 

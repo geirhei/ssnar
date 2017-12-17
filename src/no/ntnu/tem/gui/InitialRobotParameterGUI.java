@@ -130,7 +130,7 @@ public class InitialRobotParameterGUI extends javax.swing.JDialog {
         });
 
         ftxtfYPos.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        ftxtfYPos.setText("70");
+        ftxtfYPos.setText("80");
         ftxtfYPos.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 ftxtfYPosFocusGained(evt);

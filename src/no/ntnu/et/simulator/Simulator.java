@@ -257,21 +257,7 @@ public class Simulator {
             System.arraycopy(hmBytes, 0, hmMessageBytes, 1, hmBytes.length);
             inbox.add(new Message(myRobot.getAddress(), hmMessageBytes));
             
-            //
-            Position s0 = new Position(4, 5);
-            Position s1 = new Position(3, 4);
-            Position s2 = new Position(2, 3);
-            Position s3 = new Position(1, 2);
-            Position s4 = new Position(0, 1);
-            synchronized (myRobot.getObservations()) {
-                myRobot.getObservations().add(s0);
-                myRobot.getObservations().add(s1);
-                myRobot.getObservations().add(s2);
-                myRobot.getObservations().add(s3);
-                myRobot.getObservations().add(s4);
-            }
-            
-            //
+            boolean sweepCompleted = false;
             
             while (true) {
                 // Wait between each loop
@@ -307,7 +293,12 @@ public class Simulator {
                     update = myRobot.createMeasurement();
                     
                     if (myName.equals("SLAM")) {
-                        myRobot.addObservation();
+                        if (!sweepCompleted) {
+                            myRobot.addObservation();
+                        }
+                        if (myRobot.getObservations().size() > 4 || myRobot.getTowerAngle().getValue() >= 89) {
+                            sweepCompleted = true;
+                        }
                         
                         UpdateMessage um = SimRobot.generateUpdate(update[0], update[1], update[2], update[3], update[4], update[5], update[6], update[7]);
                         byte[] umBytes = um.getBytes();
@@ -336,29 +327,39 @@ public class Simulator {
                 }
                 counter++;
                 
-                if (myRobot.getObservations().size() >= 20) {
-                    List<Line> lines = detectLines(myRobot.getObservations());
-                    System.out.println("lines.size(): " + lines.size());
-                    for (int i = 0; i < lines.size(); i++) {
-                        int lX = (int) lines.get(i).pL.getXValue();
-                        int rX = (int) lines.get(i).pR.getXValue();
-                        int lY = (int) lines.get(i).pL.getYValue();
-                        int rY = (int) lines.get(i).pR.getYValue();
-                        System.out.println("L: (" + lX + ", " + lY + ") R: (" + rX + ", " + rY + ")");
-                        LineUpdateMessage lum = SimRobot.generateLineUpdate(lX, lY, rX, rY);
-                        byte[] lumBytes = lum.getBytes();
-                        byte[] lumMessageBytes = new byte[lumBytes.length + 1];
-                        lumMessageBytes[0] = Message.LINE_UPDATE;
-                        System.arraycopy(lumBytes, 0, lumMessageBytes, 1, lumBytes.length);
-                        inbox.add(new Message(myRobot.getAddress(), lumMessageBytes));
-                        System.out.println("Line sent!");
-                    }
-                    
-                    
-                    myRobot.getObservations().clear();
+                if (sweepCompleted) {
+                    break;
                 }
-                
             }
+            
+            for (int i = 0; i < 4; i++) {
+                myRobot.getObservations().get(i).print();
+            }
+            System.out.println("---------------------");
+            
+            List<Line> lines = detectLines(myRobot.getObservations());
+            if (lines == null) {
+                return;
+            }
+            //System.out.println("lines.size(): " + lines.size());
+            for (int i = 0; i < lines.size(); i++) {
+                lines.get(i).print();
+                int lX = (int) lines.get(i).pL.getXValue();
+                int rX = (int) lines.get(i).pR.getXValue();
+                int lY = (int) lines.get(i).pL.getYValue();
+                int rY = (int) lines.get(i).pR.getYValue();
+                //System.out.println("L: (" + lX + ", " + lY + ") R: (" + rX + ", " + rY + ")");
+                LineUpdateMessage lum = SimRobot.generateLineUpdate(lX, lY, rX, rY);
+                byte[] lumBytes = lum.getBytes();
+                byte[] lumMessageBytes = new byte[lumBytes.length + 1];
+                lumMessageBytes[0] = Message.LINE_UPDATE;
+                System.arraycopy(lumBytes, 0, lumMessageBytes, 1, lumBytes.length);
+                inbox.add(new Message(myRobot.getAddress(), lumMessageBytes));
+                //System.out.println("Line sent!");
+            }
+
+
+            //myRobot.getObservations().clear();
         }
     }
     

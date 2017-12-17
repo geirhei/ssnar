@@ -168,12 +168,11 @@ public class Line {
         if (p0 == null || p1 == null || p2 == null) {
             return false;
         }
-        double std_w = 10.0; // cludged
+        double std_w = 50.0; // cludged
         return Math.abs(calculateError(p0, p1, p2)) <= std_w / 2.0;
     }
     
     public static List<Line> detectLines(List<Position> observations) {
-        final double std_w = 10.0; // cludged
         if (observations == null || observations.size() < 3) {
             return null;
         }
@@ -233,16 +232,16 @@ public class Line {
      * @return true if successful, false if not
      */
     public static boolean extendLine(Position p, Line line) {
-        double std_w = 10.0; // cludged
-        double e = line.aPar * p.getXValue() - line.bPar * p.getYValue() + line.c;
+        double std_w = 50.0; // cludged
+        double e = -line.aPar * p.getXValue() + line.bPar * p.getYValue() + line.c;
         
         if (Math.abs(e) <= std_w / 2.0) {
             //line.varC = 0.5; // cludged
             line.varC = 0.0;
             //double k_c = line.varC / (line.varC + Math.pow(std_w, 2));
             double k_c = 1.0;
-            line.c = line.c - k_c * e;
-            line.varC = line.varC - k_c * line.varC;
+            line.c -= k_c * e;
+            line.varC -= k_c * line.varC;
             
             double dTheta = Math.toDegrees(Math.atan(e / line.h));
             double stdTheta = 0.0;
@@ -251,26 +250,16 @@ public class Line {
             
             //double k_theta = line.varTheta / (line.varTheta + Math.pow(stdTheta, 2));
             double k_theta = 1.0;
-            line.theta = line.theta + k_theta * dTheta;
-            line.varTheta = line.varTheta + k_theta * line.varTheta;
+            line.theta += k_theta * dTheta;
+            line.varTheta += k_theta * line.varTheta;
             
             // Update parameters
-            line.aPar = Math.sin(Math.toRadians(line.theta));
-            line.bPar = -Math.cos(Math.toRadians(line.theta));
+            line.aPar = Math.sin(Math.toRadians(90 - line.theta));
+            line.bPar = -Math.cos(Math.toRadians(90 - line.theta));
             
-            // Project persisting onto new line
-            double x_k = line.pR.getXValue();
-            double y_k = line.pR.getYValue();
-            double xNewR = x_k * Math.pow(line.bPar, 2) - y_k * line.aPar * line.bPar - line.aPar * line.c;
-            double yNewR = x_k * line.aPar * line.bPar - y_k * Math.pow(line.aPar, 2) + line.bPar * line.c;
-            line.pR = new Position(xNewR, yNewR);
-            
-            // New
-            x_k = p.getXValue();
-            y_k = p.getYValue();
-            double xNewL = x_k * Math.pow(line.bPar, 2) - y_k * line.aPar * line.bPar - line.aPar * line.c;
-            double yNewL = x_k * line.aPar * line.bPar - y_k * Math.pow(line.aPar, 2) + line.bPar * line.c;
-            line.pL = new Position(xNewL, yNewL);
+            // Project onto new line
+            line.pR = projectOntoLine(line.pR, line);
+            line.pL = projectOntoLine(p, line);
             
             // Update midpoint and h
             line.p = getMidpoint(line.pL, line.pR);
@@ -284,6 +273,13 @@ public class Line {
         } else {
             return false;
         }
+    }
+    
+    // untested
+    public static Position projectOntoLine(Position p, Line line) {
+        double x = p.getXValue() * Math.pow(line.bPar, 2) + p.getYValue() * line.aPar * line.bPar + line.aPar * line.c;
+        double y = -p.getXValue() * line.aPar * line.bPar + p.getYValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
+        return new Position(x, y);
     }
     
     /**

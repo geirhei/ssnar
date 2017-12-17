@@ -74,7 +74,7 @@ public class Position {
      * prints the x-, y-values of the Position object
      */
     public void print() {
-        System.out.println("x-position " + xValue + ", y-position " + yValue);
+        System.out.println("x: " + xValue + ", y: " + yValue);
     }
     
     /**
