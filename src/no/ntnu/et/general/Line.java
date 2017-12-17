@@ -164,12 +164,6 @@ public class Line {
         return theta;
     }
     
-    public static Line generateLine(double theta, Position p0, Position p1, Position p2) {
-        
-        
-        return new Line();
-    }
-    
     public static boolean isLine(Position p0, Position p1, Position p2) {
         double std_w = 10.0; // cludged
         return Math.abs(calculateError(p0, p1, p2)) <= std_w / 2.0;
@@ -183,11 +177,16 @@ public class Line {
         ArrayList<Line> lines = new ArrayList<Line>();
         
         int i = 0;
-        while (i < observations.size() - 4) {
+        while (i < observations.size() - 2) {
             Position p0 = observations.get(i);
             Position p1 = observations.get(i+1);
             Position p2 = observations.get(i+2);
-            Position p3 = observations.get(i+3);
+            Position p3;
+            if (observations.size() > 3) {
+                p3 = observations.get(i+3);
+            } else {
+                p3 = null;
+            }
             
             // Attempt to start a line
             Line newLine;

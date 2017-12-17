@@ -52,7 +52,7 @@ public class NxtNavigation extends Thread {
                 continue;
             }
             
-            Position target = new Position(10, 50);
+            Position target = new Position(15, 50);
             robot.setTarget(target.getXValue(), target.getYValue());
             finished = true;
         }

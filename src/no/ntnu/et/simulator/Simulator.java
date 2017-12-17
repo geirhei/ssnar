@@ -15,6 +15,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.JFrame;
 import no.ntnu.et.general.Line;
+import static no.ntnu.et.general.Line.detectLines;
 import no.ntnu.et.general.Pose;
 import no.ntnu.et.general.Position;
 import no.ntnu.et.map.GridMap;
@@ -313,24 +314,7 @@ public class Simulator {
                         byte[] umMessageBytes = new byte[umBytes.length + 1];
                         umMessageBytes[0] = Message.UPDATE;
                         System.arraycopy(umBytes, 0, umMessageBytes, 1, umBytes.length);
-                        inbox.add(new Message(myRobot.getAddress(), umMessageBytes));
-                        
-                        
-                        Position a = new Position(10, 20);
-                        Position b = new Position(20, 10);
-                        Line newLine = new Line(a, b);
-                        myRobot.getLineMap().add(newLine);
-                        
-                        if (myRobot.getLineMap().size() >= 1) {
-                            LineUpdateMessage lum = SimRobot.generateLineUpdate((int) a.getXValue(), (int) a.getYValue(), (int) b.getXValue(), (int) b.getYValue());
-                            byte[] lumBytes = lum.getBytes();
-                            byte[] lumMessageBytes = new byte[lumBytes.length + 1];
-                            lumMessageBytes[0] = Message.LINE_UPDATE;
-                            System.arraycopy(lumBytes, 0, lumMessageBytes, 1, lumBytes.length);
-                            inbox.add(new Message(myRobot.getAddress(), lumMessageBytes));
-                            
-                            myRobot.getLineMap().clear();
-                        }
+                        inbox.add(new Message(myRobot.getAddress(), umMessageBytes));                  
                         
                     } else if (myName.equals("Drone")) {
                         DroneUpdateMessage um = SimRobot.generateDroneUpdate(update[0], update[1], update[2], update[4], update[5], update[6], update[7]);
@@ -353,14 +337,22 @@ public class Simulator {
                 counter++;
                 
                 if (myRobot.getObservations().size() >= 5) {
-                    double theta = Math.toDegrees(Math.atan2(s2.getYValue() - s0.getYValue(), s2.getXValue() - s0.getXValue()));
-                    if (theta < 0) {
-                        theta += 360;
+                    List<Line> lines = detectLines(myRobot.getObservations());
+                    System.out.println("lines.size(): " + lines.size());
+                    for (int i = 0; i < lines.size(); i++) {
+                        int lX = (int) lines.get(i).pL.getXValue();
+                        int rX = (int) lines.get(i).pR.getXValue();
+                        int lY = (int) lines.get(i).pL.getYValue();
+                        int rY = (int) lines.get(i).pR.getYValue();
+                        LineUpdateMessage lum = SimRobot.generateLineUpdate(lX, lY, rX, rY);
+                        byte[] lumBytes = lum.getBytes();
+                        byte[] lumMessageBytes = new byte[lumBytes.length + 1];
+                        lumMessageBytes[0] = Message.LINE_UPDATE;
+                        System.arraycopy(lumBytes, 0, lumMessageBytes, 1, lumBytes.length);
+                        inbox.add(new Message(myRobot.getAddress(), lumMessageBytes));
+                        System.out.println("Line sent!");
                     }
-                    //System.out.println("theta: " + theta);
                     
-                    Position a = new Position(4, 5);
-                    Position b = new Position(2, 3);
                     
                     myRobot.getObservations().clear();
                 }
