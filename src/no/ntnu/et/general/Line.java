@@ -130,13 +130,30 @@ public class Line {
         return b;
     }
     
-    public static double calculateError(Position p, double theta) {
+    /**
+     * Calculates the perpendicular error of p1 relative to a line through p0 and p2.
+     * 
+     * @param p0
+     * @param p1
+     * @param p2
+     * @return error value
+     */
+    public static double calculateError(Position p0, Position p1, Position p2) {
+        double theta = calculateTheta(p0, p2);
         double a = Math.sin(Math.toRadians(theta));
         double b = -Math.cos(Math.toRadians(theta));
-        double c = -a * p.getXValue() + b * p.getYValue();
-        return a * p.getXValue() - b * p.getYValue() + c;
+        double c = -a * p0.getXValue() + b * p0.getYValue();
+        return a * p1.getXValue() - b * p1.getYValue() + c;
     }
     
+    /**
+     * Helper method for calculating the angle between two lines. Positive direction
+     * is counter-clockwise. Wraps to the interval [0,360).
+     * 
+     * @param p0
+     * @param p1
+     * @return double angle
+     */
     public static double calculateTheta(Position p0, Position p1) {
         double theta = Math.toDegrees(Math.atan2(p1.getYValue() - p0.getYValue(), p1.getXValue() - p0.getXValue()));
         if (theta < 0) {

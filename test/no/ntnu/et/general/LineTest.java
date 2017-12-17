@@ -353,11 +353,12 @@ public class LineTest {
     @Test
     public void testCalculateError() {
         System.out.println("calculateError");
-        Position p = new Position(5, 5);
-        double theta = 70.0;
-        double expResult = 2.0;
-        double result = Line.calculateError(p, theta);
-        assertEquals(expResult, result, 0.0);
+        Position p0 = new Position(-2, 2);
+        Position p1 = new Position(-1, 0);
+        Position p2 = new Position(-2, -2);
+        double expResult = 1.0;
+        double result = Math.abs(Line.calculateError(p0, p1, p2));
+        assertEquals(expResult, result, 1e-9);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }
