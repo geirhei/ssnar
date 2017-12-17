@@ -74,7 +74,7 @@ public class Robot {
     
     private boolean manualMode = false;
     
-    private List<Line> lines;
+    private ArrayList<Line> lines;
 
     /**
      * Constructor of the class Robot
@@ -122,19 +122,18 @@ public class Robot {
         this.basePosition = new int[]{0, 35, 0};
 
         // Line array
-        lines = Collections.synchronizedList(new ArrayList<Line>());
+        lines = new ArrayList<Line>();
     }
 
     public void addLine(int[] line) {
         Position a = new Position(line[0], line[1]);
         Position b = new Position(line[2], line[3]);
         Line newLine = new Line(a, b);
-        synchronized (lines) {
-            lines.add(newLine);
-        }
+        lines.add(newLine);
+        //System.out.println("Line added in RC.");
     }
     
-    public List<Line> getLines() {
+    public ArrayList<Line> getLines() {
         return lines;
     }
     

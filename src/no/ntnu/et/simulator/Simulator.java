@@ -336,7 +336,7 @@ public class Simulator {
                 }
                 counter++;
                 
-                if (myRobot.getObservations().size() >= 5) {
+                if (myRobot.getObservations().size() >= 20) {
                     List<Line> lines = detectLines(myRobot.getObservations());
                     System.out.println("lines.size(): " + lines.size());
                     for (int i = 0; i < lines.size(); i++) {
@@ -344,6 +344,7 @@ public class Simulator {
                         int rX = (int) lines.get(i).pR.getXValue();
                         int lY = (int) lines.get(i).pL.getYValue();
                         int rY = (int) lines.get(i).pR.getYValue();
+                        System.out.println("L: (" + lX + ", " + lY + ") R: (" + rX + ", " + rY + ")");
                         LineUpdateMessage lum = SimRobot.generateLineUpdate(lX, lY, rX, rY);
                         byte[] lumBytes = lum.getBytes();
                         byte[] lumMessageBytes = new byte[lumBytes.length + 1];

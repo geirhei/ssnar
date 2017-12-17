@@ -105,13 +105,14 @@ public class MapGraphic extends JPanel {
         numberOfColumns = gridmap.getNumberOfColumns();
         cellSize = gridmap.getCellSize();
         paintMap(g2D);
+        ArrayList<Line> lines = new ArrayList();
         try {
-            List<Line> lines = rc.getRobot("SLAM").getLines();
-            paintLines(g2D, lines);
+             lines = rc.getRobot("SLAM").getLines();
+            //System.out.println("Lines printed!");
         } catch (NullPointerException e) {
             
         }
-        
+        paintLines(g2D, lines);
         paintRobots(g2D);
         g2D.setTransform(initial);
 
@@ -157,24 +158,22 @@ public class MapGraphic extends JPanel {
      * 
      * @param g2D 
      */
-    private void paintLines(Graphics2D g2D, List<Line> lines) {
-        if (lines == null) {
+    private void paintLines(Graphics2D g2D, ArrayList<Line> lines) {
+        if (lines == null || lines.size() == 0) {
+            //System.out.println("lines == null!");
             return;
         }
         g2D.setPaint(Color.ORANGE);
         g2D.setStroke(new BasicStroke(2));
-        //ArrayList<ArrayList<Line>> lineBuffers = gridmap.getLineBuffers();
         //System.out.println("lines length: " + lines.size());
-        synchronized (lines) {
-            ListIterator<Line> iter = lines.listIterator();
-            while (iter.hasNext()) {
-                Line line = iter.next();
-                int aX = (int) Math.round(line.getA().getXValue());
-                int aY = (int) Math.round(line.getA().getYValue());
-                int bX = (int) Math.round(line.getB().getXValue());
-                int bY = (int) Math.round(line.getB().getYValue());
-                g2D.drawLine(aX, aY, bX, bY);
-            }
+        for (int i = 0; i < lines.size(); i++) {
+            //lines.get(i).print();
+            int pLX = (int) Math.round(lines.get(i).pL.getXValue());
+            int pLY = (int) Math.round(lines.get(i).pL.getYValue());
+            int pRX = (int) Math.round(lines.get(i).pR.getXValue());
+            int pRY = (int) Math.round(lines.get(i).pR.getYValue());
+            g2D.drawLine(pLX, pLY, pRX, pRY);
+            //System.out.println("Line painted!");
         }
     }
     

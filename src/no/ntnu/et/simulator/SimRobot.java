@@ -119,7 +119,7 @@ public class SimRobot {
         Angle theta = Angle.sum(pose.getHeading(), towerAngle);
         double r = lastIrMeasurement[0];
         //System.out.println("r: " + r);
-        if (r <= 0 || r > 20) {
+        if (r <= 0 || r > 40) {
             return;
         }
         Position pos = Utilities.polar2cart(theta, r);

@@ -165,6 +165,9 @@ public class Line {
     }
     
     public static boolean isLine(Position p0, Position p1, Position p2) {
+        if (p0 == null || p1 == null || p2 == null) {
+            return false;
+        }
         double std_w = 10.0; // cludged
         return Math.abs(calculateError(p0, p1, p2)) <= std_w / 2.0;
     }
@@ -182,7 +185,7 @@ public class Line {
             Position p1 = observations.get(i+1);
             Position p2 = observations.get(i+2);
             Position p3;
-            if (observations.size() > 3) {
+            if (i < observations.size() - 3) {
                 p3 = observations.get(i+3);
             } else {
                 p3 = null;

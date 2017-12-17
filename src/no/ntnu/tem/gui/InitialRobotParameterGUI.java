@@ -112,7 +112,7 @@ public class InitialRobotParameterGUI extends javax.swing.JDialog {
         jLabel8.setText("orientation:");
 
         ftxtfXPos.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        ftxtfXPos.setText("0");
+        ftxtfXPos.setText("200");
         ftxtfXPos.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 ftxtfXPosFocusGained(evt);
@@ -130,7 +130,7 @@ public class InitialRobotParameterGUI extends javax.swing.JDialog {
         });
 
         ftxtfYPos.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        ftxtfYPos.setText("0");
+        ftxtfYPos.setText("70");
         ftxtfYPos.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 ftxtfYPosFocusGained(evt);
@@ -143,10 +143,15 @@ public class InitialRobotParameterGUI extends javax.swing.JDialog {
         });
 
         ftxtfOrientation.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        ftxtfOrientation.setText("0");
+        ftxtfOrientation.setText("90");
         ftxtfOrientation.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 ftxtfOrientationFocusGained(evt);
+            }
+        });
+        ftxtfOrientation.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ftxtfOrientationActionPerformed(evt);
             }
         });
         ftxtfOrientation.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -274,6 +279,10 @@ public class InitialRobotParameterGUI extends javax.swing.JDialog {
     private void ftxtfXPosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ftxtfXPosActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_ftxtfXPosActionPerformed
+
+    private void ftxtfOrientationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ftxtfOrientationActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ftxtfOrientationActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

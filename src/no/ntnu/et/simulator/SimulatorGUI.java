@@ -257,6 +257,7 @@ public class SimulatorGUI extends JFrame {
 
         jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        jCheckBox7.setSelected(true);
         jCheckBox7.setText("No estimate error");
         jCheckBox7.setToolTipText("Remove estimate error. (This only stops the error from accumulating further)");
         jCheckBox7.addActionListener(new java.awt.event.ActionListener() {
@@ -265,6 +266,7 @@ public class SimulatorGUI extends JFrame {
             }
         });
 
+        jCheckBox8.setSelected(true);
         jCheckBox8.setText("No measurement error");
         jCheckBox8.setToolTipText("Remove measurement-error");
         jCheckBox8.addActionListener(new java.awt.event.ActionListener() {

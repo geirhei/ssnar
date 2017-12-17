@@ -81,10 +81,15 @@ public class InitialPoseDialog extends javax.swing.JDialog {
         jLabel8.setText("orientation:");
 
         ftxtfXPos.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        ftxtfXPos.setText("50");
+        ftxtfXPos.setText("200");
+        ftxtfXPos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ftxtfXPosActionPerformed(evt);
+            }
+        });
 
         ftxtfYPos.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        ftxtfYPos.setText("50");
+        ftxtfYPos.setText("70");
         ftxtfYPos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ftxtfYPosActionPerformed(evt);
@@ -141,7 +146,10 @@ public class InitialPoseDialog extends javax.swing.JDialog {
         jLabel1.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         jLabel1.setText("Place the robot:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Arduino", "NTX", "AVR", "Drone", "SLAM" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {"SLAM", "Arduino", "NTX", "AVR", "Drone" }));
+        jComboBox1.setSelectedIndex(0);
+        jComboBox1.setSelectedItem("SLAM");
+        jComboBox1.setToolTipText("");
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
@@ -194,7 +202,11 @@ public class InitialPoseDialog extends javax.swing.JDialog {
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         javax.swing.JComboBox<String> combo = (javax.swing.JComboBox<String>)evt.getSource();
         String selectedbot = (String)combo.getSelectedItem();
-        if(selectedbot.equals("Arduino")){
+        //System.out.println(selectedbot);
+        if (selectedbot.equals("SLAM")) {
+            RobotType = 5;
+        }
+        else if(selectedbot.equals("Arduino")){
             RobotType = 2;
         }
         else if(selectedbot.equals("NTX")){
@@ -206,10 +218,11 @@ public class InitialPoseDialog extends javax.swing.JDialog {
         else if(selectedbot.equals("AVR")){
             RobotType = 4;
         }
-        else if(selectedbot.equals("SLAM")){
-            RobotType = 5;
-        }
     }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void ftxtfXPosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ftxtfXPosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ftxtfXPosActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSetValues;
