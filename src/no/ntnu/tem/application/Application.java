@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import no.ntnu.et.general.Position;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.et.navigation.NavigationController;
 import no.ntnu.tem.communication.Communication;
@@ -66,8 +67,12 @@ public final class Application {
         this.MAPLOCATION = new File("maps\\big_map.txt").getAbsolutePath();
         this.rc = new RobotController();
         this.com = new Communication(this, rc);
-        this.worldMap = new GridMap(2, 50, 50);
-        //this.worldMap = new GridMap(1, 50, 50);
+        /* Testing begin */
+        //this.worldMap = new GridMap(2, 50, 50);
+        this.worldMap = new GridMap(1, 100, 100);
+        this.worldMap.resize(new Position(-100, -100));
+        this.worldMap.resize(new Position(100, 100));
+        /* Testing end */
         this.worldMapGraphic = new MapGraphic(worldMap, rc);
         this.slam = new MappingController(rc, worldMap);
         this.navigation = new NavigationController(rc, this, worldMap);

@@ -296,7 +296,7 @@ public class Simulator {
                         if (!sweepCompleted) {
                             myRobot.addObservation();
                         }
-                        if (myRobot.getObservations().size() > 4 || myRobot.getTowerAngle().getValue() >= 89) {
+                        if (myRobot.getObservations().size() > 100 || myRobot.getTowerAngle().getValue() >= 89) {
                             sweepCompleted = true;
                         }
                         
@@ -331,17 +331,13 @@ public class Simulator {
                     break;
                 }
             }
-            
-            for (int i = 0; i < 4; i++) {
-                myRobot.getObservations().get(i).print();
-            }
-            System.out.println("---------------------");
-            
+
+            System.out.println("Observations: " + myRobot.getObservations().size());
             List<Line> lines = detectLines(myRobot.getObservations());
             if (lines == null) {
                 return;
             }
-            //System.out.println("lines.size(): " + lines.size());
+            System.out.println("Lines detected: " + lines.size());
             for (int i = 0; i < lines.size(); i++) {
                 lines.get(i).print();
                 int lX = (int) lines.get(i).pL.getXValue();
