@@ -41,17 +41,18 @@ public class Line {
     public Position pR;
     public Position pL;
     
-    public Line(double theta, double varC, Position pR, Position pL) {
-        this.theta = theta;
+    public Line(Position pL, Position pR) {
+        this.theta = calculateTheta(pL, pR);
         this.aPar = Math.sin(Math.toRadians(theta));
         this.bPar = -Math.cos(Math.toRadians(theta));
-        this.varC = varC;
+        this.varC = 0.0;
         this.pR = pR;
         this.pL = pL;
         this.p = getMidpoint(this.pL, this.pR);
         this.c = -this.aPar * this.p.getXValue() + this.bPar * this.p.getYValue();
         this.h = distanceBetween(pL, pR) / 2;
-        this.varTheta = Math.toDegrees(Math.atan(this.varC / this.h));
+        //this.varTheta = Math.toDegrees(Math.atan(this.varC / this.h));
+        this.varTheta = 0.0;
     }
     
     /**
@@ -71,12 +72,13 @@ public class Line {
      * @param a
      * @param b 
      */
+    /*
     public Line(Position a, Position b) {
         this.a = a;
         this.b = b;
         this.length = Math.sqrt( Math.pow(b.getXValue() - a.getXValue(), 2) + Math.pow(b.getYValue() - a.getYValue(), 2) );
     }
-    
+    */
     /**
      * Empty constructor
      */
@@ -131,7 +133,7 @@ public class Line {
     }
     
     /**
-     * Calculates the perpendicular error of p1 relative to a line through p0 and p2.
+     * Calculates the perpendicular error of p1 relative to a line through p0 and p1.
      * 
      * @param p0
      * @param p1
@@ -139,11 +141,11 @@ public class Line {
      * @return error value
      */
     public static double calculateError(Position p0, Position p1, Position p2) {
-        double theta = calculateTheta(p0, p2);
+        double theta = calculateTheta(p0, p1);
         double a = Math.sin(Math.toRadians(theta));
         double b = -Math.cos(Math.toRadians(theta));
         double c = -a * p0.getXValue() + b * p0.getYValue();
-        return a * p1.getXValue() - b * p1.getYValue() + c;
+        return a * p2.getXValue() - b * p2.getYValue() + c;
     }
     
     /**
@@ -168,6 +170,48 @@ public class Line {
         return new Line();
     }
     
+    public static boolean isLine(Position p0, Position p1, Position p2) {
+        double std_w = 10.0; // cludged
+        return Math.abs(calculateError(p0, p1, p2)) <= std_w / 2.0;
+    }
+    
+    public static List<Line> detectLines(List<Position> observations) {
+        final double std_w = 10.0; // cludged
+        if (observations == null || observations.size() < 3) {
+            return null;
+        }
+        ArrayList<Line> lines = new ArrayList<Line>();
+        
+        for (int i = 0; i < observations.size() - 4; i++) {
+            Position p0 = observations.get(0);
+            Position p1 = observations.get(1);
+            Position p2 = observations.get(2);
+            Position p3 = observations.get(3);
+            Line newLine;
+            if (isLine(p0, p1, p2)) {
+                newLine = new Line(p0, p2);
+                double e = calculateError(p0, p2, p1);
+                newLine.c -= e;
+                
+                double xPNew = newLine.p.getXValue() - e * newLine.aPar;
+                double yPNew = newLine.p.getYValue() - e * newLine.bPar;
+                newLine.p = new Position(xPNew, yPNew);
+            } else if (isLine(p0, p1, p3)) {
+                newLine = new Line(p0, p3);
+                double e = calculateError(p0, p3, p1);
+                newLine.c -= e;
+            } else if (isLine(p0, p2, p3)) {
+                newLine = new Line(p0, p3);
+                double e = calculateError(p0, p3, p2);
+                newLine.c -= e;
+            }
+            
+            
+        }
+        
+        return lines;
+    }
+    
     /**
      * Attempts to extend the given line with the given position.
      * 
@@ -180,16 +224,20 @@ public class Line {
         double e = line.aPar * p.getXValue() - line.bPar * p.getYValue() + line.c;
         
         if (Math.abs(e) <= std_w / 2.0) {
-            line.varC = 0.5; // cludged
-            double k_c = line.varC / (line.varC + Math.pow(std_w, 2));
+            //line.varC = 0.5; // cludged
+            line.varC = 0.0;
+            //double k_c = line.varC / (line.varC + Math.pow(std_w, 2));
+            double k_c = 1.0;
             line.c = line.c - k_c * e;
             line.varC = line.varC - k_c * line.varC;
             
             double dTheta = Math.toDegrees(Math.atan(e / line.h));
-            double stdTheta = Math.toDegrees(Math.atan(std_w / line.h));
+            double stdTheta = 0.0;
+            //double stdTheta = Math.toDegrees(Math.atan(std_w / line.h));
             line.varTheta = Math.pow(stdTheta, 2);
             
-            double k_theta = line.varTheta / (line.varTheta + Math.pow(stdTheta, 2));
+            //double k_theta = line.varTheta / (line.varTheta + Math.pow(stdTheta, 2));
+            double k_theta = 1.0;
             line.theta = line.theta + k_theta * dTheta;
             line.varTheta = line.varTheta + k_theta * line.varTheta;
             
