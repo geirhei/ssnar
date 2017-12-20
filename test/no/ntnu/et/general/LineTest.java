@@ -426,7 +426,7 @@ public class LineTest {
     /**
      * Test of detectLines method, of class Line.
      */
-    @Test
+    //@Test
     public void testDetectLines() {
         System.out.println("detectLines");
         Position p0 = new Position(2, 2);
@@ -442,6 +442,38 @@ public class LineTest {
         List<Line> result = Line.detectLines(observations);
         //result.get(0).print();
         System.out.println("size: " + result.size());
+        //assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of calculateC method, of class Line.
+     */
+    @Test
+    public void testCalculateC() {
+        System.out.println("calculateC");
+        double theta = 270.0;
+        double x = -2.0;
+        double y = 0.0;
+        double expResult = 2.0;
+        double result = Line.calculateC(theta, x, y);
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of projectOntoLine method, of class Line.
+     */
+    //@Test
+    public void testProjectOntoLine() {
+        System.out.println("projectOntoLine");
+        Position start = new Position(2, 2);
+        Position end = new Position(6, 2);
+        Line line = new Line(start, end);
+        Position newPoint = new Position(0, 6);
+        //Position expResult = null;
+        Position result = Line.projectOntoLine(newPoint, line);
+        System.out.println("res: (" + result.getXValue() + ", " + result.getYValue() + ")");
         //assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
