@@ -450,10 +450,10 @@ public class LineTest {
     /**
      * Test of calculateC method, of class Line.
      */
-    @Test
+    //@Test
     public void testCalculateC() {
         System.out.println("calculateC");
-        double theta = 270.0;
+        double theta = 180.0;
         double x = -2.0;
         double y = 0.0;
         double expResult = 2.0;
@@ -464,13 +464,13 @@ public class LineTest {
     /**
      * Test of projectOntoLine method, of class Line.
      */
-    //@Test
+    @Test
     public void testProjectOntoLine() {
         System.out.println("projectOntoLine");
-        Position start = new Position(2, 2);
-        Position end = new Position(6, 2);
+        Position end = new Position(2, 2);
+        Position start = new Position(2, -2);
         Line line = new Line(start, end);
-        Position newPoint = new Position(0, 6);
+        Position newPoint = new Position(10, 5);
         //Position expResult = null;
         Position result = Line.projectOntoLine(newPoint, line);
         System.out.println("res: (" + result.getXValue() + ", " + result.getYValue() + ")");

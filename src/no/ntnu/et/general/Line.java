@@ -43,13 +43,13 @@ public class Line {
     
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
-        this.aPar = Math.sin(Math.toRadians(theta + 90));
-        this.bPar = Math.cos(Math.toRadians(theta + 90));
+        this.aPar = Math.sin(Math.toRadians(theta));
+        this.bPar = Math.cos(Math.toRadians(theta));
         this.varC = 0.0;
         this.pR = pR;
         this.pL = pL;
         this.p = getMidpoint(this.pL, this.pR);
-        this.c = this.aPar * this.p.getXValue() - this.bPar * this.p.getYValue();
+        this.c = -this.aPar * this.p.getXValue() - this.bPar * this.p.getYValue();
         this.h = distanceBetween(pL, pR) / 2;
         //this.varTheta = Math.toDegrees(Math.atan(this.varC / this.h));
         this.varTheta = 0.0;
@@ -142,10 +142,10 @@ public class Line {
      */
     public static double calculateError(Position p0, Position p1, Position p2) {
         double theta = calculateTheta(p0, p1);
-        double a = Math.sin(Math.toRadians(theta + 90));
-        double b = Math.cos(Math.toRadians(theta + 90));
+        double a = Math.sin(Math.toRadians(theta));
+        double b = Math.cos(Math.toRadians(theta));
         double c = calculateC(theta, p0.getXValue(), p0.getYValue());
-        return a * p2.getXValue() - b * p2.getYValue() + c;
+        return -a * p2.getXValue() + b * p2.getYValue() + c;
     }
     
     public static double calculateC(double theta, double x, double y) {
@@ -153,6 +153,15 @@ public class Line {
         double b = Math.cos(Math.toRadians(theta));
         return a * x - b * y;
     }
+    
+    /*
+    public static double calculateError(Position p, double theta) {
+        double a = Math.sin(Math.toRadians(theta));
+        double b = Math.cos(Math.toRadians(theta));
+        double c = calculateC(theta, p.getXValue(), p.getYValue());
+        return -a * p.getXValue() + b * p.getYValue() + c
+    }
+    */
     
     /**
      * Helper method for calculating the angle between two lines. Positive direction
@@ -174,7 +183,7 @@ public class Line {
         if (p0 == null || p1 == null || p2 == null) {
             return false;
         }
-        double std_w = 10.0; // cludged
+        double std_w = 5.0; // cludged
         return Math.abs(calculateError(p0, p1, p2)) <= std_w / 2.0;
     }
     
@@ -240,7 +249,7 @@ public class Line {
      */
     public static boolean extendLine(Position p, Line line) {
         double std_w = 10.0; // cludged
-        double e = line.aPar * p.getXValue() - line.bPar * p.getYValue() + line.c;
+        double e = calculateError(line.pL, line.pR, p);
         
         if (Math.abs(e) <= std_w / 2.0) {
             //line.varC = 0.5; // cludged
@@ -261,12 +270,12 @@ public class Line {
             line.varTheta += k_theta * line.varTheta;
             
             // Update parameters
-            line.aPar = Math.sin(Math.toRadians(line.theta + 90));
-            line.bPar = Math.cos(Math.toRadians(line.theta + 90));
+            line.aPar = Math.sin(Math.toRadians(line.theta));
+            line.bPar = Math.cos(Math.toRadians(line.theta));
             
             // Project onto new line
-            line.pR = projectOntoLine(line.pR, line);
-            line.pL = projectOntoLine(p, line);
+            line.pR = projectOntoLine(p, line);
+            line.pL = projectOntoLine(line.pL, line);
             
             // Update midpoint and h
             line.p = getMidpoint(line.pL, line.pR);
@@ -282,9 +291,10 @@ public class Line {
         }
     }
     
-    // untested
     public static Position projectOntoLine(Position p, Line line) {
-        double x = p.getXValue() * Math.pow(line.bPar, 2) - p.getYValue() * line.aPar * line.bPar + line.aPar * line.c;
+        //double x = p.getXValue() * Math.pow(line.bPar, 2) - p.getYValue() * line.aPar * line.bPar + line.aPar * line.c;
+        //double y = -p.getXValue() * line.aPar * line.bPar + p.getYValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
+        double x = p.getXValue() * Math.pow(line.bPar, 2) + p.getYValue() * line.aPar * line.bPar - line.aPar * line.c;
         double y = p.getXValue() * line.aPar * line.bPar + p.getYValue() * Math.pow(line.aPar, 2) + line.bPar * line.c;
         return new Position(x, y);
     }
