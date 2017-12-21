@@ -172,7 +172,12 @@ public class MapGraphic extends JPanel {
             int pLY = (int) Math.round(lines.get(i).pL.getYValue());
             int pRX = (int) Math.round(lines.get(i).pR.getXValue());
             int pRY = (int) Math.round(lines.get(i).pR.getYValue());
-            g2D.drawLine(pLX, pLY, pRX, pRY);
+            int posx = (pLX - gridmap.getLeftColumn() * cellSize) * scrollSize.intValue();
+            int posy = (pLY - gridmap.getBottomRow() * cellSize) * scrollSize.intValue();
+            int destx = (pRX - gridmap.getLeftColumn() * cellSize) * scrollSize.intValue();
+            int desty = (pRY - gridmap.getBottomRow() * cellSize) * scrollSize.intValue();
+            //g2D.drawLine(pLX, pLY, pRX, pRY);
+            g2D.drawLine(posx, posy, destx, desty);
             //System.out.println("Line painted!");
         }
     }

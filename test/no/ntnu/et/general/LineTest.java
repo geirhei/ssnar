@@ -330,21 +330,24 @@ public class LineTest {
     /**
      * Test of extendLine method, of class Line.
      */
-    //@Test
+    @Test
     public void testExtendLine() {
         System.out.println("extendLine");
-        double theta = 180.0;
-        double varTheta = 0.0;
-        Position pR = new Position(6, 2);
-        Position pL = new Position(2, 2);
-//        Line line = new Line(theta, varTheta, pR, pL);
-        Position p = new Position(1, -1);
-        boolean expResult = true;
-        //boolean result = Line.extendLine(p, line);
-        //line.print();
-        //assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+        Position pL = new Position(4, 2);
+        Position pR = new Position(-4, 2);
+        Line newLine = new Line(pL, pR);
+        Position p1 = new Position(-6, 2);
+        Position p2 = new Position(-7, 2);
+        Position p3 = new Position(-8, 2);
+        Position p4 = new Position(-9, 4);
+        
+        Line.extendLine(p1, newLine);
+        
+        Line.extendLine(p2, newLine);
+        Line.extendLine(p3, newLine);
+        Line.extendLine(p4, newLine);
+        newLine.print();
+        assertEquals(newLine.pL, pL);
     }
 
     /**
@@ -429,10 +432,11 @@ public class LineTest {
     //@Test
     public void testDetectLines() {
         System.out.println("detectLines");
-        Position p0 = new Position(2, 2);
-        Position p1 = new Position(4, 2);
-        Position p2 = new Position(6, 2);
-        Position p3 = new Position(7, 20);
+        Line newLine = new Line(new Position(4, 2), new Position(-4, 2));
+        Position p0 = new Position(-5, 2);
+        Position p1 = new Position(-6, 2);
+        Position p2 = new Position(-7, 2);
+        Position p3 = new Position(-8, 2);
         List<Position> observations = new ArrayList<Position>();
         observations.add(p0);
         observations.add(p1);
@@ -440,7 +444,11 @@ public class LineTest {
         observations.add(p3);
         //List<Line> expResult = null;
         List<Line> result = Line.detectLines(observations);
-        //result.get(0).print();
+        Position pLres = new Position(4, 2);
+        Position pRres = new Position(-8, 2);
+        assertEquals(pLres, result.get(0).pL);
+        assertEquals(pRres, result.get(0).pR);
+        result.get(0).print();
         System.out.println("size: " + result.size());
         //assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
@@ -476,36 +484,31 @@ public class LineTest {
     @Test
     public void testProjectOntoLine() {
         System.out.println("projectOntoLine");
-        Position p1 = new Position(2, 2);
-        Position p2 = new Position(-2, 2);
-        Position p3 = new Position(-2, -2);
-        Position p4 = new Position(2, -2);
+        Position p1 = new Position(4, 4);
+        Position p2 = new Position(-4, 4);
+        Position p3 = new Position(-4, -4);
+        Position p4 = new Position(4, -4);
         
         Line line1 = new Line(p3, p4);
         Line line2 = new Line(p4, p1);
         Line line3 = new Line(p1, p2);
         Line line4 = new Line(p2, p3);
-        Position newPoint = new Position(0, 0);
+        Position newPoint = new Position(-5, -5);
         //Position expResult = null;
         Position result = Line.projectOntoLine(newPoint, line1);
-        System.out.println("res: (" + result.getXValue() + ", " + result.getYValue() + ")");
-        assertEquals(new Position(0, -2), result);
+        //result.print();
+        assertEquals(new Position(-5, -4), result);
         result = Line.projectOntoLine(newPoint, line2);
-        
-        assertEquals(new Position(2, 0), result);
+        //result.print();
+        assertEquals(new Position(4, -5), result);
         result = Line.projectOntoLine(newPoint, line3);
-        //System.out.println("res: (" + result.getXValue() + ", " + result.getYValue() + ")");
-        assertEquals(new Position(0, 2), result);
+        result.print();
+        assertEquals(new Position(-5, 4), result);
         result = Line.projectOntoLine(newPoint, line4);
-        assertEquals(new Position(-2, 0), result);
-        Line.projectOntoLine(newPoint, line1).print();
-        Line.projectOntoLine(newPoint, line2).print();
-        Line.projectOntoLine(newPoint, line3).print();
-        Line.projectOntoLine(newPoint, line4).print();
-        System.out.println("res: (" + result.getXValue() + ", " + result.getYValue() + ")");
-        //assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+        //result.print();
+        assertEquals(new Position(-4, -5), result);
+        
+        //System.out.println("res: (" + result.getXValue() + ", " + result.getYValue() + ")");
     }
 
 }

@@ -41,7 +41,7 @@ public class Line {
     public Position pR;
     public Position pL;
     
-    public static double STD_W = 10.0;
+    public static final double STD_W = 5.0;
     
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
@@ -143,11 +143,11 @@ public class Line {
      * @return error value
      */
     public static double calculateError(Position p0, Position p1, Position p2) {
-        double theta = calculateTheta(p0, p1);
-        double a = -Math.sin(Math.toRadians(theta));
-        double b = -Math.cos(Math.toRadians(theta));
-        double c = calculateC(theta, p0.getXValue(), p0.getYValue());
-        return a * p2.getXValue() - b * p2.getYValue() + c;
+        Line line = new Line(p0, p1);
+        double a = -Math.sin(Math.toRadians(line.theta));
+        double b = -Math.cos(Math.toRadians(line.theta));
+        double c = calculateC(line.theta, line.p.getXValue(), line.p.getYValue());
+        return -a * p2.getXValue() + b * p2.getYValue() + c;
     }
     
     public static double calculateC(double theta, double x, double y) {
@@ -232,10 +232,12 @@ public class Line {
             newLine.p = new Position(xPNew, yPNew);
             
             // Extend line
+            /*
             while (i < observations.size() && extendLine(observations.get(i), newLine)) {
                 i++;
                 System.out.println("Line extended!");
             }
+            */
             lines.add(newLine);
         }
         return lines;
