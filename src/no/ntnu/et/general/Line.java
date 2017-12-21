@@ -39,7 +39,7 @@ public class Line {
     public Position pR;
     public Position pL;
     
-    public static final double STD_W = 3.0;
+    public static final double STD_W = 5.0;
     
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
@@ -227,12 +227,12 @@ public class Line {
             newLine.p = new Position(xPNew, yPNew);
             
             // Extend line
-            
+            /*
             while (i < observations.size() && extendLine(observations.get(i), newLine)) {
                 i++;
                 System.out.println("Line extended!");
             }
-            
+            */
             lines.add(newLine);
         }
         return lines;
