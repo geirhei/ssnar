@@ -473,7 +473,7 @@ public class LineTest {
     /**
      * Test of projectOntoLine method, of class Line.
      */
-    //@Test
+    @Test
     public void testProjectOntoLine() {
         System.out.println("projectOntoLine");
         Position p1 = new Position(2, 2);
@@ -487,11 +487,22 @@ public class LineTest {
         Line line4 = new Line(p2, p3);
         Position newPoint = new Position(0, 0);
         //Position expResult = null;
+        Position result = Line.projectOntoLine(newPoint, line1);
+        System.out.println("res: (" + result.getXValue() + ", " + result.getYValue() + ")");
+        assertEquals(new Position(0, -2), result);
+        result = Line.projectOntoLine(newPoint, line2);
+        
+        assertEquals(new Position(2, 0), result);
+        result = Line.projectOntoLine(newPoint, line3);
+        //System.out.println("res: (" + result.getXValue() + ", " + result.getYValue() + ")");
+        assertEquals(new Position(0, 2), result);
+        result = Line.projectOntoLine(newPoint, line4);
+        assertEquals(new Position(-2, 0), result);
         Line.projectOntoLine(newPoint, line1).print();
         Line.projectOntoLine(newPoint, line2).print();
         Line.projectOntoLine(newPoint, line3).print();
         Line.projectOntoLine(newPoint, line4).print();
-        //System.out.println("res: (" + result.getXValue() + ", " + result.getYValue() + ")");
+        System.out.println("res: (" + result.getXValue() + ", " + result.getYValue() + ")");
         //assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");

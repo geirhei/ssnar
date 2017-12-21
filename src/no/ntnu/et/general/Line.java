@@ -292,10 +292,8 @@ public class Line {
     }
     
     public static Position projectOntoLine(Position p, Line line) {
-        //double x = p.getXValue() * Math.pow(line.bPar, 2) - p.getYValue() * line.aPar * line.bPar + line.aPar * line.c;
-        //double y = -p.getXValue() * line.aPar * line.bPar + p.getYValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
-        double x = p.getXValue() * Math.pow(line.bPar, 2) + p.getYValue() * line.aPar * line.bPar - line.aPar * line.c;
-        double y = p.getXValue() * line.aPar * line.bPar + p.getYValue() * Math.pow(line.aPar, 2) + line.bPar * line.c;
+        double x = p.getXValue() * Math.pow(line.bPar, 2) + p.getYValue() * line.aPar * line.bPar + line.aPar * line.c;
+        double y = p.getXValue() * line.aPar * line.bPar + p.getYValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
         return new Position(x, y);
     }
     
