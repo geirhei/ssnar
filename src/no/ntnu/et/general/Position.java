@@ -154,4 +154,22 @@ public class Position {
         xValue = Math.cos(rad)*xTemp+-Math.sin(rad)*yTemp;
         yValue = Math.sin(rad)*xTemp+Math.cos(rad)*yTemp;
     }
+    
+    private boolean areEqual(double aThis, double aThat){
+        //System.out.println("double");
+        return Double.doubleToLongBits(aThis) == Double.doubleToLongBits(aThat);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if ( !(obj instanceof Position) ) {
+            return false;
+        }
+        Position otherPos = (Position) obj;
+        return areEqual(this.xValue, otherPos.xValue) &&
+                areEqual(this.yValue, otherPos.yValue);
+    }
 }
