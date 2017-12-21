@@ -6,6 +6,8 @@
  */
 package no.ntnu.et.general;
 import java.awt.Graphics2D;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * This class represents a position using an x-value, an a y-value
@@ -157,9 +159,10 @@ public class Position {
     
     private boolean areEqual(double aThis, double aThat){
         //System.out.println("double");
-        return Double.doubleToLongBits(aThis) == Double.doubleToLongBits(aThat);
+        return (Math.abs(Double.doubleToLongBits(aThis) - Double.doubleToLongBits(aThat)) <= 1e-9);
     }
     
+    /*
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -169,7 +172,51 @@ public class Position {
             return false;
         }
         Position otherPos = (Position) obj;
-        return areEqual(this.xValue, otherPos.xValue) &&
-                areEqual(this.yValue, otherPos.yValue);
+        if (Double.compare(this.xValue, otherPos.xValue) != 0) {
+            return false;
+        }
+        if (Double.compare(this.yValue, otherPos.yValue) != 0) {
+            return false;
+        }
+        return true;
+
+    }
+    */
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (int) (Double.doubleToLongBits(this.xValue) ^ (Double.doubleToLongBits(this.xValue) >>> 32));
+        hash = 17 * hash + (int) (Double.doubleToLongBits(this.yValue) ^ (Double.doubleToLongBits(this.yValue) >>> 32));
+        return hash;
+    }
+    
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Position other = (Position) obj;
+        if (Double.doubleToLongBits(round(this.xValue, 1)) != Double.doubleToLongBits(round(other.xValue, 1))) {
+            return false;
+        }
+        if (Double.doubleToLongBits(round(this.yValue, 1)) != Double.doubleToLongBits(round(other.yValue, 1))) {
+            return false;
+        }
+        return true;
     }
 }
