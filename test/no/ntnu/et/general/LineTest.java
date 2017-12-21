@@ -450,30 +450,48 @@ public class LineTest {
     /**
      * Test of calculateC method, of class Line.
      */
-    //@Test
+    @Test
     public void testCalculateC() {
         System.out.println("calculateC");
-        double theta = 180.0;
-        double x = -2.0;
-        double y = 0.0;
-        double expResult = 2.0;
-        double result = Line.calculateC(theta, x, y);
-        assertEquals(expResult, result, 0.0);
+        double x = 1.0;
+        double y = 1.0;
+        double theta1 = 0.0;
+        double theta2 = 90.0;
+        double theta3 = 180.0;
+        double theta4 = 270.0;
+        //double expResult = 2.0;
+        double result = Line.calculateC(theta1, x, y);
+        assertEquals(1.0, result, 0.01);
+        result = Line.calculateC(theta2, x, y);
+        assertEquals(-1.0, result, 0.01);
+        result = Line.calculateC(theta3, x, y);
+        assertEquals(-1.0, result, 0.01);
+        result = Line.calculateC(theta4, x, y);
+        assertEquals(1.0, result, 0.01);
     }
 
     /**
      * Test of projectOntoLine method, of class Line.
      */
-    @Test
+    //@Test
     public void testProjectOntoLine() {
         System.out.println("projectOntoLine");
-        Position end = new Position(2, 2);
-        Position start = new Position(2, -2);
-        Line line = new Line(start, end);
-        Position newPoint = new Position(10, 5);
+        Position p1 = new Position(2, 2);
+        Position p2 = new Position(-2, 2);
+        Position p3 = new Position(-2, -2);
+        Position p4 = new Position(2, -2);
+        
+        Line line1 = new Line(p3, p4);
+        Line line2 = new Line(p4, p1);
+        Line line3 = new Line(p1, p2);
+        Line line4 = new Line(p2, p3);
+        Position newPoint = new Position(0, 0);
         //Position expResult = null;
-        Position result = Line.projectOntoLine(newPoint, line);
-        System.out.println("res: (" + result.getXValue() + ", " + result.getYValue() + ")");
+        Line.projectOntoLine(newPoint, line1).print();
+        Line.projectOntoLine(newPoint, line2).print();
+        Line.projectOntoLine(newPoint, line3).print();
+        Line.projectOntoLine(newPoint, line4).print();
+        //System.out.println("res: (" + result.getXValue() + ", " + result.getYValue() + ")");
         //assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");

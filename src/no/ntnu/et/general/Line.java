@@ -41,15 +41,17 @@ public class Line {
     public Position pR;
     public Position pL;
     
+    public static double STD_W = 10.0;
+    
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
-        this.aPar = Math.sin(Math.toRadians(theta));
-        this.bPar = Math.cos(Math.toRadians(theta));
+        this.aPar = -Math.sin(Math.toRadians(theta));
+        this.bPar = -Math.cos(Math.toRadians(theta));
         this.varC = 0.0;
         this.pR = pR;
         this.pL = pL;
         this.p = getMidpoint(this.pL, this.pR);
-        this.c = -this.aPar * this.p.getXValue() - this.bPar * this.p.getYValue();
+        this.c = calculateC(this.theta, this.p.getXValue(), this.p.getYValue());
         this.h = distanceBetween(pL, pR) / 2;
         //this.varTheta = Math.toDegrees(Math.atan(this.varC / this.h));
         this.varTheta = 0.0;
@@ -142,15 +144,15 @@ public class Line {
      */
     public static double calculateError(Position p0, Position p1, Position p2) {
         double theta = calculateTheta(p0, p1);
-        double a = Math.sin(Math.toRadians(theta));
-        double b = Math.cos(Math.toRadians(theta));
+        double a = -Math.sin(Math.toRadians(theta));
+        double b = -Math.cos(Math.toRadians(theta));
         double c = calculateC(theta, p0.getXValue(), p0.getYValue());
-        return -a * p2.getXValue() + b * p2.getYValue() + c;
+        return a * p2.getXValue() - b * p2.getYValue() + c;
     }
     
     public static double calculateC(double theta, double x, double y) {
-        double a = Math.sin(Math.toRadians(theta));
-        double b = Math.cos(Math.toRadians(theta));
+        double a = -Math.sin(Math.toRadians(theta));
+        double b = -Math.cos(Math.toRadians(theta));
         return a * x - b * y;
     }
     
@@ -183,8 +185,7 @@ public class Line {
         if (p0 == null || p1 == null || p2 == null) {
             return false;
         }
-        double std_w = 5.0; // cludged
-        return Math.abs(calculateError(p0, p1, p2)) <= std_w / 2.0;
+        return Math.abs(calculateError(p0, p1, p2)) <= STD_W / 2.0;
     }
     
     public static List<Line> detectLines(List<Position> observations) {
@@ -248,10 +249,9 @@ public class Line {
      * @return true if successful, false if not
      */
     public static boolean extendLine(Position p, Line line) {
-        double std_w = 10.0; // cludged
         double e = calculateError(line.pL, line.pR, p);
         
-        if (Math.abs(e) <= std_w / 2.0) {
+        if (Math.abs(e) <= STD_W / 2.0) {
             //line.varC = 0.5; // cludged
             line.varC = 0.0;
             //double k_c = line.varC / (line.varC + Math.pow(std_w, 2));
@@ -261,7 +261,7 @@ public class Line {
             
             double dTheta = Math.toDegrees(Math.atan(e / line.h));
             double stdTheta = 0.0;
-            //double stdTheta = Math.toDegrees(Math.atan(std_w / line.h));
+            //double stdTheta = Math.toDegrees(Math.atan(STD_W / line.h));
             line.varTheta = Math.pow(stdTheta, 2);
             
             //double k_theta = line.varTheta / (line.varTheta + Math.pow(stdTheta, 2));
@@ -270,8 +270,8 @@ public class Line {
             line.varTheta += k_theta * line.varTheta;
             
             // Update parameters
-            line.aPar = Math.sin(Math.toRadians(line.theta));
-            line.bPar = Math.cos(Math.toRadians(line.theta));
+            line.aPar = -Math.sin(Math.toRadians(line.theta));
+            line.bPar = -Math.cos(Math.toRadians(line.theta));
             
             // Project onto new line
             line.pR = projectOntoLine(p, line);
