@@ -33,28 +33,23 @@ public class Line {
     public Position p;
     public double theta;
     public double h;
-    public double varTheta;
-    public double varC;
     public double aPar;
     public double bPar;
     public double c;
     public Position pR;
     public Position pL;
     
-    public static final double STD_W = 5.0;
+    public static final double STD_W = 3.0;
     
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
         this.aPar = -Math.sin(Math.toRadians(theta));
         this.bPar = -Math.cos(Math.toRadians(theta));
-        this.varC = 0.0;
         this.pR = pR;
         this.pL = pL;
         this.p = getMidpoint(this.pL, this.pR);
         this.c = calculateC(this.theta, this.p.getXValue(), this.p.getYValue());
         this.h = distanceBetween(pL, pR) / 2;
-        //this.varTheta = Math.toDegrees(Math.atan(this.varC / this.h));
-        this.varTheta = 0.0;
     }
     
     /**
@@ -232,12 +227,12 @@ public class Line {
             newLine.p = new Position(xPNew, yPNew);
             
             // Extend line
-            /*
+            
             while (i < observations.size() && extendLine(observations.get(i), newLine)) {
                 i++;
                 System.out.println("Line extended!");
             }
-            */
+            
             lines.add(newLine);
         }
         return lines;
@@ -254,22 +249,12 @@ public class Line {
         double e = calculateError(line.pL, line.pR, p);
         
         if (Math.abs(e) <= STD_W / 2.0) {
-            //line.varC = 0.5; // cludged
-            line.varC = 0.0;
-            //double k_c = line.varC / (line.varC + Math.pow(std_w, 2));
             double k_c = 1.0;
             line.c -= k_c * e;
-            line.varC -= k_c * line.varC;
             
             double dTheta = Math.toDegrees(Math.atan(e / line.h));
-            double stdTheta = 0.0;
-            //double stdTheta = Math.toDegrees(Math.atan(STD_W / line.h));
-            line.varTheta = Math.pow(stdTheta, 2);
-            
-            //double k_theta = line.varTheta / (line.varTheta + Math.pow(stdTheta, 2));
             double k_theta = 1.0;
             line.theta += k_theta * dTheta;
-            line.varTheta += k_theta * line.varTheta;
             
             // Update parameters
             line.aPar = -Math.sin(Math.toRadians(line.theta));
