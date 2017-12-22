@@ -43,8 +43,8 @@ public class Line {
     
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
-        this.aPar = -Math.sin(Math.toRadians(theta));
-        this.bPar = -Math.cos(Math.toRadians(theta));
+        this.aPar = Math.sin(Math.toRadians(theta - 90));
+        this.bPar = -Math.cos(Math.toRadians(theta - 90));
         this.pR = pR;
         this.pL = pL;
         this.p = getMidpoint(this.pL, this.pR);
@@ -146,9 +146,9 @@ public class Line {
     }
     
     public static double calculateC(double theta, double x, double y) {
-        double a = -Math.sin(Math.toRadians(theta));
+        double a = Math.sin(Math.toRadians(180 - theta));
         double b = -Math.cos(Math.toRadians(theta));
-        return a * x - b * y;
+        return -a * y - b * x;
     }
     
     /*
