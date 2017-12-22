@@ -39,12 +39,12 @@ public class Line {
     public Position pR;
     public Position pL;
     
-    public static final double STD_W = 5.0;
+    public static final double STD_W = 100.0;
     
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
-        this.aPar = Math.sin(Math.toRadians(theta - 90));
-        this.bPar = -Math.cos(Math.toRadians(theta - 90));
+        this.aPar = Math.sin(Math.toRadians(theta + 90));
+        this.bPar = -Math.cos(Math.toRadians(theta + 90));
         this.pR = pR;
         this.pL = pL;
         this.p = getMidpoint(this.pL, this.pR);
@@ -96,8 +96,8 @@ public class Line {
     }
     
     public static Position getMidpoint(Position a, Position b) {
-        double midX = (a.getXValue() + b.getXValue()) / 2;
-        double midY = (a.getYValue() + b.getYValue()) / 2;
+        double midX = (a.getXValue() + b.getXValue()) / 2.0;
+        double midY = (a.getYValue() + b.getYValue()) / 2.0;
         return new Position(midX, midY);
     }
 
@@ -139,15 +139,15 @@ public class Line {
      */
     public static double calculateError(Position p0, Position p1, Position p2) {
         Line line = new Line(p0, p1);
-        double a = -Math.sin(Math.toRadians(line.theta));
+        double a = Math.sin(Math.toRadians(180 - line.theta));
         double b = -Math.cos(Math.toRadians(line.theta));
         double c = calculateC(line.theta, line.p.getXValue(), line.p.getYValue());
-        return -a * p2.getXValue() + b * p2.getYValue() + c;
+        return a * p2.getYValue() + b * p2.getXValue() + c;
     }
     
     public static double calculateC(double theta, double x, double y) {
-        double a = Math.sin(Math.toRadians(180 - theta));
-        double b = -Math.cos(Math.toRadians(theta));
+        double a = Math.sin(Math.toRadians(theta + 90));
+        double b = -Math.cos(Math.toRadians(theta + 90));
         return -a * y - b * x;
     }
     
@@ -227,12 +227,12 @@ public class Line {
             newLine.p = new Position(xPNew, yPNew);
             
             // Extend line
-            /*
+            
             while (i < observations.size() && extendLine(observations.get(i), newLine)) {
                 i++;
                 System.out.println("Line extended!");
             }
-            */
+            
             lines.add(newLine);
         }
         return lines;
@@ -254,10 +254,10 @@ public class Line {
             
             double dTheta = Math.toDegrees(Math.atan(e / line.h));
             double k_theta = 1.0;
-            line.theta += k_theta * dTheta;
+            line.theta -= k_theta * dTheta;
             
             // Update parameters
-            line.aPar = -Math.sin(Math.toRadians(line.theta));
+            line.aPar = Math.sin(Math.toRadians(180 - line.theta));
             line.bPar = -Math.cos(Math.toRadians(line.theta));
             
             // Project onto new line
@@ -279,8 +279,8 @@ public class Line {
     }
     
     public static Position projectOntoLine(Position p, Line line) {
-        double x = p.getXValue() * Math.pow(line.bPar, 2) + p.getYValue() * line.aPar * line.bPar + line.aPar * line.c;
-        double y = p.getXValue() * line.aPar * line.bPar + p.getYValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
+        double x = -p.getYValue() * line.aPar * line.bPar + p.getXValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
+        double y = p.getYValue() * Math.pow(line.bPar, 2) - p.getXValue() * line.aPar * line.bPar - line.aPar * line.c;      
         return new Position(x, y);
     }
     

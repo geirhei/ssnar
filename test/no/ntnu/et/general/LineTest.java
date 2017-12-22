@@ -461,14 +461,19 @@ public class LineTest {
     @Test
     public void testCalculateC() {
         System.out.println("calculateC");
-        double x = -1.0;
-        double y = -1.0;
-        double theta1 = 0.0;
-        double theta2 = 90.0;
-        double theta3 = 180.0;
-        double theta4 = 270.0;
-        //double expResult = 2.0;
-        double result = Line.calculateC(theta1, x, y);
+        
+        double x = 0.0;
+        double y = 1.0;
+        double xOrg = y;
+        double yOrg = x;
+        double thetaOrg = 90.0;
+        double thetaNew = thetaOrg - 90;
+        double aOrg = Math.sin(Math.toRadians(thetaOrg));
+        double bOrg = -Math.cos(Math.toRadians(thetaOrg));
+        double cOrg = -aOrg * xOrg - bOrg * yOrg;
+        double cNew = Line.calculateC(thetaNew, x, y);
+        assertEquals(cOrg, cNew, 1e-9);
+        /*
         assertEquals(-1.0, result, 0.01);
         result = Line.calculateC(theta2, x, y);
         assertEquals(1.0, result, 0.01);
@@ -476,12 +481,13 @@ public class LineTest {
         assertEquals(1.0, result, 0.01);
         result = Line.calculateC(theta4, x, y);
         assertEquals(-1.0, result, 0.01);
+        */
     }
 
     /**
      * Test of projectOntoLine method, of class Line.
      */
-    //@Test
+    @Test
     public void testProjectOntoLine() {
         System.out.println("projectOntoLine");
         Position p1 = new Position(4, 4);
@@ -493,6 +499,7 @@ public class LineTest {
         Line line2 = new Line(p4, p1);
         Line line3 = new Line(p1, p2);
         Line line4 = new Line(p2, p3);
+        //line1.print();
         Position newPoint = new Position(-5, -5);
         //Position expResult = null;
         Position result = Line.projectOntoLine(newPoint, line1);
@@ -502,7 +509,7 @@ public class LineTest {
         //result.print();
         assertEquals(new Position(4, -5), result);
         result = Line.projectOntoLine(newPoint, line3);
-        result.print();
+        //result.print();
         assertEquals(new Position(-5, 4), result);
         result = Line.projectOntoLine(newPoint, line4);
         //result.print();
