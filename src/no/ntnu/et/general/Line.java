@@ -39,7 +39,7 @@ public class Line {
     public Position pR;
     public Position pL;
     
-    public static final double STD_W = 100.0;
+    public static final double STD_W = 10.0;
     
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
@@ -139,8 +139,8 @@ public class Line {
      */
     public static double calculateError(Position p0, Position p1, Position p2) {
         Line line = new Line(p0, p1);
-        double a = Math.sin(Math.toRadians(180 - line.theta));
-        double b = -Math.cos(Math.toRadians(line.theta));
+        double a = Math.sin(Math.toRadians(line.theta + 90));
+        double b = -Math.cos(Math.toRadians(line.theta + 90));
         double c = calculateC(line.theta, line.p.getXValue(), line.p.getYValue());
         return a * p2.getYValue() + b * p2.getXValue() + c;
     }
@@ -222,8 +222,10 @@ public class Line {
             }
             
             newLine.c -= e;
-            double xPNew = newLine.p.getXValue() - e * newLine.aPar;
-            double yPNew = newLine.p.getYValue() - e * newLine.bPar;
+            //double xPNew = newLine.p.getXValue() - e * newLine.aPar;
+            //double yPNew = newLine.p.getYValue() - e * newLine.bPar;
+            double xPNew = newLine.p.getXValue() - e * newLine.bPar;
+            double yPNew = newLine.p.getYValue() - e * newLine.aPar;
             newLine.p = new Position(xPNew, yPNew);
             
             // Extend line
@@ -257,8 +259,8 @@ public class Line {
             line.theta -= k_theta * dTheta;
             
             // Update parameters
-            line.aPar = Math.sin(Math.toRadians(180 - line.theta));
-            line.bPar = -Math.cos(Math.toRadians(line.theta));
+            line.aPar = Math.sin(Math.toRadians(line.theta + 90));
+            line.bPar = -Math.cos(Math.toRadians(line.theta + 90));
             
             // Project onto new line
             line.pR = projectOntoLine(p, line);
@@ -279,8 +281,10 @@ public class Line {
     }
     
     public static Position projectOntoLine(Position p, Line line) {
-        double x = -p.getYValue() * line.aPar * line.bPar + p.getXValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
-        double y = p.getYValue() * Math.pow(line.bPar, 2) - p.getXValue() * line.aPar * line.bPar - line.aPar * line.c;      
+        //double x = -p.getYValue() * line.aPar * line.bPar + p.getXValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
+        //double y = p.getYValue() * Math.pow(line.bPar, 2) - p.getXValue() * line.aPar * line.bPar - line.aPar * line.c;      
+        double y = -p.getXValue() * line.aPar * line.bPar + p.getYValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
+        double x = p.getXValue() * Math.pow(line.bPar, 2) - p.getYValue() * line.aPar * line.bPar - line.aPar * line.c;      
         return new Position(x, y);
     }
     
@@ -597,7 +601,11 @@ public class Line {
     
     public void print() {
         System.out.println("Line:");
-        System.out.println("pL(x: " + pL.getXValue() + ", y: " + pL.getYValue() + "), pR(x: " + pR.getXValue() + ", y: " + pR.getYValue() + ")");
+        //System.out.println("pL(x: " + pL.getXValue() + ", y: " + pL.getYValue() + "), pR(x: " + pR.getXValue() + ", y: " + pR.getYValue() + ")");
+        System.out.print("pL: ");
+        pL.print();
+        System.out.print("pR: ");
+        pR.print();
         System.out.println("theta: " + theta);
         System.out.println("c: " + c);
     }

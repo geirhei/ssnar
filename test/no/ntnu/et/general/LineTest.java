@@ -463,7 +463,7 @@ public class LineTest {
         System.out.println("calculateC");
         
         double x = 0.0;
-        double y = 1.0;
+        double y = -55.0;
         double xOrg = y;
         double yOrg = x;
         double thetaOrg = 90.0;
@@ -514,6 +514,11 @@ public class LineTest {
         result = Line.projectOntoLine(newPoint, line4);
         //result.print();
         assertEquals(new Position(-4, -5), result);
+        Line newLine = new Line(new Position(-2, -2), new Position(2, 2));
+        Position newPos = new Position(3, 3);
+        result = Line.projectOntoLine(newPos, newLine);
+        result.print();
+        assertEquals(new Position(0, 0), result);
         
         //System.out.println("res: (" + result.getXValue() + ", " + result.getYValue() + ")");
     }
