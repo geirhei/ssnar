@@ -218,12 +218,12 @@ public class Line {
             newLine.p = new Position(xPNew, yPNew);
             
             // Extend line
-            
+            /*
             while (i < observations.size() && extendLine(observations.get(i), newLine)) {
                 i++;
                 System.out.println("Line extended!");
             }
-            
+            */
             lines.add(newLine);
         }
         return lines;
@@ -345,12 +345,15 @@ public class Line {
     
     public void print() {
         System.out.println("Line:");
-        //System.out.println("pL(x: " + pL.getXValue() + ", y: " + pL.getYValue() + "), pR(x: " + pR.getXValue() + ", y: " + pR.getYValue() + ")");
         System.out.print("pL: ");
         pL.print();
         System.out.print("pR: ");
         pR.print();
-        System.out.println("theta: " + theta);
-        System.out.println("c: " + c);
+        System.out.print("theta: ");
+        System.out.printf("%1.2f", theta);
+        System.out.println();
+        System.out.print("c: ");
+        System.out.printf("%1.2f", c);
+        System.out.println();
     }
 }
