@@ -37,7 +37,7 @@ public class Line {
     public Position pR;
     public Position pL;
     
-    public static final double STD_W = 10.0;
+    public static final double STD_W = 5.0;
     
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
@@ -218,12 +218,13 @@ public class Line {
             newLine.p = new Position(xPNew, yPNew);
             
             // Extend line
-            
+            // Is the problem here? extendLine takes newLines as an argument several times?
+            /*
             while (i < observations.size() && extendLine(observations.get(i), newLine)) {
                 i++;
                 System.out.println("Line extended!");
             }
-            
+            */
             lines.add(newLine);
         }
         return lines;
@@ -267,6 +268,27 @@ public class Line {
         } else {
             return false;
         }
+    }
+    
+    public static boolean matchSegment(Line mapLine, Line line) {
+        final double varTheta_m = 1.0;
+        final double varTheta_o = 1.0;
+        final double varC_o = 1.0;
+        final double varC_m = 1.0;
+        if (Math.pow(mapLine.theta - line.theta, 2) > varTheta_m + varTheta_o) {
+            return false;
+        }
+        if (Math.pow(mapLine.c - line.c, 2) > varC_o + varC_m) {
+            return false;
+        }
+        double x_o = line.p.getXValue();
+        double x_m = mapLine.p.getXValue();
+        double y_o = line.p.getYValue();
+        double y_m = mapLine.p.getYValue();
+        if (Math.pow(x_o - x_m, 2) + Math.pow(y_o - y_m, 2) > line.h + mapLine.h) {
+            return false;
+        }
+        return true;
     }
     
     public static Position projectOntoLine(Position p, Line line) {
