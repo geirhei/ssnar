@@ -191,7 +191,7 @@ public class MappingController extends Thread {
                 
                 // SLAMrobot handling. Does not currently care about other robots.
                 // 2D list of positions should be ok
-
+                /*
                 if (robot.getName().equals("SLAM")) {
                     
                     for (int j = 0; j < 4; j++) {
@@ -242,6 +242,7 @@ public class MappingController extends Thread {
                         System.out.println("Lines merged.");
                         System.out.println("lineRepository size: " + lineRepository.size());
                         */
+                        /*
                         mergeNeeded = false;
                     }
                     
@@ -249,6 +250,7 @@ public class MappingController extends Thread {
                     
                     //continue;
                 }
+                */
                 
                 int sensorOneValue = 0;
 

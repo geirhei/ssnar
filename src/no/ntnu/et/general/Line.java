@@ -41,8 +41,8 @@ public class Line {
     
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
-        this.aPar = Math.sin(Math.toRadians(theta + 90));
-        this.bPar = -Math.cos(Math.toRadians(theta + 90));
+        this.aPar = Math.sin(Math.toRadians(theta));
+        this.bPar = -Math.cos(Math.toRadians(theta));
         this.pR = pR;
         this.pL = pL;
         this.p = getMidpoint(this.pL, this.pR);
@@ -137,16 +137,16 @@ public class Line {
      */
     public static double calculateError(Position p0, Position p1, Position p2) {
         Line line = new Line(p0, p1);
-        double a = Math.sin(Math.toRadians(line.theta + 90));
-        double b = -Math.cos(Math.toRadians(line.theta + 90));
+        double a = Math.sin(Math.toRadians(line.theta));
+        double b = -Math.cos(Math.toRadians(line.theta));
         double c = calculateC(line.theta, line.p.getXValue(), line.p.getYValue());
-        return a * p2.getYValue() + b * p2.getXValue() + c;
+        return a * p2.getXValue() + b * p2.getYValue() + c;
     }
     
     public static double calculateC(double theta, double x, double y) {
-        double a = Math.sin(Math.toRadians(theta + 90));
-        double b = -Math.cos(Math.toRadians(theta + 90));
-        return -a * y - b * x;
+        double a = Math.sin(Math.toRadians(theta));
+        double b = -Math.cos(Math.toRadians(theta));
+        return -a * x - b * y;
     }
     
     /**
@@ -218,12 +218,12 @@ public class Line {
             newLine.p = new Position(xPNew, yPNew);
             
             // Extend line
-            /*
+            
             while (i < observations.size() && extendLine(observations.get(i), newLine)) {
                 i++;
                 System.out.println("Line extended!");
             }
-            */
+            
             lines.add(newLine);
         }
         return lines;
@@ -248,8 +248,8 @@ public class Line {
             line.theta -= k_theta * dTheta;
             
             // Update parameters
-            line.aPar = Math.sin(Math.toRadians(line.theta + 90));
-            line.bPar = -Math.cos(Math.toRadians(line.theta + 90));
+            line.aPar = Math.sin(Math.toRadians(line.theta));
+            line.bPar = -Math.cos(Math.toRadians(line.theta));
             
             // Project onto new line
             line.pR = projectOntoLine(p, line);
@@ -270,10 +270,8 @@ public class Line {
     }
     
     public static Position projectOntoLine(Position p, Line line) {
-        //double x = -p.getYValue() * line.aPar * line.bPar + p.getXValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
-        //double y = p.getYValue() * Math.pow(line.bPar, 2) - p.getXValue() * line.aPar * line.bPar - line.aPar * line.c;      
+        double x = p.getXValue() * Math.pow(line.bPar, 2) - p.getYValue() * line.aPar * line.bPar - line.aPar * line.c;
         double y = -p.getXValue() * line.aPar * line.bPar + p.getYValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
-        double x = p.getXValue() * Math.pow(line.bPar, 2) - p.getYValue() * line.aPar * line.bPar - line.aPar * line.c;      
         return new Position(x, y);
     }
     
