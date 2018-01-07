@@ -41,8 +41,8 @@ public class Line {
     
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
-        this.aPar = -Math.sin(Math.toRadians(theta));
-        this.bPar = -Math.cos(Math.toRadians(theta));
+        this.aPar = Math.sin(Math.toRadians(theta - 90));
+        this.bPar = -Math.cos(Math.toRadians(theta - 90));
         this.pR = pR;
         this.pL = pL;
         this.p = getMidpoint(this.pL, this.pR);
@@ -137,15 +137,15 @@ public class Line {
      */
     public static double calculateError(Position p0, Position p1, Position p2) {
         Line line = new Line(p0, p1);
-        double a = -Math.sin(Math.toRadians(line.theta));
-        double b = -Math.cos(Math.toRadians(line.theta));
+        double a = Math.sin(Math.toRadians(line.theta - 90));
+        double b = -Math.cos(Math.toRadians(line.theta - 90));
         double c = calculateC(line.theta, line.p.getXValue(), line.p.getYValue());
         return a * p2.getYValue() + b * p2.getXValue() + c;
     }
     
     public static double calculateC(double theta, double x, double y) {
-        double a = -Math.sin(Math.toRadians(theta));
-        double b = -Math.cos(Math.toRadians(theta));
+        double a = Math.sin(Math.toRadians(theta - 90));
+        double b = -Math.cos(Math.toRadians(theta - 90));
         return -a * y - b * x;
     }
     
@@ -210,21 +210,19 @@ public class Line {
                 continue;
             }
             
-            newLine.c -= e;
-            //double xPNew = newLine.p.getXValue() - e * newLine.aPar;
-            //double yPNew = newLine.p.getYValue() - e * newLine.bPar;
+            newLine.c -= 0.01 * e;
             double xPNew = newLine.p.getXValue() - e * newLine.bPar;
             double yPNew = newLine.p.getYValue() - e * newLine.aPar;
             newLine.p = new Position(xPNew, yPNew);
             
             // Extend line
             // Is the problem here? extendLine takes newLines as an argument several times?
-            /*
+            
             while (i < observations.size() && extendLine(observations.get(i), newLine)) {
                 i++;
                 System.out.println("Line extended!");
             }
-            */
+            
             lines.add(newLine);
         }
         return lines;
@@ -241,20 +239,19 @@ public class Line {
         double e = calculateError(line.pL, line.pR, p);
         
         if (Math.abs(e) <= STD_W / 2.0) {
-            double k_c = 1.0;
+            double k_c = 0.01;
             line.c -= k_c * e;
             
             double dTheta = Math.toDegrees(Math.atan(e / line.h));
-            double k_theta = 1.0;
+            double k_theta = 0.01;
             line.theta -= k_theta * dTheta;
             
             // Update parameters
-            line.aPar = -Math.sin(Math.toRadians(line.theta));
-            line.bPar = -Math.cos(Math.toRadians(line.theta));
+            line.aPar = Math.sin(Math.toRadians(line.theta - 90));
+            line.bPar = -Math.cos(Math.toRadians(line.theta - 90));
             
             // Project onto new line
             line.pR = projectOntoLine(p, line);
-            //line.pR = p;
             line.pL = projectOntoLine(line.pL, line);
             
             // Update midpoint and h
@@ -289,15 +286,8 @@ public class Line {
     }
     
     public static Position projectOntoLine(Position p, Line line) {
-        //double x = p.getXValue() * Math.pow(line.bPar, 2) - p.getYValue() * line.aPar * line.bPar - line.aPar * line.c;
-        //double y = -p.getXValue() * line.aPar * line.bPar + p.getYValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
-        
-        //double x = -p.getYValue() * line.aPar * line.bPar + p.getXValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
-        //double y = p.getYValue() * Math.pow(line.bPar, 2) - p.getXValue() * line.aPar * line.bPar - line.aPar * line.c;
-
-        double x = -p.getXValue() * line.aPar * line.bPar + p.getYValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
-        double y = p.getXValue() * Math.pow(line.bPar, 2) - p.getYValue() * line.aPar * line.bPar - line.aPar * line.c;
-
+        double x = Math.pow(line.aPar, 2) * p.getXValue() - line.aPar * line.bPar * p.getYValue() - line.bPar * line.c;
+        double y = Math.pow(line.bPar, 2) * p.getYValue() - line.aPar * line.bPar * p.getXValue() - line.aPar * line.c;
         return new Position(x, y);
     }
     

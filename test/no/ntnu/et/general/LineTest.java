@@ -374,37 +374,27 @@ public class LineTest {
     @Test
     public void testProjectOntoLine() {
         System.out.println("projectOntoLine");
-        Position p1 = new Position(4, 4);
-        Position p2 = new Position(-4, 4);
-        Position p3 = new Position(-4, -4);
-        Position p4 = new Position(4, -4);
+        Position p0 = new Position(19, 9);
+        Position p1 = new Position(16, 9);
+        Position p2 = new Position(14, 6);
+        Position p3 = new Position(10, 4);
+        Position p4 = new Position(6, 9);
+        Position p5 = new Position(2, 9);
+        Position p7 = new Position(10, -3);
+        Position p8 = new Position(11, 0);
         
-        Line line1 = new Line(p3, p4);
-        Line line2 = new Line(p4, p1);
-        Line line3 = new Line(p1, p2);
-        Line line4 = new Line(p2, p3);
-        //line1.print();
-        Position newPoint = new Position(-5, -5);
-        //Position expResult = null;
-        Position result = Line.projectOntoLine(newPoint, line1);
-        //result.print();
-        assertEquals(new Position(-5, -4), result);
-        result = Line.projectOntoLine(newPoint, line2);
-        //result.print();
-        assertEquals(new Position(4, -5), result);
-        result = Line.projectOntoLine(newPoint, line3);
-        //result.print();
-        assertEquals(new Position(-5, 4), result);
-        result = Line.projectOntoLine(newPoint, line4);
-        //result.print();
-        assertEquals(new Position(-4, -5), result);
-        Line newLine = new Line(new Position(-2, -2), new Position(2, 2));
-        Position newPos = new Position(3, 3);
-        result = Line.projectOntoLine(newPos, newLine);
-        result.print();
-        //assertEquals(new Position(0, 0), result);
+        Line line0 = new Line(p4, p5);
+        line0.print();
+        Position p6 = new Position(4, 14);
+        Position res = Line.projectOntoLine(p6, line0);
+        Position expected = new Position(4, 9);
+        res.print();
+        assertEquals(expected, res);
         
-        //System.out.println("res: (" + result.getXValue() + ", " + result.getYValue() + ")");
+        Line line6 = new Line(p7, p3);
+        res = Line.projectOntoLine(new Position(11, -4), line6);
+        res.print();
+        assertEquals(res, new Position(10, 0));
     }
 
     /**

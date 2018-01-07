@@ -332,6 +332,19 @@ public class Simulator {
                 }
             }
 
+            // manual
+            /*
+            myRobot.getObservations().add(new Position(200, 90));
+            myRobot.getObservations().add(new Position(195, 110));
+            myRobot.getObservations().add(new Position(190, 90));
+            myRobot.getObservations().add(new Position(185, 110));
+            myRobot.getObservations().add(new Position(180, 90));
+            myRobot.getObservations().add(new Position(150, 90));
+            myRobot.getObservations().add(new Position(140, 110));
+            myRobot.getObservations().add(new Position(130, 90));
+            */
+            //
+            
             System.out.println("Observations: " + myRobot.getObservations().size());
             List<Line> lines = detectLines(myRobot.getObservations());
             if (lines == null) {

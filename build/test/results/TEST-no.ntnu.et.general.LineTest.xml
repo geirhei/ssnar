@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="1" hostname="NTNU04352" name="no.ntnu.et.general.LineTest" skipped="0" tests="2" time="0.054" timestamp="2018-01-07T11:02:45">
+<testsuite errors="0" failures="1" hostname="NTNU04352" name="no.ntnu.et.general.LineTest" skipped="0" tests="1" time="0.051" timestamp="2018-01-07T14:45:11">
   <properties>
     <property name="libs.jsp-compiler.javadoc" value="" />
     <property name="netbeans.autoupdate.country" value="US" />
@@ -62,7 +62,7 @@
     <property name="copylibs.rebase" value="true" />
     <property name="libs.spring-webmvc3.0.maven-pom" value="" />
     <property name="libs.swing-layout.maven-pom" value="" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner no.ntnu.et.general.LineTest skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=true formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\Users\geirhei\Documents\ssnar\SSNAR\build\test\results\TEST-no.ntnu.et.general.LineTest.xml crashfile=C:\Users\geirhei\Documents\ssnar\SSNAR\build\junitvmwatcher2973745781764796572.properties propsfile=C:\Users\geirhei\Documents\ssnar\SSNAR\build\junit286109293492720925.properties" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner no.ntnu.et.general.LineTest skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=true formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\Users\geirhei\Documents\ssnar\SSNAR\build\test\results\TEST-no.ntnu.et.general.LineTest.xml crashfile=C:\Users\geirhei\Documents\ssnar\SSNAR\build\junitvmwatcher8541056913530447971.properties propsfile=C:\Users\geirhei\Documents\ssnar\SSNAR\build\junit8874289886482635132.properties" />
     <property name="build.classes.dir" value="build/classes" />
     <property name="netbeans.accept_license_class" value="org.netbeans.license.AcceptLicense" />
     <property name="ant.file.type.SSNAR" value="file" />
@@ -112,7 +112,7 @@
     <property name="javadoc.splitindex" value="true" />
     <property name="file.separator" value="\" />
     <property name="libs.Java-EE-GlassFish-v3-Prelude.maven-pom" value="" />
-    <property name="javac.includesfile.binary" value="C:\Users\geirhei\Documents\ssnar\SSNAR\null816204482" />
+    <property name="javac.includesfile.binary" value="C:\Users\geirhei\Documents\ssnar\SSNAR\null646595790" />
     <property name="libs.junit_4.maven-pom" value="" />
     <property name="mkdist.disabled" value="false" />
     <property name="javac.test.processorpath" value="../libraries/rxtx-2.1.7.jar:../libraries/RXTXcomm.jar:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/Jama-1.0.3.jar:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/absolutelayout/AbsoluteLayout.jar:..\libraries\EJML-core-0.30-sources.jar:..\libraries\EJML-core-0.30.jar:..\libraries\EJML-dense64-0.30-sources.jar:..\libraries\EJML-dense64-0.30.jar:..\libraries\EJML-denseC64-0.30-sources.jar:..\libraries\EJML-denseC64-0.30.jar:..\libraries\EJML-equation-0.30-sources.jar:..\libraries\EJML-equation-0.30.jar:..\libraries\EJML-simple-0.30-sources.jar:..\libraries\EJML-simple-0.30.jar:build/classes:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/junit_4/junit-4.12.jar:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/hamcrest/hamcrest-core-1.3.jar" />
@@ -452,20 +452,19 @@
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit" />
     <property name="libs.javaee-web-api-7.0.javadoc" value="C:\Program Files (x86)\NetBeans 8.2\enterprise\docs\javaee-doc-api.jar" />
   </properties>
-  <testcase classname="no.ntnu.et.general.LineTest" name="testMatchSegment" time="0.009">
-    <failure message="expected:&lt;true&gt; but was:&lt;false&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;true&gt; but was:&lt;false&gt;
-	at no.ntnu.et.general.LineTest.testMatchSegment(LineTest.java:421)
+  <testcase classname="no.ntnu.et.general.LineTest" name="testProjectOntoLine" time="0.011">
+    <failure message="expected:&lt;no.ntnu.et.general.Position@27407e7&gt; but was:&lt;no.ntnu.et.general.Position@426407e7&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;no.ntnu.et.general.Position@27407e7&gt; but was:&lt;no.ntnu.et.general.Position@426407e7&gt;
+	at no.ntnu.et.general.LineTest.testProjectOntoLine(LineTest.java:397)
 </failure>
   </testcase>
-  <testcase classname="no.ntnu.et.general.LineTest" name="testProjectOntoLine" time="0.002" />
-  <system-out><![CDATA[matchSegment
+  <system-out><![CDATA[projectOntoLine
 Line:
-pL: x: 0.00, y: 1.00
-pR: x: 1.00, y: 0.00
-theta: 315.00
-c: 0.71
-projectOntoLine
-x: 3.00, y: 3.00
+pL: x: 6.00, y: 9.00
+pR: x: 2.00, y: 9.00
+theta: 180.00
+c: -9.00
+x: 4.00, y: 9.00
+x: 10.00, y: -4.00
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
