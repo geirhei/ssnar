@@ -407,4 +407,20 @@ public class LineTest {
         //System.out.println("res: (" + result.getXValue() + ", " + result.getYValue() + ")");
     }
 
+    /**
+     * Test of matchSegment method, of class Line.
+     */
+    //@Test
+    public void testMatchSegment() {
+        System.out.println("matchSegment");
+        Line mapLine = new Line(new Position(0, 0), new Position(1, 1));
+        Line line = new Line(new Position(0, 1), new Position(1, 0));
+        line.print();
+        boolean expResult = true;
+        boolean result = Line.matchSegment(mapLine, line);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
 }

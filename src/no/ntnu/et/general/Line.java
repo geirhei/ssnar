@@ -37,11 +37,11 @@ public class Line {
     public Position pR;
     public Position pL;
     
-    public static final double STD_W = 5.0;
+    public static final double STD_W = 50.0;
     
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
-        this.aPar = Math.sin(Math.toRadians(theta));
+        this.aPar = -Math.sin(Math.toRadians(theta));
         this.bPar = -Math.cos(Math.toRadians(theta));
         this.pR = pR;
         this.pL = pL;
@@ -137,16 +137,16 @@ public class Line {
      */
     public static double calculateError(Position p0, Position p1, Position p2) {
         Line line = new Line(p0, p1);
-        double a = Math.sin(Math.toRadians(line.theta));
+        double a = -Math.sin(Math.toRadians(line.theta));
         double b = -Math.cos(Math.toRadians(line.theta));
         double c = calculateC(line.theta, line.p.getXValue(), line.p.getYValue());
-        return a * p2.getXValue() + b * p2.getYValue() + c;
+        return a * p2.getYValue() + b * p2.getXValue() + c;
     }
     
     public static double calculateC(double theta, double x, double y) {
-        double a = Math.sin(Math.toRadians(theta));
+        double a = -Math.sin(Math.toRadians(theta));
         double b = -Math.cos(Math.toRadians(theta));
-        return -a * x - b * y;
+        return -a * y - b * x;
     }
     
     /**
@@ -249,20 +249,17 @@ public class Line {
             line.theta -= k_theta * dTheta;
             
             // Update parameters
-            line.aPar = Math.sin(Math.toRadians(line.theta));
+            line.aPar = -Math.sin(Math.toRadians(line.theta));
             line.bPar = -Math.cos(Math.toRadians(line.theta));
             
             // Project onto new line
             line.pR = projectOntoLine(p, line);
+            //line.pR = p;
             line.pL = projectOntoLine(line.pL, line);
             
             // Update midpoint and h
             line.p = getMidpoint(line.pL, line.pR);
             line.h = distanceBetween(line.pL, line.p);
-            
-            /***
-            Update uncertainties
-            ***/
             
             return true;
         } else {
@@ -271,10 +268,10 @@ public class Line {
     }
     
     public static boolean matchSegment(Line mapLine, Line line) {
-        final double varTheta_m = 1.0;
-        final double varTheta_o = 1.0;
-        final double varC_o = 1.0;
-        final double varC_m = 1.0;
+        final double varTheta_m = 5.0;
+        final double varTheta_o = 5.0;
+        final double varC_o = 5.0;
+        final double varC_m = 5.0;
         if (Math.pow(mapLine.theta - line.theta, 2) > varTheta_m + varTheta_o) {
             return false;
         }
@@ -292,8 +289,15 @@ public class Line {
     }
     
     public static Position projectOntoLine(Position p, Line line) {
-        double x = p.getXValue() * Math.pow(line.bPar, 2) - p.getYValue() * line.aPar * line.bPar - line.aPar * line.c;
-        double y = -p.getXValue() * line.aPar * line.bPar + p.getYValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
+        //double x = p.getXValue() * Math.pow(line.bPar, 2) - p.getYValue() * line.aPar * line.bPar - line.aPar * line.c;
+        //double y = -p.getXValue() * line.aPar * line.bPar + p.getYValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
+        
+        //double x = -p.getYValue() * line.aPar * line.bPar + p.getXValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
+        //double y = p.getYValue() * Math.pow(line.bPar, 2) - p.getXValue() * line.aPar * line.bPar - line.aPar * line.c;
+
+        double x = -p.getXValue() * line.aPar * line.bPar + p.getYValue() * Math.pow(line.aPar, 2) - line.bPar * line.c;
+        double y = p.getXValue() * Math.pow(line.bPar, 2) - p.getYValue() * line.aPar * line.bPar - line.aPar * line.c;
+
         return new Position(x, y);
     }
     
