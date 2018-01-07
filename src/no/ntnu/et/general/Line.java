@@ -243,7 +243,7 @@ public class Line {
             line.c -= k_c * e;
             
             double dTheta = Math.toDegrees(Math.atan(e / line.h));
-            double k_theta = 0.01;
+            double k_theta = 0.001;
             line.theta -= k_theta * dTheta;
             
             // Update parameters
@@ -283,6 +283,41 @@ public class Line {
             return false;
         }
         return true;
+    }
+    
+    public static void updateMapSegment(Line observedLine, Line mapLine) {
+        // Update c
+        double k_c = 0.01;
+        mapLine.c += k_c * (observedLine.c - mapLine.c);
+        
+        // Update theta
+        double k_theta = 0.01;
+        mapLine.theta += k_theta * (observedLine.theta - mapLine.theta);
+        
+        // Update parameters
+        mapLine.aPar = Math.sin(Math.toDegrees(mapLine.theta - 90));
+        mapLine.bPar = -Math.cos(Math.toDegrees(mapLine.theta - 90));
+        
+        // Project endpoints onto corrected segment
+        Position observedL = projectOntoLine(observedLine.pL, mapLine);
+        Position observedR = projectOntoLine(observedLine.pR, mapLine);
+        Position mapL = projectOntoLine(mapLine.pL, mapLine);
+        Position mapR = projectOntoLine(mapLine.pR, mapLine);
+        
+        if (Position.distanceBetween(observedL, mapR) > Position.distanceBetween(mapL, mapR)) {
+            mapLine.pL = observedL;
+        } else {
+            mapLine.pL = mapL;
+        }
+        if (Position.distanceBetween(observedR, mapL) > Position.distanceBetween(mapR, mapL)) {
+            mapLine.pR = observedR;
+        } else {
+            mapLine.pR = mapR;
+        }
+        
+        // Update midpoint and h
+        mapLine.p = getMidpoint(mapLine.pL, mapLine.pR);
+        mapLine.h = distanceBetween(mapLine.pL, mapLine.p);
     }
     
     public static Position projectOntoLine(Position p, Line line) {
