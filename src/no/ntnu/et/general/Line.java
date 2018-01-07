@@ -37,12 +37,12 @@ public class Line {
     public Position pR;
     public Position pL;
     
-    public static final double STD_W = 50.0;
+    public static final double STD_W = 30.0;
     
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
-        this.aPar = Math.sin(Math.toRadians(theta - 90));
-        this.bPar = -Math.cos(Math.toRadians(theta - 90));
+        this.aPar = findA(theta);
+        this.bPar = findB(theta);
         this.pR = pR;
         this.pL = pL;
         this.p = getMidpoint(this.pL, this.pR);
@@ -137,16 +137,22 @@ public class Line {
      */
     public static double calculateError(Position p0, Position p1, Position p2) {
         Line line = new Line(p0, p1);
-        double a = Math.sin(Math.toRadians(line.theta - 90));
-        double b = -Math.cos(Math.toRadians(line.theta - 90));
+        double a = findA(line.theta);
+        double b = findB(line.theta);
         double c = calculateC(line.theta, line.p.getXValue(), line.p.getYValue());
         return a * p2.getYValue() + b * p2.getXValue() + c;
     }
     
+    private static double findA(double theta) {
+        return -Math.sin(Math.toRadians(theta + 90));
+    }
+    
+    private static double findB(double theta) {
+        return -Math.cos(Math.toRadians(theta + 90));
+    }
+    
     public static double calculateC(double theta, double x, double y) {
-        double a = Math.sin(Math.toRadians(theta - 90));
-        double b = -Math.cos(Math.toRadians(theta - 90));
-        return -a * y - b * x;
+        return -findA(theta) * y - findB(theta) * x;
     }
     
     /**
@@ -244,11 +250,11 @@ public class Line {
             
             double dTheta = Math.toDegrees(Math.atan(e / line.h));
             double k_theta = 0.001;
-            line.theta -= k_theta * dTheta;
+            line.theta += k_theta * dTheta;
             
             // Update parameters
-            line.aPar = Math.sin(Math.toRadians(line.theta - 90));
-            line.bPar = -Math.cos(Math.toRadians(line.theta - 90));
+            line.aPar = findA(line.theta);
+            line.bPar = findB(line.theta);
             
             // Project onto new line
             line.pR = projectOntoLine(p, line);
@@ -295,8 +301,8 @@ public class Line {
         mapLine.theta += k_theta * (observedLine.theta - mapLine.theta);
         
         // Update parameters
-        mapLine.aPar = Math.sin(Math.toDegrees(mapLine.theta - 90));
-        mapLine.bPar = -Math.cos(Math.toDegrees(mapLine.theta - 90));
+        mapLine.aPar = findA(mapLine.theta);
+        mapLine.bPar = findB(mapLine.theta);
         
         // Project endpoints onto corrected segment
         Position observedL = projectOntoLine(observedLine.pL, mapLine);
