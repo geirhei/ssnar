@@ -37,7 +37,7 @@ public class Line {
     public Position pR;
     public Position pL;
     
-    public static final double STD_W = 30.0;
+    public static final double STD_W = 25.0;
     
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
@@ -178,7 +178,7 @@ public class Line {
         return Math.abs(calculateError(p0, p1, p2)) <= STD_W / 2.0;
     }
     
-    public static List<Line> detectLines(List<Position> observations) {
+    public static List<Line> detectLines(List<Position> observations, boolean clockwise) {
         if (observations == null || observations.size() < 3) {
             return null;
         }
@@ -216,6 +216,10 @@ public class Line {
                 continue;
             }
             
+            if (clockwise) {
+                newLine.theta += 180;
+            }
+            
             newLine.c -= 0.01 * e;
             double xPNew = newLine.p.getXValue() - e * newLine.bPar;
             double yPNew = newLine.p.getYValue() - e * newLine.aPar;
@@ -224,7 +228,7 @@ public class Line {
             // Extend line
             // Is the problem here? extendLine takes newLines as an argument several times?
             
-            while (i < observations.size() && extendLine(observations.get(i), newLine)) {
+            while (i < observations.size() && extendLine(observations.get(i), newLine, clockwise)) {
                 i++;
                 System.out.println("Line extended!");
             }
@@ -241,7 +245,7 @@ public class Line {
      * @param line Line
      * @return true if successful, false if not
      */
-    public static boolean extendLine(Position p, Line line) {
+    public static boolean extendLine(Position p, Line line, boolean clockwise) {
         double e = calculateError(line.pL, line.pR, p);
         
         if (Math.abs(e) <= STD_W / 2.0) {
@@ -250,7 +254,11 @@ public class Line {
             
             double dTheta = Math.toDegrees(Math.atan(e / line.h));
             double k_theta = 0.001;
-            line.theta += k_theta * dTheta;
+            if (clockwise) {
+                line.theta -= k_theta * dTheta;   
+            } else {
+                line.theta += k_theta * dTheta;
+            }
             
             // Update parameters
             line.aPar = findA(line.theta);

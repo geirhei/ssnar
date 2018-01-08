@@ -346,7 +346,8 @@ public class Simulator {
             //
             
             System.out.println("Observations: " + myRobot.getObservations().size());
-            List<Line> lines = detectLines(myRobot.getObservations());
+            boolean clockwise = false;
+            List<Line> lines = detectLines(myRobot.getObservations(), clockwise);
             if (lines == null) {
                 return;
             }
