@@ -38,6 +38,8 @@ public class Line {
     public Position pL;
     
     public static final double STD_W = 30.0;
+    public static final double VAR_C = Math.pow(STD_W, 2) * Math.pow(STD_W, 2) / (Math.pow(STD_W, 2) + Math.pow(STD_W, 2));
+    public static final double VAR_I = 1.0;
     
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
@@ -127,8 +129,14 @@ public class Line {
         return b;
     }
     
+    public static double calculateR(double theta, double alpha, double rho, double w) {
+        return 0;
+    }
+    
+    public static double calculateAlpha()
+    
     /**
-     * Calculates the perpendicular error of p1 relative to a line through p0 and p1.
+     * Calculates the perpendicular error of p2 relative to a line through p0 and p1.
      * 
      * @param p0
      * @param p1
@@ -178,6 +186,14 @@ public class Line {
         return Math.abs(calculateError(p0, p1, p2)) <= STD_W / 2.0;
     }
     
+    /**
+     * TODO: Distance between points must be less than the width of the robot,
+     * else a possible passage may be blocked.
+     * 
+     * @param observations
+     * @param clockwise
+     * @return ArrayList of detected line segments
+     */
     public static List<Line> detectLines(List<Position> observations, boolean clockwise) {
         if (observations == null || observations.size() < 3) {
             return null;
@@ -216,18 +232,12 @@ public class Line {
                 continue;
             }
             
-            if (clockwise) {
-                newLine.theta += 180;
-            }
-            
             newLine.c -= 0.01 * e;
             double xPNew = newLine.p.getXValue() - e * newLine.bPar;
             double yPNew = newLine.p.getYValue() - e * newLine.aPar;
             newLine.p = new Position(xPNew, yPNew);
             
             // Extend line
-            // Is the problem here? extendLine takes newLines as an argument several times?
-            
             while (i < observations.size() && extendLine(observations.get(i), newLine, clockwise)) {
                 i++;
                 System.out.println("Line extended!");
@@ -250,6 +260,7 @@ public class Line {
         
         if (Math.abs(e) <= STD_W / 2.0) {
             double k_c = 0.01;
+            //double k_c = VAR_C / (VAR_C + Math.pow(STD_W, 2));
             line.c -= k_c * e;
             
             double dTheta = Math.toDegrees(Math.atan(e / line.h));
