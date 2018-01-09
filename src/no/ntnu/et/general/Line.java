@@ -129,11 +129,29 @@ public class Line {
         return b;
     }
     
-    public static double calculateR(double theta, double alpha, double rho, double w) {
+    public static double calculateR(List<Point> set, double alpha) {
         return 0;
     }
     
-    public static double calculateAlpha()
+    public static double calculateAlpha(List<Point> set) {
+        double a0 = 0.0;
+        double a1 = 0.0;
+        double a2 = 0.0;
+        double a3 = 0.0;
+        double w = 1.0 / VAR_I;
+        
+        for (int i = 0; i < set.size(); i++) {
+            a0 += w * Math.pow(set.get(i).r, 2) * Math.sin(set.get(i).theta);
+            a2 += w * Math.pow(set.get(i).r, 2) * Math.cos(2 * set.get(i).theta);
+            for (int j = 0; j < set.size(); j++) {
+                a1 += w * w * set.get(i).r * set.get(j).r * Math.cos(set.get(i).theta) * Math.sin(set.get(j).theta);
+                a3 += w * w * set.get(i).r * set.get(j).r * Math.cos(set.get(i).theta + set.get(j).theta);
+            }
+        }
+        
+        double alpha = 0.5 * Math.atan((a0 - 2 / (w * set.size()) * a1) / (a2 - 1 / (w * set.size()) * a3));
+        return alpha;
+    }
     
     /**
      * Calculates the perpendicular error of p2 relative to a line through p0 and p1.
