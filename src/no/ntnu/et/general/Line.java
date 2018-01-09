@@ -130,7 +130,17 @@ public class Line {
     }
     
     public static double calculateR(List<Point> set, double alpha) {
-        return 0;
+        double r0 = 0.0;
+        double r1 = 0.0;
+        double w = 1.0 / VAR_I;
+        
+        for (int i = 0; i < set.size(); i++) {
+            r0 += w * set.get(i).r * Math.cos(set.get(i).theta - alpha);
+            r1 += w;
+        }
+        
+        double r = r0 / r1;
+        return r;
     }
     
     public static double calculateAlpha(List<Point> set) {
@@ -149,7 +159,7 @@ public class Line {
             }
         }
         
-        double alpha = 0.5 * Math.atan((a0 - 2 / (w * set.size()) * a1) / (a2 - 1 / (w * set.size()) * a3));
+        double alpha = 0.5 * Math.atan((a0 - 2.0 / (w * set.size()) * a1) / (a2 - 1.0 / (w * set.size()) * a3));
         return alpha;
     }
     
