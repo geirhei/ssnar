@@ -37,7 +37,7 @@ public class Line {
     public Position pR;
     public Position pL;
     
-    public static final double STD_W = 25.0;
+    public static final double STD_W = 30.0;
     
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
@@ -265,8 +265,13 @@ public class Line {
             line.bPar = findB(line.theta);
             
             // Project onto new line
-            line.pR = projectOntoLine(p, line);
-            line.pL = projectOntoLine(line.pL, line);
+            if (clockwise) {
+                line.pR = projectOntoLine(line.pR, line);
+                line.pL = projectOntoLine(p, line);
+            } else {
+                line.pR = projectOntoLine(p, line);
+                line.pL = projectOntoLine(line.pL, line);
+            }
             
             // Update midpoint and h
             line.p = getMidpoint(line.pL, line.pR);
