@@ -42,6 +42,8 @@ public class Line {
     public static final double VAR_C = Math.pow(STD_W, 2) * Math.pow(STD_W, 2) / (Math.pow(STD_W, 2) + Math.pow(STD_W, 2));
     public static final double VAR_I = 1.0;
     
+    static final double TOLERANCE = 50.0;
+    
     /*
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
@@ -514,18 +516,17 @@ public class Line {
         lineBuffer.clear();
     }
     
-    public static void lineMerge1(List<Line> buffer, List<Line> repository) {
-        if (repository.isEmpty()) {
-            synchronized (repository) {
-                for (Line bufferLine : buffer) {
-                    repository.add(bufferLine);
-                }
-            }
-            buffer.clear();
-            return;
-        }
+    public static Line mergeSegments(Line line1, Line line2) {
+        double a1 = (line1.b.getYValue() - line1.a.getYValue()) / (line1.b.getXValue() - line1.b.getXValue());
+        double a2 = (line2.b.getYValue() - line2.a.getYValue()) / (line2.b.getXValue() - line2.b.getXValue());
+        double b1 = line1.a.getYValue() - a1 * line1.a.getXValue();
+        double b2 = line2.a.getYValue() - a2 * line2.a.getXValue();
         
-        // is meargeable?
+        return new Line();
+    }
+    
+    public static void lineMerge1(Line[] lineBuffer, Line[] lineRepo) {
+        
     }
     
     static boolean isMergeable(Line lineA, Line lineB) {
@@ -693,7 +694,7 @@ public class Line {
         double y2 = b.getYValue();
         double x3 = c.getXValue();
         double y3 = c.getYValue();
-        return Math.abs((y1 - y2) * (x1 - x3) - (y1 - y3) * (x1 - x2)) <= 100.0; // epsilon because of float comparison 1e-9
+        return Math.abs((y1 - y2) * (x1 - x3) - (y1 - y3) * (x1 - x2)) <= TOLERANCE; // epsilon because of float comparison 1e-9
     }
     
     /**

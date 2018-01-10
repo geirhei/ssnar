@@ -69,6 +69,8 @@ public class SimRobot {
     int pointBufferCtr = 0;
     Line[] lineBuffer;
     int lineBufferCtr = 0;
+    Line[] lineRepo;
+    int lineRepoCtr = 0;
 
     /**
      * Constructor for Robot.
@@ -98,12 +100,6 @@ public class SimRobot {
         translationFinished = true;
         targetPosition = Position.copy(pose.getPosition());
         
-        /*
-        for (int i : circleArr) {
-            i = maxLineOfSight;
-        }
-        */
-        
         if (name.equals("SLAM")) {
             moveSpeed = 0.05;
         } else {
@@ -114,6 +110,7 @@ public class SimRobot {
         
         pointBuffer = new Position[50];
         lineBuffer = new Line[50];
+        lineRepo = new Line[50];
     }
     
     List<Position> getObservations() {
