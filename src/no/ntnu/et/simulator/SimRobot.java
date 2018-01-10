@@ -122,9 +122,9 @@ public class SimRobot {
         if (r <= 0 || r > 40) {
             return;
         }
-        Point point = new Point(r, theta.getValue());
-        //Position pos = Utilities.polar2cart(theta, r);
+        Position pos = Utilities.polar2cart(theta, r);
         pos.add(pose.getPosition());
+        
         synchronized (observations) {
             observations.add(pos);
             //System.out.println("Observation added: (" + pos.getXValue() + ", " + pos.getYValue() + ")");
