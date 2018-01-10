@@ -8,6 +8,7 @@ package no.ntnu.et.general;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import static no.ntnu.et.general.Position.distanceBetween;
 import no.ntnu.et.simulator.Feature;
 
@@ -348,6 +349,251 @@ public class Line {
         double x = Math.pow(line.aPar, 2) * p.getXValue() - line.aPar * line.bPar * p.getYValue() - line.bPar * line.c;
         double y = Math.pow(line.bPar, 2) * p.getYValue() - line.aPar * line.bPar * p.getXValue() - line.aPar * line.c;
         return new Position(x, y);
+    }
+    
+    public static void lineCreate(ArrayList<Position> pointBuffer, List<Line> lineBuffer) {
+        if (pointBuffer.size() <= 1) {
+            pointBuffer.clear();
+            return;
+        } else if (pointBuffer.size() == 2) {
+            Line line = new Line(pointBuffer.get(0), pointBuffer.get(1));
+            lineBuffer.add(line);
+            pointBuffer.clear();
+            return;
+        }
+        
+        Position a = pointBuffer.get(0);
+        Position b = pointBuffer.get(1);
+        
+        int i = 2;
+        while (i < pointBuffer.size()) {
+            Line line;
+            if (i == pointBuffer.size() - 1) {
+                if (!isCollinear(a, b, pointBuffer.get(i))) {
+                    line = new Line(a, pointBuffer.get(i-1));
+                } else {
+                    line = new Line(a, pointBuffer.get(i));
+                }
+                i++;
+            } else if (i == pointBuffer.size() - 2) {
+                if (!isCollinear(a, b, pointBuffer.get(i))) {
+                    line = new Line(a, pointBuffer.get(i-1));
+                    a = pointBuffer.get(i);
+                    b = pointBuffer.get(i+1);
+                    i++;
+                } else {
+                    i++;
+                    break;
+                }
+            } else {
+                if (!isCollinear(a, b, pointBuffer.get(i))) {
+                    line = new Line(a, pointBuffer.get(i-1));
+                    a = pointBuffer.get(i);
+                    b = pointBuffer.get(i+1);
+                    i += 2;
+                } else {
+                    i++;
+                    break;
+                }
+            }
+            
+            System.out.println("length :" + line.getLength());
+            // Discard lines that are too long
+            if (line.getLength() < 20) {
+                lineBuffer.add(line);
+            }
+            
+        }
+        pointBuffer.clear();
+    }
+    
+    public static void lineMerge(List<Line> lineBuffer, List<Line> lineRepository) {
+        // Array size check here
+
+        if (lineRepository.isEmpty()) {
+            synchronized (lineRepository) {
+                for (Line bufferLine : lineBuffer) {
+                    lineRepository.add(bufferLine);
+                }
+            }
+            lineBuffer.clear();
+            return;
+        }
+          
+        double u = 0; // slope tolerance
+        double d = 0; // distance tolerance
+        
+        ArrayList<Line> toAdd = new ArrayList<Line>();
+        ListIterator<Line> iter1 = lineBuffer.listIterator();
+        while (iter1.hasNext()) {
+            Line bufferLine = iter1.next();
+            boolean merged = false;
+            double m1 = bufferLine.getSlope();
+            synchronized (lineRepository) {
+                ListIterator<Line> iter2 = lineBuffer.listIterator();
+                while (iter2.hasNext()) {
+                    Line line = iter2.next();
+                    double m2 = line.getSlope();
+                    if (!(Math.abs(m1 - m2) <= u)) {
+                        continue;
+                    }
+                    double dist1 = Position.distanceBetween(bufferLine.getA(), line.getA());
+                    double dist2 = Position.distanceBetween(bufferLine.getA(), line.getB());
+                    double dist3 = Position.distanceBetween(bufferLine.getB(), line.getA());
+                    double dist4 = Position.distanceBetween(bufferLine.getB(), line.getB());
+                    
+                    if (dist1 <= d || dist4 <= d) {
+                        Line newLine = bufferLine;
+                        iter2.set(newLine);
+                    } else if (dist2 <= d) {
+                        Line newLine = new Line(line.getA(), bufferLine.getB());
+                        iter2.set(newLine);
+                    } else if (dist3 <= d) {
+                        Line newLine = new Line(bufferLine.getA(), line.getB());
+                        iter2.set(newLine);
+                    } else {
+                        continue;
+                    }
+                    merged = true;
+                }
+            }
+            if (!merged) {
+                toAdd.add(bufferLine);
+            }
+        }
+        
+        // Add non-merged lines to end of lineRepository
+        synchronized (lineRepository) {
+            for (Line bufferLine : toAdd) {
+                lineRepository.add(bufferLine);
+            }
+        }
+        lineBuffer.clear();
+    }
+    
+    public static void lineMerge1(List<Line> buffer, List<Line> repository) {
+        if (repository.isEmpty()) {
+            synchronized (repository) {
+                for (Line bufferLine : buffer) {
+                    repository.add(bufferLine);
+                }
+            }
+            buffer.clear();
+            return;
+        }
+        
+        // is meargeable?
+    }
+    
+    static boolean isMergeable(Line lineA, Line lineB) {
+        //u1
+        double slopeA = lineA.getSlope();
+        double slopeB = lineB.getSlope();
+        double angle = Math.abs(slopeB - slopeA);
+        double u1 = calculateU1(angle);
+        System.out.println("u1: " + u1);
+        
+        // u2
+        Position midA = getMidpoint(lineA);
+        Position midB = getMidpoint(lineB);
+        // double u2 = calculateU2()
+        
+        //u3
+        double midPointDist = Position.distanceBetween(midA, midB);
+        double lengthA = lineA.getLength();
+        double lengthB = lineB.getLength();
+        double u3 = calculateU3(midPointDist, lengthA, lengthB);
+        System.out.println("u3: " + u3);
+        
+        //u4
+        // double u4 = calculateU4()
+        
+        //double similarityThreshold = 0.6;
+        return (u1 >= 0.6 && u3 >= 0.6); // add u2 and u4
+    }
+    
+    /**
+     * Angle between the two line segments.
+     * 
+     * @param angle
+     * @return 
+     */
+    static double calculateU1(double angle) {
+        double a = 10.0;
+        double b = 20.0;
+        double res = 1.0;
+        if (angle >= 0 && angle < a) {
+            res = 1.0 - 0.5 / a * angle;
+        } else if (angle >= a && angle <= b) {
+            res = 0.5 - 0.5 / (b - a) * (angle - a);
+        } else if (angle > b) {
+            res = 0.0;
+        }
+        return res;
+    }
+    
+    /**
+     * Maximum distance of each line's midpoint to the other line.
+     * 
+     * @param dist
+     * @return 
+     */
+    static double calculateU2(double dist) {
+        double c = 10.0;
+        double d = 30.0;
+        double e = 60.0;
+        double res = 1.0;
+        if (dist > c && dist <= d) {
+            res = 0.5;
+        } else if (dist > d && dist <= e) {
+            res = 0.5 - 0.5 / (e - d) * (dist - d);
+        } else if (dist > e) {
+            res = 0.0;
+        }
+        return res;
+    }
+    
+    /**
+     * Distance between the midpoints of the two-line segments.
+     * 
+     * @param dist
+     * @param lenA
+     * @param lenB
+     * @return 
+     */
+    static double calculateU3(double dist, double lenA, double lenB) {
+        double f;
+        if (lenA <= lenB) {
+            f = lenA;
+        } else {
+            f = lenB;
+        }
+        double g = f + 10.0;
+        double res = 1.0;
+        if (dist > f && dist < g) {
+            res = 1.0 - 1.0 / (g - f) * (dist - f);
+        } else if (dist >= g) {
+            res = 0.0;
+        }
+        return res;
+    }
+    
+    /**
+     * Minimum distance from the endpoint of a line-segment to the other line-segment.
+     * 
+     * @param dist
+     * @return 
+     */
+    static double calculateU4(double dist) {
+        double h = 10.0;
+        double i = 20.0;
+        double res = 1.0;
+        if (dist > h && h < i) {
+            res = 1.0 - 1.0 / (i - h) * (dist - h);
+        } else if (dist >= i) {
+            res = 0.0;
+        }
+        return res;
     }
     
     /**
