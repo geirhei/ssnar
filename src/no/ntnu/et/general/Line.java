@@ -435,7 +435,7 @@ public class Line {
                 if (i == bufferSize - 1) {
                     line = new Line(a, pointBuffer[i]);
                 } else {
-                    break;
+                    continue;
                 }
             } else {
                 line = new Line(a, pointBuffer[i-1]);
@@ -693,7 +693,7 @@ public class Line {
         double y2 = b.getYValue();
         double x3 = c.getXValue();
         double y3 = c.getYValue();
-        return Math.abs((y1 - y2) * (x1 - x3) - (y1 - y3) * (x1 - x2)) <= 1e-9; // epsilon because of float comparison 1e-9
+        return Math.abs((y1 - y2) * (x1 - x3) - (y1 - y3) * (x1 - x2)) <= 100.0; // epsilon because of float comparison 1e-9
     }
     
     /**
