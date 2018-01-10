@@ -407,6 +407,33 @@ public class Line {
         pointBuffer.clear();
     }
     
+    public static void lineCreate1(Position[] pointBuffer, Line[] lineBuffer) {
+        int bufferSize = pointBuffer.length;
+        int lineIndex = 0;
+        Position a = pointBuffer[0];
+        Position b = pointBuffer[1];
+        
+        for (int i = 2; i < bufferSize; i++) {
+            Line line;
+            if (isCollinear(a, b, pointBuffer[i])) {
+                if (i == bufferSize - 1) {
+                    line = new Line(a, pointBuffer[i]);
+                } else {
+                    break;
+                }
+            } else {
+                line = new Line(a, pointBuffer[i-1]);
+                a = pointBuffer[i];
+                b = pointBuffer[i+1];
+                if (i < bufferSize - 2) {
+                    i++;
+                }
+            }
+            lineBuffer[lineIndex] = line;
+            lineIndex++;
+        }
+    }
+    
     public static void lineMerge(List<Line> lineBuffer, List<Line> lineRepository) {
         // Array size check here
 
