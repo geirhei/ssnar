@@ -26,8 +26,8 @@ public class Line {
     
     private double length;
     
-    private Position a;
-    private Position b;
+    public Position a;
+    public Position b;
     
     public Position p;
     public double theta;
@@ -42,6 +42,7 @@ public class Line {
     public static final double VAR_C = Math.pow(STD_W, 2) * Math.pow(STD_W, 2) / (Math.pow(STD_W, 2) + Math.pow(STD_W, 2));
     public static final double VAR_I = 1.0;
     
+    /*
     public Line(Position pL, Position pR) {
         this.theta = calculateTheta(pL, pR);
         this.aPar = findA(theta);
@@ -52,6 +53,7 @@ public class Line {
         this.c = calculateC(this.theta, this.p.getXValue(), this.p.getYValue());
         this.h = distanceBetween(pL, pR) / 2;
     }
+    */
     
     /**
      * Creates a new Line object
@@ -70,13 +72,13 @@ public class Line {
      * @param a
      * @param b 
      */
-    /*
+    
     public Line(Position a, Position b) {
         this.a = a;
         this.b = b;
-        this.length = Math.sqrt( Math.pow(b.getXValue() - a.getXValue(), 2) + Math.pow(b.getYValue() - a.getYValue(), 2) );
+        //this.length = Math.sqrt( Math.pow(b.getXValue() - a.getXValue(), 2) + Math.pow(b.getYValue() - a.getYValue(), 2) );
     }
-    */
+    
     /**
      * Empty constructor
      */
@@ -407,11 +409,25 @@ public class Line {
         pointBuffer.clear();
     }
     
-    public static void lineCreate1(Position[] pointBuffer, Line[] lineBuffer) {
-        int bufferSize = pointBuffer.length;
+    /**
+     * 
+     * @param pointBuffer
+     * @param lineBuffer
+     * @param bufferSize number of values in pointBuffer
+     */
+    public static void lineCreate1(Position[] pointBuffer, Line[] lineBuffer, int bufferSize) {
+        if (pointBuffer == null || bufferSize < 2) {
+            return;
+        }
+        
         int lineIndex = 0;
         Position a = pointBuffer[0];
         Position b = pointBuffer[1];
+        if (bufferSize == 2) {
+            Line line = new Line(a, b);
+            lineBuffer[lineIndex] = line;
+            return;
+        }
         
         for (int i = 2; i < bufferSize; i++) {
             Line line;
@@ -677,7 +693,7 @@ public class Line {
         double y2 = b.getYValue();
         double x3 = c.getXValue();
         double y3 = c.getYValue();
-        return Math.abs((y1 - y2) * (x1 - x3) - (y1 - y3) * (x1 - x2)) <= 0.5; // epsilon because of float comparison 1e-9
+        return Math.abs((y1 - y2) * (x1 - x3) - (y1 - y3) * (x1 - x2)) <= 1e-9; // epsilon because of float comparison 1e-9
     }
     
     /**
