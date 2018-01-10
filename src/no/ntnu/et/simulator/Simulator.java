@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.JFrame;
 import no.ntnu.et.general.Line;
 import static no.ntnu.et.general.Line.detectLines;
+import static no.ntnu.et.general.Line.lineCreate1;
 import no.ntnu.et.general.Pose;
 import no.ntnu.et.general.Position;
 import no.ntnu.et.map.GridMap;
@@ -296,7 +297,7 @@ public class Simulator {
                         if (!sweepCompleted) {
                             myRobot.addObservation();
                         }
-                        if (myRobot.getObservations().size() > 100 || myRobot.getTowerAngle().getValue() >= 89) {
+                        if (myRobot.getTowerAngle().getValue() >= 89) {
                             sweepCompleted = true;
                         }
                         
@@ -332,19 +333,16 @@ public class Simulator {
                 }
             }
             
-            System.out.println("Observations: " + myRobot.getObservations().size());
-            boolean clockwise = false;
-            List<Line> lines = detectLines(myRobot.getObservations(), clockwise);
-            if (lines == null) {
-                return;
-            }
-            System.out.println("Lines detected: " + lines.size());
-            for (int i = 0; i < lines.size(); i++) {
-                lines.get(i).print();
-                int lX = (int) lines.get(i).pL.getXValue();
-                int rX = (int) lines.get(i).pR.getXValue();
-                int lY = (int) lines.get(i).pL.getYValue();
-                int rY = (int) lines.get(i).pR.getYValue();
+            lineCreate1(myRobot.pointBuffer, myRobot.lineBuffer, myRobot.pointBufferCtr);
+            
+            Line[] lineBuffer = myRobot.lineBuffer;
+            int i = 0;
+            while (lineBuffer[i] != null) {
+                //myRobot.lineBuffer[i].print();
+                int lX = (int) lineBuffer[i].a.getXValue();
+                int rX = (int) lineBuffer[i].b.getXValue();
+                int lY = (int) lineBuffer[i].a.getYValue();
+                int rY = (int) lineBuffer[i].b.getYValue();
                 //System.out.println("L: (" + lX + ", " + lY + ") R: (" + rX + ", " + rY + ")");
                 LineUpdateMessage lum = SimRobot.generateLineUpdate(lX, lY, rX, rY);
                 byte[] lumBytes = lum.getBytes();
@@ -353,8 +351,9 @@ public class Simulator {
                 System.arraycopy(lumBytes, 0, lumMessageBytes, 1, lumBytes.length);
                 inbox.add(new Message(myRobot.getAddress(), lumMessageBytes));
                 //System.out.println("Line sent!");
+                i++;
             }
-
+            System.out.println("Lines detected: " + ++i);
 
             //myRobot.getObservations().clear();
         }

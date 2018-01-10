@@ -64,6 +64,11 @@ public class SimRobot {
     //public int[] circleArr = new int[360];
     private List<Position> observations;
     private List<Line> lineMap;
+    
+    Position[] pointBuffer;
+    int pointBufferCtr = 0;
+    Line[] lineBuffer;
+    int lineBufferCtr = 0;
 
     /**
      * Constructor for Robot.
@@ -106,6 +111,9 @@ public class SimRobot {
         }
         observations = Collections.synchronizedList(new ArrayList<Position>());
         lineMap = Collections.synchronizedList(new ArrayList<Line>());
+        
+        pointBuffer = new Position[50];
+        lineBuffer = new Line[50];
     }
     
     List<Position> getObservations() {
@@ -125,12 +133,22 @@ public class SimRobot {
         Position pos = Utilities.polar2cart(theta, r);
         pos.add(pose.getPosition());
         
-        synchronized (observations) {
-            observations.add(pos);
-            //System.out.println("Observation added: (" + pos.getXValue() + ", " + pos.getYValue() + ")");
-        }
+        ///
     }
     
+    void addObservation() {
+        Angle theta = sum(towerAngle, pose.getHeading());
+        double r = lastIrMeasurement[0];
+        if (r <= 0 || r > 40) {
+            return;
+        }
+        Position pos = Utilities.polar2cart(theta, r);
+        pos.add(pose.getPosition());
+        pointBuffer[pointBufferCtr] = pos;
+        pointBufferCtr++;
+    }
+    
+    /*
     void addObservation() {
         Angle theta = sum(towerAngle, pose.getHeading());
         double r = lastIrMeasurement[0];
@@ -144,7 +162,8 @@ public class SimRobot {
             //System.out.println("Observation added: (" + pos.getXValue() + ", " + pos.getYValue() + ")");
         }
     }
-
+*/
+    
     double[] getMeasurement() {
         return lastIrMeasurement;
     }
