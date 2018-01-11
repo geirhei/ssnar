@@ -288,30 +288,11 @@ public class Simulator {
                     update = myRobot.createMeasurement();
                     
                     if (myName.equals("SLAM")) {
-                        //myRobot.addObservation();
                         myRobot.updatePointBuffers();
                         if (myRobot.getTowerAngle().getValue() >= 89 || myRobot.getTowerAngle().getValue() <= 1) {
                             myRobot.createLines();
+                            myRobot.mergeLines();
                             myRobot.sendLineUpdates(inbox);
-                            //myRobot.lineBufferCtr = lineCreate(myRobot.pointBuffers[0], myRobot.lineBuffer, myRobot.pointBufferLengths[0]);
-                            //myRobot.lineRepoCtr = lineMerge(myRobot.lineBuffer, myRobot.lineRepo, myRobot.lineBufferCtr, myRobot.lineRepoCtr);
-                            
-                            //System.out.println("Lines detected: " + k);
-                            /*
-                            int j = 0;
-                            while (myRobot.lineRepo[j] != null) {
-                                LineUpdateMessage lum = SimRobot.generateLineUpdate(myRobot.lineRepo[j]);
-                                byte[] lumBytes = lum.getBytes();
-                                byte[] lumMessageBytes = new byte[lumBytes.length + 1];
-                                lumMessageBytes[0] = Message.LINE_UPDATE;
-                                System.arraycopy(lumBytes, 0, lumMessageBytes, 1, lumBytes.length);
-                                inbox.add(new Message(myRobot.getAddress(), lumMessageBytes));
-                                //System.out.println("Line sent!");
-                                myRobot.lineRepo[j].print();
-                                j++;
-                            }
-                            System.out.println("Lines in repo: " + j);
-                            */
                             break;
                         }
                         

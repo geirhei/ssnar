@@ -19,6 +19,7 @@ import static no.ntnu.et.general.Angle.sum;
 import no.ntnu.et.general.Position;
 import no.ntnu.et.general.Line;
 import static no.ntnu.et.general.Line.lineCreate;
+import static no.ntnu.et.general.Line.lineMerge;
 import no.ntnu.et.general.Point;
 import no.ntnu.tem.communication.DroneUpdateMessage;
 import no.ntnu.tem.communication.HandshakeMessage;
@@ -196,7 +197,20 @@ public class SimRobot {
         }
     }
     
+    void mergeLines() {
+        for (int i = 0; i < 4; i++) {
+            lineRepoLength = lineMerge(lineBuffers[i], lineRepo, lineBufferLengths[i], lineRepoLength);
+            
+            // Clear line buffers and reset lengths
+            for (int j = 0; j < 50; j++) {
+                lineBuffers[i] = null;
+            }
+            lineBufferLengths[i] = 0;
+        }
+    }
+    
     void sendLineUpdates(ConcurrentLinkedQueue<Message> inbox) {
+        /*
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < lineBufferLengths[i]; j++) {
                 LineUpdateMessage lum = SimRobot.generateLineUpdate(lineBuffers[i][j]);
@@ -207,7 +221,16 @@ public class SimRobot {
                 inbox.add(new Message(getAddress(), lumMessageBytes));
             }
         }
+        */
         
+        for (int i = 0; i < lineRepoLength; i++) {
+            LineUpdateMessage lum = SimRobot.generateLineUpdate(lineRepo[i]);
+            byte[] lumBytes = lum.getBytes();
+            byte[] lumMessageBytes = new byte[lumBytes.length + 1];
+            lumMessageBytes[0] = Message.LINE_UPDATE;
+            System.arraycopy(lumBytes, 0, lumMessageBytes, 1, lumBytes.length);
+            inbox.add(new Message(getAddress(), lumMessageBytes));
+        }
     }
     
     /*
