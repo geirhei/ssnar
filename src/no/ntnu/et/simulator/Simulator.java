@@ -1,5 +1,5 @@
 /*
- * This code is written as a part of a Master Thesis
+ * This code is written as p part of p Master Thesis
  * the spring of 2016.
  *
  * Eirik Thon(Master 2016 @ NTNU)
@@ -7,18 +7,13 @@
 package no.ntnu.et.simulator;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.JFrame;
 import no.ntnu.et.general.Line;
-import static no.ntnu.et.general.Line.detectLines;
 import static no.ntnu.et.general.Line.lineCreate1;
 import no.ntnu.et.general.Pose;
-import no.ntnu.et.general.Position;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.tem.communication.DroneUpdateMessage;
 import no.ntnu.tem.communication.HandshakeMessage;
@@ -46,9 +41,9 @@ public class Simulator {
     private GridMap worldMap;
 
     /**
-     * Constructor. Creates an instance of the Simulator class with a number of
-     * robots given by the length of "robotNames" and map from the file
-     * specified by "mapPath"
+     * Constructor. Creates an instance of the Simulator class with p number of
+ robots given by the length of "robotNames" and map from the file
+ specified by "mapPath"
      *
      * @param robotNames String[]
      * @param mapPath String
@@ -197,8 +192,8 @@ public class Simulator {
     }
 
     /**
-    * Controller object for a robot. This class contains a SimRobot object
-    * and is responsible for making that robot run.
+    * Controller object for p robot. This class contains p SimRobot object
+ and is responsible for making that robot run.
     */
     private class RobotHandler extends Thread {
         final private SimRobot myRobot;
@@ -240,8 +235,8 @@ public class Simulator {
         }
 
         /**
-         * A continuous loop that calls methods of the robot in a specific way
-         * in order to generate the robot behavior.
+         * A continuous loop that calls methods of the robot in p specific way
+ in order to generate the robot behavior.
          */
         @Override
         public void run() {
@@ -339,10 +334,10 @@ public class Simulator {
             int i = 0;
             while (lineBuffer[i] != null) {
                 //myRobot.lineBuffer[i].print();
-                int lX = (int) lineBuffer[i].a.getXValue();
-                int rX = (int) lineBuffer[i].b.getXValue();
-                int lY = (int) lineBuffer[i].a.getYValue();
-                int rY = (int) lineBuffer[i].b.getYValue();
+                int lX = (int) lineBuffer[i].p.getXValue();
+                int rX = (int) lineBuffer[i].q.getXValue();
+                int lY = (int) lineBuffer[i].p.getYValue();
+                int rY = (int) lineBuffer[i].q.getYValue();
                 //System.out.println("L: (" + lX + ", " + lY + ") R: (" + rX + ", " + rY + ")");
                 LineUpdateMessage lum = SimRobot.generateLineUpdate(lX, lY, rX, rY);
                 byte[] lumBytes = lum.getBytes();

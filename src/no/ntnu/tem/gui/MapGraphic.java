@@ -1,5 +1,5 @@
 /*
- * This code is written as a part of a Master Thesis
+ * This code is written as p part of p Master Thesis
  * the spring of 2016.
  *
  * Thor Eivind Andersen and Mats Rødseth (Master 2016 @ NTNU)
@@ -168,10 +168,10 @@ public class MapGraphic extends JPanel {
         //System.out.println("lines length: " + lines.size());
         for (int i = 0; i < lines.size(); i++) {
             //lines.get(i).print();
-            int pLX = (int) Math.round(lines.get(i).a.getXValue());
-            int pLY = (int) Math.round(lines.get(i).a.getYValue());
-            int pRX = (int) Math.round(lines.get(i).b.getXValue());
-            int pRY = (int) Math.round(lines.get(i).b.getYValue());
+            int pLX = (int) Math.round(lines.get(i).p.getXValue());
+            int pLY = (int) Math.round(lines.get(i).p.getYValue());
+            int pRX = (int) Math.round(lines.get(i).q.getXValue());
+            int pRY = (int) Math.round(lines.get(i).q.getYValue());
             int posx = (pLX - gridmap.getLeftColumn() * cellSize) * scrollSize.intValue();
             int posy = (pLY - gridmap.getBottomRow() * cellSize) * scrollSize.intValue();
             int destx = (pRX - gridmap.getLeftColumn() * cellSize) * scrollSize.intValue();

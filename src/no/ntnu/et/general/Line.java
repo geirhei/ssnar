@@ -1,5 +1,5 @@
 /*
- * This code is written as a part of a Master Thesis
+ * This code is written as p part of p Master Thesis
  * the spring of 2016.
  *
  * Eirik Thon(Master 2016 @ NTNU)
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import static no.ntnu.et.general.Position.distanceBetween;
+import static no.ntnu.et.general.Utilities.getProjectedPoint;
 import no.ntnu.et.simulator.Feature;
 
 /**
@@ -26,9 +27,10 @@ public class Line {
     
     private double length;
     
-    public Position a;
-    public Position b;
+    public Position p;
+    public Position q;
     
+    /*
     public Position p;
     public double theta;
     public double h;
@@ -37,10 +39,10 @@ public class Line {
     public double c;
     public Position pR;
     public Position pL;
-    
     public static final double STD_W = 30.0;
     public static final double VAR_C = Math.pow(STD_W, 2) * Math.pow(STD_W, 2) / (Math.pow(STD_W, 2) + Math.pow(STD_W, 2));
     public static final double VAR_I = 1.0;
+    */
     
     static final double TOLERANCE = 50.0;
     
@@ -58,7 +60,7 @@ public class Line {
     */
     
     /**
-     * Creates a new Line object
+     * Creates p new Line object
      * @param start
      * @param direction
      * @param length 
@@ -71,14 +73,14 @@ public class Line {
     
     /**
      * Constructor Line object used in line merge
-     * @param a
-     * @param b 
+     * @param p
+     * @param q 
      */
     
-    public Line(Position a, Position b) {
-        this.a = a;
-        this.b = b;
-        //this.length = Math.sqrt( Math.pow(b.getXValue() - a.getXValue(), 2) + Math.pow(b.getYValue() - a.getYValue(), 2) );
+    public Line(Position p, Position q) {
+        this.p = p;
+        this.q = q;
+        //this.length = Math.sqrt( Math.pow(q.getXValue() - p.getXValue(), 2) + Math.pow(q.getYValue() - p.getYValue(), 2) );
     }
     
     /**
@@ -123,25 +125,27 @@ public class Line {
     }
     
     private double getSlope() {
-        return (b.getYValue() - a.getYValue()) / (b.getXValue() - a.getXValue());
+        return (q.getYValue() - p.getYValue()) / (q.getXValue() - p.getXValue());
     }
     
     public Position getA() {
-        return a;
+        return p;
     }
     
     public Position getB() {
-        return b;
+        return q;
     }
     
+    /*
     /**
-     * Calculates the perpendicular error of p2 relative to a line through p0 and p1.
+     * Calculates the perpendicular error of p2 relative to p line through p0 and p1.
      * 
      * @param p0
      * @param p1
      * @param p2
      * @return error value
      */
+    /*
     public static double calculateError(Position p0, Position p1, Position p2) {
         Line line = new Line(p0, p1);
         double a = findA(line.theta);
@@ -170,6 +174,7 @@ public class Line {
      * @param p1
      * @return double angle
      */
+    /*
     public static double calculateTheta(Position p0, Position p1) {
         double theta = Math.toDegrees(Math.atan2(p1.getYValue() - p0.getYValue(), p1.getXValue() - p0.getXValue()));
         if (theta < 0) {
@@ -187,12 +192,13 @@ public class Line {
     
     /**
      * TODO: Distance between points must be less than the width of the robot,
-     * else a possible passage may be blocked.
+ else p possible passage may be blocked.
      * 
      * @param observations
      * @param clockwise
      * @return ArrayList of detected line segments
      */
+    /*
     public static List<Line> detectLines(List<Position> observations, boolean clockwise) {
         if (observations == null || observations.size() < 3) {
             return null;
@@ -211,7 +217,7 @@ public class Line {
                 p3 = null;
             }
             
-            // Attempt to start a line
+            // Attempt to start p line
             Line newLine;
             double e;
             if (isLine(p0, p1, p2)) {
@@ -254,6 +260,7 @@ public class Line {
      * @param line Line
      * @return true if successful, false if not
      */
+    /*
     public static boolean extendLine(Position p, Line line, boolean clockwise) {
         double e = calculateError(line.pL, line.pR, p);
         
@@ -355,6 +362,7 @@ public class Line {
         return new Position(x, y);
     }
     
+    
     public static void lineCreate(ArrayList<Position> pointBuffer, List<Line> lineBuffer) {
         if (pointBuffer.size() <= 1) {
             pointBuffer.clear();
@@ -410,7 +418,7 @@ public class Line {
         }
         pointBuffer.clear();
     }
-    
+    */
     /**
      * 
      * @param pointBuffer
@@ -517,12 +525,37 @@ public class Line {
     }
     
     public static Line mergeSegments(Line line1, Line line2) {
-        double a1 = (line1.b.getYValue() - line1.a.getYValue()) / (line1.b.getXValue() - line1.b.getXValue());
-        double a2 = (line2.b.getYValue() - line2.a.getYValue()) / (line2.b.getXValue() - line2.b.getXValue());
-        double b1 = line1.a.getYValue() - a1 * line1.a.getXValue();
-        double b2 = line2.a.getYValue() - a2 * line2.a.getXValue();
+        double a1 = (line1.q.getYValue() - line1.p.getYValue()) / (line1.q.getXValue() - line1.q.getXValue());
+        double a2 = (line2.q.getYValue() - line2.p.getYValue()) / (line2.q.getXValue() - line2.q.getXValue());
+        double b1 = line1.p.getYValue() - a1 * line1.p.getXValue();
+        double b2 = line2.p.getYValue() - a2 * line2.p.getXValue();
+        double l1 = Position.distanceBetween(line1.p, line1.q);
+        double l2 = Position.distanceBetween(line2.p, line2.q);
         
-        return new Line();
+        // Find parameters for the merged line
+        double a = (l1 * a1 + l2 * a2) / (l1 + l2);
+        double b = (l1 * b1 + l2 * b2) / (l1 + l2);
+        
+        // Find projections of all 4 points onto merged line
+        Position[] projectedPoints = new Position[4];
+        projectedPoints[0] = getProjectedPoint(line1.p, a, b);
+        projectedPoints[1] = getProjectedPoint(line2.p, a, b);
+        projectedPoints[2] = getProjectedPoint(line1.q, a, b);
+        projectedPoints[3] = getProjectedPoint(line2.q, a, b);
+        
+        // Find the points farthest away from each other
+        Position p = projectedPoints[0];
+        Position q = projectedPoints[0];
+        for (int i = 1; i < projectedPoints.length; i++) {
+            if (projectedPoints[i].getXValue() < p.getXValue()) {
+                p = projectedPoints[i];
+            }
+            if (projectedPoints[i].getXValue() > p.getXValue()) {
+                q = projectedPoints[i];
+            }
+        }
+        
+        return new Line(p, q);
     }
     
     public static void lineMerge1(Line[] lineBuffer, Line[] lineRepo) {
@@ -623,7 +656,7 @@ public class Line {
     }
     
     /**
-     * Minimum distance from the endpoint of a line-segment to the other line-segment.
+     * Minimum distance from the endpoint of p line-segment to the other line-segment.
      * 
      * @param dist
      * @return 
@@ -641,7 +674,7 @@ public class Line {
     }
     
     /**
-     * Creates a new Line object similar to the input Feature object. The Line
+     * Creates p new Line object similar to the input Feature object. The Line
      * object starts in the start position of the feature and ends in its end 
      * position
      * @param feature Feature
@@ -659,8 +692,8 @@ public class Line {
     }
     
     /**
-     * Creates a new Line object between the two Position given in the input
-     * parameters
+     * Creates p new Line object between the two Position given in the input
+ parameters
      * @param startPos Position
      * @param endPos Position
      * @return Line
@@ -706,6 +739,7 @@ public class Line {
         System.out.println("Length: " + length);
     }
     
+    /*
     public void print() {
         System.out.println("Line:");
         System.out.print("pL: ");
@@ -719,4 +753,5 @@ public class Line {
         System.out.printf("%1.2f", c);
         System.out.println();
     }
+    */
 }
