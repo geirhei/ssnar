@@ -168,7 +168,7 @@ public class Line {
      * @param lineBuffer
      * @param bufferSize number of values in pointBuffer
      */
-    public static void lineCreate(Position[] pointBuffer, Line[] lineBuffer, int bufferSize) {
+    public static int lineCreate(Position[] pointBuffer, Line[] lineBuffer, int bufferSize) {
         if (pointBuffer == null || lineBuffer == null) {
             throw new NullPointerException("Buffers cannot be null.");
         }
@@ -178,7 +178,7 @@ public class Line {
         }
         
         if (bufferSize < 2) {
-            return;
+            return 0;
         }
         
         int lineIndex = 0;
@@ -187,7 +187,7 @@ public class Line {
         if (bufferSize == 2) {
             Line line = new Line(a, b);
             lineBuffer[lineIndex] = line;
-            return;
+            return 1;
         }
         
         for (int i = 2; i < bufferSize; i++) {
@@ -209,6 +209,7 @@ public class Line {
             lineBuffer[lineIndex] = line;
             lineIndex++;
         }
+        return lineIndex;
     }
     
     /*
