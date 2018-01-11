@@ -252,14 +252,15 @@ public class LineTest {
     /**
      * Test of lineMerge method, of class Line.
      */
-    //@Test
+    @Test
     public void testLineMerge() {
         System.out.println("lineMerge");
         List<Line> lineBuffer = null;
         List<Line> lineRepository = null;
         Line.lineMerge(lineBuffer, lineRepository);
+        assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**

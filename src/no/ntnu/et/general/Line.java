@@ -92,6 +92,11 @@ public class Line {
         return length;
     }
     
+    /**
+     * Returns the slope of the line.
+     * 
+     * @return double
+     */
     private double getSlope() {
         return (q.getYValue() - p.getYValue()) / (q.getXValue() - p.getXValue());
     }
@@ -163,19 +168,27 @@ public class Line {
     */
     
     /**
+     * Finds and extract line segments from a set of points in sequence.
      * 
      * @param pointBuffer
      * @param lineBuffer
-     * @param bufferSize number of values in pointBuffer
+     * @param bufferSize
+     * @return the number of lines created
      */
     public static int lineCreate(Position[] pointBuffer, Line[] lineBuffer, int bufferSize) {
-        if (pointBuffer == null || lineBuffer == null) {
+        //if (pointBuffer == null || lineBuffer == null) {
+        //    throw new NullPointerException("Buffers cannot be null.");
+        //}
+        /*
+        if (pointBuffer[bufferSize-1] == null) {
             throw new NullPointerException("Buffers cannot be null.");
         }
-        
+        */
+        /*
         if (bufferSize <= 0) {
             throw new IllegalArgumentException("Buffer size cannot be zero or less.");
         }
+        */
         
         if (bufferSize < 2) {
             return 0;
@@ -278,7 +291,18 @@ public class Line {
     }
     */
     
-    public static void lineMerge(Line[] lineBuffer, Line[] lineRepo, int bufferCtr, int repoCtr) {
+    /**
+     * Compares each line in lineBuffer with all lines in lineRepo, and replaces
+     * the one in the repo with the merged if possible. If a line in lineBuffer
+     * cannot be merged is added to the end of the repo.
+     * 
+     * @param lineBuffer
+     * @param lineRepo
+     * @param bufferCtr
+     * @param repoCtr 
+     * @return  
+     */
+    public static int lineMerge(Line[] lineBuffer, Line[] lineRepo, int bufferCtr, int repoCtr) {
         if (lineBuffer == null || lineRepo == null) {
             throw new NullPointerException("Invalid line arguments.");
         }
@@ -305,9 +329,18 @@ public class Line {
                     merged = false;
                 }
             }
+            repoCtr = index;
         }
+        return repoCtr;
     }
     
+    /**
+     * Determines if two lines satisfy the conditions for merging.
+     * 
+     * @param line1
+     * @param line2
+     * @return true if mergeable, else false
+     */
     public static boolean isMergeable(Line line1, Line line2) {
         if (line1 == null || line2 == null) {
             throw new NullPointerException("Invalid line arguments.");
@@ -330,6 +363,14 @@ public class Line {
         return (d1 <= delta) || (d2 <= delta) || (d3 <= delta) || (d4 <= delta);
     }
     
+    /**
+     * Performs a merge procedure on the two lines, and returns the resulting
+     * line object.
+     * 
+     * @param line1
+     * @param line2
+     * @return 
+     */
     public static Line mergeSegments(Line line1, Line line2) {
         if (line1 == null || line2 == null) {
             throw new NullPointerException("Line arguments cannot be null.");

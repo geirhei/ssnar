@@ -11,16 +11,19 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import no.ntnu.et.general.Utilities;
 import no.ntnu.et.general.Pose;
 import no.ntnu.et.general.Angle;
 import static no.ntnu.et.general.Angle.sum;
 import no.ntnu.et.general.Position;
 import no.ntnu.et.general.Line;
+import static no.ntnu.et.general.Line.lineCreate;
 import no.ntnu.et.general.Point;
 import no.ntnu.tem.communication.DroneUpdateMessage;
 import no.ntnu.tem.communication.HandshakeMessage;
 import no.ntnu.tem.communication.LineUpdateMessage;
+import no.ntnu.tem.communication.Message;
 import no.ntnu.tem.communication.UpdateMessage;
 
 /**
@@ -67,10 +70,17 @@ public class SimRobot {
     
     Position[] pointBuffer;
     int pointBufferCtr = 0;
+    Position[][] pointBuffers;
+    int[] pointBufferLengths;
+    
     Line[] lineBuffer;
     int lineBufferCtr = 0;
+    Line[][] lineBuffers;
+    int[] lineBufferLengths;
+    
     Line[] lineRepo;
     int lineRepoCtr = 0;
+    int lineRepoLength;
 
     /**
      * Constructor for Robot.
@@ -111,6 +121,18 @@ public class SimRobot {
         pointBuffer = new Position[50];
         lineBuffer = new Line[50];
         lineRepo = new Line[50];
+        
+        pointBuffers = new Position[4][];
+        lineBuffers = new Line[4][];
+        pointBufferLengths = new int[4];
+        for (int i = 0; i < 4; i++) {
+            pointBuffers[i] = new Position[50];
+            lineBuffers[i] = new Line[50];
+            pointBufferLengths[i] = 0;
+        }
+        
+        lineBufferLengths = new int[4];
+        lineRepoLength = 0;
     }
     
     List<Position> getObservations() {
@@ -143,6 +165,49 @@ public class SimRobot {
         pos.add(pose.getPosition());
         pointBuffer[pointBufferCtr] = pos;
         pointBufferCtr++;
+    }
+    
+    void updatePointBuffers() {
+        Angle theta = sum(towerAngle, pose.getHeading());
+        for (int i = 0; i < 4; i++) {
+            if (i > 0) {
+                theta.add(90);
+            }
+            double r = lastIrMeasurement[i];
+            if (r <= 0 || r > 40) {
+                continue;
+            }
+            Position pos = Utilities.polar2cart(theta, r);
+            pos.add(pose.getPosition());
+            pointBuffers[i][pointBufferLengths[i]] = pos;
+            pointBufferLengths[i]++;
+        }
+    }
+    
+    void createLines() {
+        for (int i = 0; i < 4; i++) {
+            lineBufferLengths[i] = lineCreate(pointBuffers[i], lineBuffers[i], pointBufferLengths[i]);    
+            
+            // Clear point buffers and reset lengths
+            for (int j = 0; j < 50; j++) {
+                pointBuffer[i] = null;
+            }
+            pointBufferLengths[i] = 0;
+        }
+    }
+    
+    void sendLineUpdates(ConcurrentLinkedQueue<Message> inbox) {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < lineBufferLengths[i]; j++) {
+                LineUpdateMessage lum = SimRobot.generateLineUpdate(lineBuffers[i][j]);
+                byte[] lumBytes = lum.getBytes();
+                byte[] lumMessageBytes = new byte[lumBytes.length + 1];
+                lumMessageBytes[0] = Message.LINE_UPDATE;
+                System.arraycopy(lumBytes, 0, lumMessageBytes, 1, lumBytes.length);
+                inbox.add(new Message(getAddress(), lumMessageBytes));
+            }
+        }
+        
     }
     
     /*
