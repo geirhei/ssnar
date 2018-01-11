@@ -76,11 +76,12 @@ public class Position {
      * prints the x-, y-values of the Position object
      */
     public void print() {
-        System.out.print("x: ");
+        System.out.print("(");
         System.out.printf("%1.2f", xValue);
-        System.out.print(", y: ");
+        System.out.print(",");
         System.out.printf("%1.2f", yValue);
-        System.out.println();
+        System.out.print(")");
+        //System.out.println();
     }
     
     /**

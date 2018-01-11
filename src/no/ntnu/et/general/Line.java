@@ -525,8 +525,8 @@ public class Line {
     }
     
     public static Line mergeSegments(Line line1, Line line2) {
-        double a1 = (line1.q.getYValue() - line1.p.getYValue()) / (line1.q.getXValue() - line1.q.getXValue());
-        double a2 = (line2.q.getYValue() - line2.p.getYValue()) / (line2.q.getXValue() - line2.q.getXValue());
+        double a1 = (line1.q.getYValue() - line1.p.getYValue()) / (line1.q.getXValue() - line1.p.getXValue());
+        double a2 = (line2.q.getYValue() - line2.p.getYValue()) / (line2.q.getXValue() - line2.p.getXValue());
         double b1 = line1.p.getYValue() - a1 * line1.p.getXValue();
         double b2 = line2.p.getYValue() - a2 * line2.p.getXValue();
         double l1 = Position.distanceBetween(line1.p, line1.q);
@@ -754,4 +754,14 @@ public class Line {
         System.out.println();
     }
     */
+    
+    public void print() {
+        System.out.print("Line segment: ");
+        System.out.print("p");
+        p.print();
+        System.out.print(" --- ");
+        System.out.print("q");
+        q.print();
+        System.out.println();
+    }
 }

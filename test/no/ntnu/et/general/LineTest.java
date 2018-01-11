@@ -6,6 +6,7 @@
  */
 package no.ntnu.et.general;
 
+import static java.lang.Double.NaN;
 import java.util.ArrayList;
 import java.util.List;
 import no.ntnu.et.simulator.Feature;
@@ -141,18 +142,7 @@ public class LineTest {
         fail("The test case is a prototype.");
     }
 
-    /**
-     * Test of print method, of class Line.
-     */
-    //@Test
-    public void testPrint() {
-        System.out.println("print");
-        Line instance = null;
-        instance.print();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
+   
     /**
      * Test of mergeSelf method, of class Line.
      */
@@ -211,45 +201,8 @@ public class LineTest {
         fail("The test case is a prototype.");
     }
 
-    /**
-     * Test of extendLine method, of class Line.
-     */
-    //@Test
-    public void testExtendLine() {
-        System.out.println("extendLine");
-        Position pL = new Position(4, 2);
-        Position pR = new Position(-4, 2);
-        Line newLine = new Line(pL, pR);
-        Position p1 = new Position(-6, 2);
-        Position p2 = new Position(-7, 2);
-        Position p3 = new Position(-8, 2);
-        Position p4 = new Position(-9, 4);
-        
-        Line.extendLine(p1, newLine);
-        
-        Line.extendLine(p2, newLine);
-        Line.extendLine(p3, newLine);
-        Line.extendLine(p4, newLine);
-        newLine.print();
-        assertEquals(newLine.pL, pL);
-    }
-
-    /**
-     * Test of calculateError method, of class Line.
-     */
-    //@Test
-    public void testCalculateError() {
-        System.out.println("calculateError");
-        Position p0 = new Position(-2, 2);
-        Position p1 = new Position(-1, 0);
-        Position p2 = new Position(-2, -2);
-        double expResult = 1.0;
-        double result = Math.abs(Line.calculateError(p0, p1, p2));
-        assertEquals(expResult, result, 1e-9);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
-    }
-
+    
+    
     /**
      * Test of generateLine method, of class Line.
      */
@@ -279,138 +232,137 @@ public class LineTest {
         fail("The test case is a prototype.");
     }
 
+   
+   
+    
     /**
-     * Test of calculateTheta method, of class Line.
+     * Test of lineCreate1 method, of class Line.
      */
     //@Test
-    public void testCalculateTheta() {
-        System.out.println("calculateTheta");
-        Position p0 = new Position(0, 0);
-        Position p1 = new Position(2, 2);
-        double expResult = 45.0;
-        double result = Line.calculateTheta(p0, p1);
-        assertEquals(expResult, result, 0.0);
+    public void testLineCreate1() {
+        System.out.println("lineCreate1");
+        Position[] pointBuffer = null;
+        Line[] lineBuffer = null;
+        int bufferSize = 0;
+        Line.lineCreate1(pointBuffer, lineBuffer, bufferSize);
         // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of lineMerge method, of class Line.
+     */
+    //@Test
+    public void testLineMerge() {
+        System.out.println("lineMerge");
+        List<Line> lineBuffer = null;
+        List<Line> lineRepository = null;
+        Line.lineMerge(lineBuffer, lineRepository);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of mergeSegments method, of class Line.
+     */
+    @Test
+    public void testMergeSegments() {
+        System.out.println("mergeSegments");
+        Line line1 = new Line(new Position(1, 1), new Position(4, 4));
+        Line line2 = new Line(new Position(1, 2), new Position(6, 3));
+        Line result = Line.mergeSegments(line1, line2);
+        result.print();
+        //assertEquals(expResult, result);
+        if (result.p == null || result.q == null || result.p.getXValue() == NaN) {
+            fail("Invalid result.");
+        }
         //fail("The test case is a prototype.");
     }
 
     /**
-     * Test of isLine method, of class Line.
+     * Test of lineMerge1 method, of class Line.
      */
     //@Test
-    public void testIsLine() {
-        System.out.println("isLine");
-        Position p0 = null;
-        Position p1 = null;
-        Position p2 = null;
+    public void testLineMerge1() {
+        System.out.println("lineMerge1");
+        Line[] lineBuffer = null;
+        Line[] lineRepo = null;
+        Line.lineMerge1(lineBuffer, lineRepo);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of isMergeable method, of class Line.
+     */
+    //@Test
+    public void testIsMergeable() {
+        System.out.println("isMergeable");
+        Line lineA = null;
+        Line lineB = null;
         boolean expResult = false;
-        boolean result = Line.isLine(p0, p1, p2);
+        boolean result = Line.isMergeable(lineA, lineB);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
 
     /**
-     * Test of detectLines method, of class Line.
+     * Test of calculateU1 method, of class Line.
      */
     //@Test
-    public void testDetectLines() {
-        System.out.println("detectLines");
-        Line newLine = new Line(new Position(4, 2), new Position(-4, 2));
-        Position p0 = new Position(-5, 2);
-        Position p1 = new Position(-6, 2);
-        Position p2 = new Position(-7, 2);
-        Position p3 = new Position(-8, 2);
-        List<Position> observations = new ArrayList<Position>();
-        observations.add(p0);
-        observations.add(p1);
-        observations.add(p2);
-        observations.add(p3);
-        //List<Line> expResult = null;
-        List<Line> result = Line.detectLines(observations);
-        Position pLres = new Position(4, 2);
-        Position pRres = new Position(-8, 2);
-        assertEquals(pLres, result.get(0).pL);
-        assertEquals(pRres, result.get(0).pR);
-        result.get(0).print();
-        System.out.println("size: " + result.size());
-        //assertEquals(expResult, result);
+    public void testCalculateU1() {
+        System.out.println("calculateU1");
+        double angle = 0.0;
+        double expResult = 0.0;
+        double result = Line.calculateU1(angle);
+        assertEquals(expResult, result, 0.0);
         // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+        fail("The test case is a prototype.");
     }
 
     /**
-     * Test of calculateC method, of class Line.
+     * Test of calculateU2 method, of class Line.
      */
     //@Test
-    public void testCalculateC() {
-        System.out.println("calculateC");
-        
-        double x = 0.0;
-        double y = -55.0;
-        double xOrg = y;
-        double yOrg = x;
-        double thetaOrg = 90.0;
-        double thetaNew = thetaOrg - 90;
-        double aOrg = Math.sin(Math.toRadians(thetaOrg));
-        double bOrg = -Math.cos(Math.toRadians(thetaOrg));
-        double cOrg = -aOrg * xOrg - bOrg * yOrg;
-        double cNew = Line.calculateC(thetaNew, x, y);
-        assertEquals(cOrg, cNew, 1e-9);
-        /*
-        assertEquals(-1.0, result, 0.01);
-        result = Line.calculateC(theta2, x, y);
-        assertEquals(1.0, result, 0.01);
-        result = Line.calculateC(theta3, x, y);
-        assertEquals(1.0, result, 0.01);
-        result = Line.calculateC(theta4, x, y);
-        assertEquals(-1.0, result, 0.01);
-        */
-    }
-
-    /**
-     * Test of projectOntoLine method, of class Line.
-     */
-    @Test
-    public void testProjectOntoLine() {
-        System.out.println("projectOntoLine");
-        Position p0 = new Position(19, 9);
-        Position p1 = new Position(16, 9);
-        Position p2 = new Position(14, 6);
-        Position p3 = new Position(10, 4);
-        Position p4 = new Position(6, 9);
-        Position p5 = new Position(2, 9);
-        Position p7 = new Position(10, -3);
-        Position p8 = new Position(11, 0);
-        
-        Line line0 = new Line(p4, p5);
-        line0.print();
-        Position p6 = new Position(4, 14);
-        Position res = Line.projectOntoLine(p6, line0);
-        Position expected = new Position(4, 9);
-        res.print();
-        assertEquals(expected, res);
-        
-        Line line6 = new Line(p7, p3);
-        res = Line.projectOntoLine(new Position(11, -4), line6);
-        res.print();
-        assertEquals(res, new Position(10, 0));
-    }
-
-    /**
-     * Test of matchSegment method, of class Line.
-     */
-    //@Test
-    public void testMatchSegment() {
-        System.out.println("matchSegment");
-        Line mapLine = new Line(new Position(0, 0), new Position(1, 1));
-        Line line = new Line(new Position(0, 1), new Position(1, 0));
-        line.print();
-        boolean expResult = true;
-        boolean result = Line.matchSegment(mapLine, line);
-        assertEquals(expResult, result);
+    public void testCalculateU2() {
+        System.out.println("calculateU2");
+        double dist = 0.0;
+        double expResult = 0.0;
+        double result = Line.calculateU2(dist);
+        assertEquals(expResult, result, 0.0);
         // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of calculateU3 method, of class Line.
+     */
+    //@Test
+    public void testCalculateU3() {
+        System.out.println("calculateU3");
+        double dist = 0.0;
+        double lenA = 0.0;
+        double lenB = 0.0;
+        double expResult = 0.0;
+        double result = Line.calculateU3(dist, lenA, lenB);
+        assertEquals(expResult, result, 0.0);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of calculateU4 method, of class Line.
+     */
+    //@Test
+    public void testCalculateU4() {
+        System.out.println("calculateU4");
+        double dist = 0.0;
+        double expResult = 0.0;
+        double result = Line.calculateU4(dist);
+        assertEquals(expResult, result, 0.0);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
     }
 
 }
