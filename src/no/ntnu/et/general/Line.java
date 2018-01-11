@@ -172,9 +172,11 @@ public class Line {
         if (pointBuffer == null || lineBuffer == null) {
             throw new NullPointerException("Buffers cannot be null.");
         }
+        
         if (bufferSize <= 0) {
             throw new IllegalArgumentException("Buffer size cannot be zero or less.");
         }
+        
         if (bufferSize < 2) {
             return;
         }
@@ -273,12 +275,21 @@ public class Line {
         lineBuffer.clear();
     }
     
+    public static void lineMerge1(Line[] lineBuffer, Line[] lineRepo, int bufferCtr, int repoCtr) {
+        if (lineBuffer == null || lineRepo == null) {
+            throw new NullPointerException("Invalid line arguments.");
+        }
+        for (int i = 0; i < bufferCtr; i++) {
+            
+        }
+    }
+    
     public static boolean isMergeable1(Line line1, Line line2) {
         if (line1 == null || line2 == null) {
             throw new NullPointerException("Invalid line arguments.");
         }
-        double u = 1e-9;
-        double delta = 1e-9;
+        final double u = 0.1;
+        final double delta = 1;
         double m1 = line1.getSlope();
         double m2 = line2.getSlope();
         

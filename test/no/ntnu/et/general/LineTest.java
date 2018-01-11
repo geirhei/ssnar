@@ -287,7 +287,7 @@ public class LineTest {
         System.out.println("lineMerge1");
         Line[] lineBuffer = null;
         Line[] lineRepo = null;
-        Line.lineMerge1(lineBuffer, lineRepo);
+        //Line.lineMerge1(lineBuffer, lineRepo);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -361,6 +361,75 @@ public class LineTest {
         double expResult = 0.0;
         double result = Line.calculateU4(dist);
         assertEquals(expResult, result, 0.0);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of getP method, of class Line.
+     */
+    //@Test
+    public void testGetP() {
+        System.out.println("getP");
+        Line instance = null;
+        Position expResult = null;
+        Position result = instance.getP();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of getQ method, of class Line.
+     */
+    //@Test
+    public void testGetQ() {
+        System.out.println("getQ");
+        Line instance = null;
+        Position expResult = null;
+        Position result = instance.getQ();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of lineCreate method, of class Line.
+     */
+    //@Test
+    public void testLineCreate() {
+        System.out.println("lineCreate");
+        Position[] pointBuffer = null;
+        Line[] lineBuffer = null;
+        int bufferSize = 0;
+        Line.lineCreate(pointBuffer, lineBuffer, bufferSize);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of isMergeable1 method, of class Line.
+     */
+    //@Test
+    public void testIsMergeable1() {
+        System.out.println("isMergeable1");
+        Line line1 = new Line(new Position(0,1), new Position(2,1));
+        Line line2 = new Line(new Position(1,0.5), new Position(2.5,1.5));
+        boolean expResult = true;
+        boolean result = Line.isMergeable1(line1, line2);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of print method, of class Line.
+     */
+    //@Test
+    public void testPrint() {
+        System.out.println("print");
+        Line instance = null;
+        instance.print();
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="NTNU04352" name="no.ntnu.et.general.LineTest" skipped="0" tests="1" time="0.052" timestamp="2018-01-11T12:31:36">
+<testsuite errors="0" failures="1" hostname="NTNU04352" name="no.ntnu.et.general.LineTest" skipped="0" tests="2" time="0.051" timestamp="2018-01-11T13:33:01">
   <properties>
     <property name="libs.jsp-compiler.javadoc" value="" />
     <property name="netbeans.autoupdate.country" value="US" />
@@ -62,7 +62,7 @@
     <property name="copylibs.rebase" value="true" />
     <property name="libs.spring-webmvc3.0.maven-pom" value="" />
     <property name="libs.swing-layout.maven-pom" value="" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner no.ntnu.et.general.LineTest skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=true formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\Users\geirhei\Documents\ssnar\SSNAR\build\test\results\TEST-no.ntnu.et.general.LineTest.xml crashfile=C:\Users\geirhei\Documents\ssnar\SSNAR\build\junitvmwatcher3324557523200399806.properties propsfile=C:\Users\geirhei\Documents\ssnar\SSNAR\build\junit2129002394688512630.properties" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner no.ntnu.et.general.LineTest skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=true formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\Users\geirhei\Documents\ssnar\SSNAR\build\test\results\TEST-no.ntnu.et.general.LineTest.xml crashfile=C:\Users\geirhei\Documents\ssnar\SSNAR\build\junitvmwatcher7441191928331195582.properties propsfile=C:\Users\geirhei\Documents\ssnar\SSNAR\build\junit3620774265270770850.properties" />
     <property name="build.classes.dir" value="build/classes" />
     <property name="netbeans.accept_license_class" value="org.netbeans.license.AcceptLicense" />
     <property name="ant.file.type.SSNAR" value="file" />
@@ -112,7 +112,7 @@
     <property name="javadoc.splitindex" value="true" />
     <property name="file.separator" value="\" />
     <property name="libs.Java-EE-GlassFish-v3-Prelude.maven-pom" value="" />
-    <property name="javac.includesfile.binary" value="C:\Users\geirhei\Documents\ssnar\SSNAR\null1574861539" />
+    <property name="javac.includesfile.binary" value="C:\Users\geirhei\Documents\ssnar\SSNAR\null1560671804" />
     <property name="libs.junit_4.maven-pom" value="" />
     <property name="mkdist.disabled" value="false" />
     <property name="javac.test.processorpath" value="../libraries/rxtx-2.1.7.jar:../libraries/RXTXcomm.jar:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/Jama-1.0.3.jar:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/absolutelayout/AbsoluteLayout.jar:..\libraries\EJML-core-0.30-sources.jar:..\libraries\EJML-core-0.30.jar:..\libraries\EJML-dense64-0.30-sources.jar:..\libraries\EJML-dense64-0.30.jar:..\libraries\EJML-denseC64-0.30-sources.jar:..\libraries\EJML-denseC64-0.30.jar:..\libraries\EJML-equation-0.30-sources.jar:..\libraries\EJML-equation-0.30.jar:..\libraries\EJML-simple-0.30-sources.jar:..\libraries\EJML-simple-0.30.jar:build/classes:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/junit_4/junit-4.12.jar:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/hamcrest/hamcrest-core-1.3.jar" />
@@ -168,7 +168,7 @@
     <property name="libs.primefaces.javadoc" value="" />
     <property name="libs.spring-framework300.maven-pom" value="" />
     <property name="run.test.classpath" value="../libraries/rxtx-2.1.7.jar:../libraries/RXTXcomm.jar:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/Jama-1.0.3.jar:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/absolutelayout/AbsoluteLayout.jar:..\libraries\EJML-core-0.30-sources.jar:..\libraries\EJML-core-0.30.jar:..\libraries\EJML-dense64-0.30-sources.jar:..\libraries\EJML-dense64-0.30.jar:..\libraries\EJML-denseC64-0.30-sources.jar:..\libraries\EJML-denseC64-0.30.jar:..\libraries\EJML-equation-0.30-sources.jar:..\libraries\EJML-equation-0.30.jar:..\libraries\EJML-simple-0.30-sources.jar:..\libraries\EJML-simple-0.30.jar:build/classes:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/junit_4/junit-4.12.jar:C:/Users/geirhei/Documents/ssnar/SSNAR/libraries/hamcrest/hamcrest-core-1.3.jar:build/test/classes" />
-    <property name="ant.project.invoked-targets" value="debug-test" />
+    <property name="ant.project.invoked-targets" value="test-single" />
     <property name="test.binaryexcludes" value="" />
     <property name="libs.swing-layout.javadoc" value="C:\Program Files (x86)\NetBeans 8.2\platform\docs\swing-layout-1.0.4-doc.zip" />
     <property name="sun.java2d.dpiaware" value="true" />
@@ -177,7 +177,6 @@
     <property name="libs.PostgreSQLDriver.maven-pom" value="" />
     <property name="java.class.version" value="52.0" />
     <property name="libs.JAVADB_DRIVER_LABEL.classpath" value="C:\Program Files\Java\jdk1.8.0_144\db\lib\derby.jar;C:\Program Files\Java\jdk1.8.0_144\db\lib\derbyclient.jar;C:\Program Files\Java\jdk1.8.0_144\db\lib\derbynet.jar" />
-    <property name="jpda.address" value="javadebug" />
     <property name="libs.hibernate4-persistencemodelgen.maven-pom" value="" />
     <property name="libs.javaee-endorsed-api-6.0.src" value="" />
     <property name="libs.eclipselink.javadoc" value="C:\Program Files (x86)\NetBeans 8.2\java\modules\ext\docs\javax.persistence-2.1.0-doc.zip" />
@@ -364,6 +363,7 @@
     <property name="libs.jsf12.src" value="" />
     <property name="libs.JAVADB_DRIVER_LABEL.maven-pom" value="" />
     <property name="libs.struts.javadoc" value="C:\Program Files (x86)\NetBeans 8.2\enterprise\docs\struts-1.3.10-javadoc.zip" />
+    <property name="ignore.failing.tests" value="true" />
     <property name="libs.Comet-GlassFish-v3.classpath" value="" />
     <property name="libs.javaee-web-api-7.0.src" value="" />
     <property name="libs.primefaces.src" value="" />
@@ -416,7 +416,7 @@
     <property name="libs.Comet-GlassFish-v3.src" value="" />
     <property name="libs.restlib.javadoc" value="" />
     <property name="libs.JAXB-ENDORSED.classpath" value="C:\Program Files (x86)\NetBeans 8.2\ide\modules\ext\jaxb\api\jaxb-api.jar" />
-    <property name="nb.internal.action.name" value="debug.single" />
+    <property name="nb.internal.action.name" value="test.single" />
     <property name="libs.javaee-api-7.0.javadoc" value="C:\Program Files (x86)\NetBeans 8.2\enterprise\docs\javaee-doc-api.jar" />
     <property name="libs.eclipselink.classpath" value="C:\Program Files (x86)\NetBeans 8.2\java\modules\ext\eclipselink\eclipselink.jar;C:\Program Files (x86)\NetBeans 8.2\java\modules\ext\eclipselink\javax.persistence_2.1.0.v201304241213.jar;C:\Program Files (x86)\NetBeans 8.2\java\modules\ext\eclipselink\org.eclipse.persistence.jpa.jpql_2.5.2.v20140319-9ad6abd.jar" />
     <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment" />
@@ -454,8 +454,14 @@
     <property name="libs.javaee-web-api-7.0.javadoc" value="C:\Program Files (x86)\NetBeans 8.2\enterprise\docs\javaee-doc-api.jar" />
   </properties>
   <testcase classname="no.ntnu.et.general.LineTest" name="testMergeSegments" time="0.005" />
+  <testcase classname="no.ntnu.et.general.LineTest" name="testIsMergeable1" time="0.004">
+    <failure message="expected:&lt;true&gt; but was:&lt;false&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;true&gt; but was:&lt;false&gt;
+	at no.ntnu.et.general.LineTest.testIsMergeable1(LineTest.java:420)
+</failure>
+  </testcase>
   <system-out><![CDATA[mergeSegments
 Line segment: p(0.77,1.41) --- q(5.42,4.03)
+isMergeable1
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

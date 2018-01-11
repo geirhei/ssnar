@@ -253,7 +253,7 @@ public class Simulator {
             System.arraycopy(hmBytes, 0, hmMessageBytes, 1, hmBytes.length);
             inbox.add(new Message(myRobot.getAddress(), hmMessageBytes));
             
-            boolean sweepCompleted = false;
+            //boolean sweepCompleted = false;
             
             while (true) {
                 // Wait between each loop
@@ -289,11 +289,30 @@ public class Simulator {
                     update = myRobot.createMeasurement();
                     
                     if (myName.equals("SLAM")) {
-                        if (!sweepCompleted) {
-                            myRobot.addObservation();
-                        }
+                        myRobot.addObservation();
                         if (myRobot.getTowerAngle().getValue() >= 89) {
-                            sweepCompleted = true;
+                            //sweepCompleted = true;
+                            lineCreate(myRobot.pointBuffer, myRobot.lineBuffer, myRobot.pointBufferCtr);
+                            Line[] lineBuffer = myRobot.lineBuffer;
+                            int i = 0;
+                            while (lineBuffer[i] != null) {
+                                //myRobot.lineBuffer[i].print();
+                                int lX = (int) lineBuffer[i].p.getXValue();
+                                int rX = (int) lineBuffer[i].q.getXValue();
+                                int lY = (int) lineBuffer[i].p.getYValue();
+                                int rY = (int) lineBuffer[i].q.getYValue();
+                                //System.out.println("L: (" + lX + ", " + lY + ") R: (" + rX + ", " + rY + ")");
+                                LineUpdateMessage lum = SimRobot.generateLineUpdate(lX, lY, rX, rY);
+                                byte[] lumBytes = lum.getBytes();
+                                byte[] lumMessageBytes = new byte[lumBytes.length + 1];
+                                lumMessageBytes[0] = Message.LINE_UPDATE;
+                                System.arraycopy(lumBytes, 0, lumMessageBytes, 1, lumBytes.length);
+                                inbox.add(new Message(myRobot.getAddress(), lumMessageBytes));
+                                //System.out.println("Line sent!");
+                                i++;
+                            }
+                            System.out.println("Lines detected: " + ++i);
+                            break;
                         }
                         
                         UpdateMessage um = SimRobot.generateUpdate(update[0], update[1], update[2], update[3], update[4], update[5], update[6], update[7]);
@@ -322,35 +341,7 @@ public class Simulator {
                     counter = 0;
                 }
                 counter++;
-                
-                if (sweepCompleted) {
-                    break;
-                }
             }
-            
-            lineCreate(myRobot.pointBuffer, myRobot.lineBuffer, myRobot.pointBufferCtr);
-            
-            Line[] lineBuffer = myRobot.lineBuffer;
-            int i = 0;
-            while (lineBuffer[i] != null) {
-                //myRobot.lineBuffer[i].print();
-                int lX = (int) lineBuffer[i].p.getXValue();
-                int rX = (int) lineBuffer[i].q.getXValue();
-                int lY = (int) lineBuffer[i].p.getYValue();
-                int rY = (int) lineBuffer[i].q.getYValue();
-                //System.out.println("L: (" + lX + ", " + lY + ") R: (" + rX + ", " + rY + ")");
-                LineUpdateMessage lum = SimRobot.generateLineUpdate(lX, lY, rX, rY);
-                byte[] lumBytes = lum.getBytes();
-                byte[] lumMessageBytes = new byte[lumBytes.length + 1];
-                lumMessageBytes[0] = Message.LINE_UPDATE;
-                System.arraycopy(lumBytes, 0, lumMessageBytes, 1, lumBytes.length);
-                inbox.add(new Message(myRobot.getAddress(), lumMessageBytes));
-                //System.out.println("Line sent!");
-                i++;
-            }
-            System.out.println("Lines detected: " + ++i);
-
-            //myRobot.getObservations().clear();
         }
     }
     
