@@ -189,10 +189,7 @@ public class SimRobot {
         for (int i = 0; i < 4; i++) {
             lineBufferLengths[i] = lineCreate(pointBuffers[i], lineBuffers[i], pointBufferLengths[i]);    
             
-            // Clear point buffers and reset lengths
-            for (int j = 0; j < 50; j++) {
-                pointBuffer[i] = null;
-            }
+            // Reset pointBuffer lengths
             pointBufferLengths[i] = 0;
         }
     }
@@ -201,10 +198,7 @@ public class SimRobot {
         for (int i = 0; i < 4; i++) {
             lineRepoLength = lineMerge(lineBuffers[i], lineRepo, lineBufferLengths[i], lineRepoLength);
             
-            // Clear line buffers and reset lengths
-            for (int j = 0; j < 50; j++) {
-                lineBuffers[i] = null;
-            }
+            // Reset lineBuffer lengths
             lineBufferLengths[i] = 0;
         }
     }

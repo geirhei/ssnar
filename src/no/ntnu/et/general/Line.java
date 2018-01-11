@@ -345,8 +345,8 @@ public class Line {
         if (line1 == null || line2 == null) {
             throw new NullPointerException("Invalid line arguments.");
         }
-        final double u = 0.1;
-        final double delta = 1;
+        final double u = 10.0;
+        final double delta = 100.0;
         double m1 = line1.getSlope();
         double m2 = line2.getSlope();
         
