@@ -227,6 +227,12 @@ public class Utilities {
         return null;
     }
     
+    public static Position getProjectedPoint(Position p, double a, double b) {
+        double x = (p.getXValue() + a * p.getYValue() - a * b) / (1 + Math.pow(a, 2));
+        double y = (a * p.getXValue() + Math.pow(a, 2) * p.getYValue() + b) / (1 + Math.pow(a, 2));
+        return new Position(x, y);
+    }
+    
     /*
     public static void createLines(ArrayList<Position> pointBuffer, ArrayList<Line> lineBuffer) {
         removeDuplicates(pointBuffer);
