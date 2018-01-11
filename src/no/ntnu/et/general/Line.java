@@ -169,7 +169,13 @@ public class Line {
      * @param bufferSize number of values in pointBuffer
      */
     public static void lineCreate(Position[] pointBuffer, Line[] lineBuffer, int bufferSize) {
-        if (pointBuffer == null || bufferSize < 2) {
+        if (pointBuffer == null || lineBuffer == null) {
+            throw new NullPointerException("Buffers cannot be null.");
+        }
+        if (bufferSize <= 0) {
+            throw new IllegalArgumentException("Buffer size cannot be zero or less.");
+        }
+        if (bufferSize < 2) {
             return;
         }
         
@@ -268,6 +274,9 @@ public class Line {
     }
     
     public static boolean isMergeable1(Line line1, Line line2) {
+        if (line1 == null || line2 == null) {
+            throw new NullPointerException("Invalid line arguments.");
+        }
         double u = 1e-9;
         double delta = 1e-9;
         double m1 = line1.getSlope();
@@ -287,6 +296,9 @@ public class Line {
     }
     
     public static Line mergeSegments(Line line1, Line line2) {
+        if (line1 == null || line2 == null) {
+            throw new NullPointerException("Line arguments cannot be null.");
+        }
         double a1 = (line1.q.getYValue() - line1.p.getYValue()) / (line1.q.getXValue() - line1.p.getXValue());
         double a2 = (line2.q.getYValue() - line2.p.getYValue()) / (line2.q.getXValue() - line2.p.getXValue());
         double b1 = line1.p.getYValue() - a1 * line1.p.getXValue();
