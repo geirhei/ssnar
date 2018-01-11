@@ -86,28 +86,28 @@ public class LineTest {
     }
 
     /**
-     * Test of getA method, of class Line.
+     * Test of getP method, of class Line.
      */
     //@Test
     public void testGetA() {
         System.out.println("getA");
         Line instance = null;
         Position expResult = null;
-        Position result = instance.getA();
+        Position result = instance.getP();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
 
     /**
-     * Test of getB method, of class Line.
+     * Test of getQ method, of class Line.
      */
     //@Test
     public void testGetB() {
         System.out.println("getB");
         Line instance = null;
         Position expResult = null;
-        Position result = instance.getB();
+        Position result = instance.getQ();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");

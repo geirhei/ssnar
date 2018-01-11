@@ -20,44 +20,14 @@ import no.ntnu.et.simulator.Feature;
  * @author Eirik Thon
  */
 public class Line {
-    
     private double[] start;
-    
     private double[] direction;
-    
     private double length;
     
     public Position p;
     public Position q;
     
-    /*
-    public Position p;
-    public double theta;
-    public double h;
-    public double aPar;
-    public double bPar;
-    public double c;
-    public Position pR;
-    public Position pL;
-    public static final double STD_W = 30.0;
-    public static final double VAR_C = Math.pow(STD_W, 2) * Math.pow(STD_W, 2) / (Math.pow(STD_W, 2) + Math.pow(STD_W, 2));
-    public static final double VAR_I = 1.0;
-    */
-    
     static final double TOLERANCE = 50.0;
-    
-    /*
-    public Line(Position pL, Position pR) {
-        this.theta = calculateTheta(pL, pR);
-        this.aPar = findA(theta);
-        this.bPar = findB(theta);
-        this.pR = pR;
-        this.pL = pL;
-        this.p = getMidpoint(this.pL, this.pR);
-        this.c = calculateC(this.theta, this.p.getXValue(), this.p.getYValue());
-        this.h = distanceBetween(pL, pR) / 2;
-    }
-    */
     
     /**
      * Creates p new Line object
@@ -76,11 +46,9 @@ public class Line {
      * @param p
      * @param q 
      */
-    
     public Line(Position p, Position q) {
         this.p = p;
         this.q = q;
-        //this.length = Math.sqrt( Math.pow(q.getXValue() - p.getXValue(), 2) + Math.pow(q.getYValue() - p.getYValue(), 2) );
     }
     
     /**
@@ -97,8 +65,8 @@ public class Line {
     }
     
     public static Position getMidpoint(Line line) {
-        double midX = (line.getA().getXValue() + line.getB().getXValue()) / 2;
-        double midY = (line.getA().getYValue() + line.getB().getYValue()) / 2;
+        double midX = (line.getP().getXValue() + line.getQ().getXValue()) / 2;
+        double midY = (line.getP().getYValue() + line.getQ().getYValue()) / 2;
         return new Position(midX, midY);
     }
     
@@ -128,241 +96,15 @@ public class Line {
         return (q.getYValue() - p.getYValue()) / (q.getXValue() - p.getXValue());
     }
     
-    public Position getA() {
+    public Position getP() {
         return p;
     }
     
-    public Position getB() {
+    public Position getQ() {
         return q;
     }
     
     /*
-    /**
-     * Calculates the perpendicular error of p2 relative to p line through p0 and p1.
-     * 
-     * @param p0
-     * @param p1
-     * @param p2
-     * @return error value
-     */
-    /*
-    public static double calculateError(Position p0, Position p1, Position p2) {
-        Line line = new Line(p0, p1);
-        double a = findA(line.theta);
-        double b = findB(line.theta);
-        double c = calculateC(line.theta, line.p.getXValue(), line.p.getYValue());
-        return a * p2.getYValue() + b * p2.getXValue() + c;
-    }
-    
-    private static double findA(double theta) {
-        return -Math.sin(Math.toRadians(theta + 90));
-    }
-    
-    private static double findB(double theta) {
-        return -Math.cos(Math.toRadians(theta + 90));
-    }
-    
-    public static double calculateC(double theta, double x, double y) {
-        return -findA(theta) * y - findB(theta) * x;
-    }
-    
-    /**
-     * Helper method for calculating the angle between two lines. Positive direction
-     * is counter-clockwise. Wraps to the interval [0,360).
-     * 
-     * @param p0
-     * @param p1
-     * @return double angle
-     */
-    /*
-    public static double calculateTheta(Position p0, Position p1) {
-        double theta = Math.toDegrees(Math.atan2(p1.getYValue() - p0.getYValue(), p1.getXValue() - p0.getXValue()));
-        if (theta < 0) {
-            theta += 360;
-        }
-        return theta;
-    }
-    
-    public static boolean isLine(Position p0, Position p1, Position p2) {
-        if (p0 == null || p1 == null || p2 == null) {
-            return false;
-        }
-        return Math.abs(calculateError(p0, p1, p2)) <= STD_W / 2.0;
-    }
-    
-    /**
-     * TODO: Distance between points must be less than the width of the robot,
- else p possible passage may be blocked.
-     * 
-     * @param observations
-     * @param clockwise
-     * @return ArrayList of detected line segments
-     */
-    /*
-    public static List<Line> detectLines(List<Position> observations, boolean clockwise) {
-        if (observations == null || observations.size() < 3) {
-            return null;
-        }
-        ArrayList<Line> lines = new ArrayList<Line>();
-        
-        int i = 0;
-        while (i < observations.size() - 2) {
-            Position p0 = observations.get(i);
-            Position p1 = observations.get(i+1);
-            Position p2 = observations.get(i+2);
-            Position p3;
-            if (i < observations.size() - 3) {
-                p3 = observations.get(i+3);
-            } else {
-                p3 = null;
-            }
-            
-            // Attempt to start p line
-            Line newLine;
-            double e;
-            if (isLine(p0, p1, p2)) {
-                newLine = new Line(p0, p2);
-                e = calculateError(p0, p2, p1);
-                i += 3;
-            } else if (isLine(p0, p1, p3)) {
-                newLine = new Line(p0, p3);
-                e = calculateError(p0, p3, p1);
-                i += 4;
-            } else if (isLine(p0, p2, p3)) {
-                newLine = new Line(p0, p3);
-                e = calculateError(p0, p3, p2);
-                i += 4;
-            } else {
-                i += 4;
-                continue;
-            }
-            
-            newLine.c -= 0.01 * e;
-            double xPNew = newLine.p.getXValue() - e * newLine.bPar;
-            double yPNew = newLine.p.getYValue() - e * newLine.aPar;
-            newLine.p = new Position(xPNew, yPNew);
-            
-            // Extend line
-            while (i < observations.size() && extendLine(observations.get(i), newLine, clockwise)) {
-                i++;
-                System.out.println("Line extended!");
-            }
-            
-            lines.add(newLine);
-        }
-        return lines;
-    }
-    
-    /**
-     * Attempts to extend the given line with the given position.
-     * 
-     * @param p Position
-     * @param line Line
-     * @return true if successful, false if not
-     */
-    /*
-    public static boolean extendLine(Position p, Line line, boolean clockwise) {
-        double e = calculateError(line.pL, line.pR, p);
-        
-        if (Math.abs(e) <= STD_W / 2.0) {
-            double k_c = 0.01;
-            //double k_c = VAR_C / (VAR_C + Math.pow(STD_W, 2));
-            line.c -= k_c * e;
-            
-            double dTheta = Math.toDegrees(Math.atan(e / line.h));
-            double k_theta = 0.001;
-            if (clockwise) {
-                line.theta -= k_theta * dTheta;   
-            } else {
-                line.theta += k_theta * dTheta;
-            }
-            
-            // Update parameters
-            line.aPar = findA(line.theta);
-            line.bPar = findB(line.theta);
-            
-            // Project onto new line
-            if (clockwise) {
-                line.pR = projectOntoLine(line.pR, line);
-                line.pL = projectOntoLine(p, line);
-            } else {
-                line.pR = projectOntoLine(p, line);
-                line.pL = projectOntoLine(line.pL, line);
-            }
-            
-            // Update midpoint and h
-            line.p = getMidpoint(line.pL, line.pR);
-            line.h = distanceBetween(line.pL, line.p);
-            
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    public static boolean matchSegment(Line mapLine, Line line) {
-        final double varTheta_m = 5.0;
-        final double varTheta_o = 5.0;
-        final double varC_o = 5.0;
-        final double varC_m = 5.0;
-        if (Math.pow(mapLine.theta - line.theta, 2) > varTheta_m + varTheta_o) {
-            return false;
-        }
-        if (Math.pow(mapLine.c - line.c, 2) > varC_o + varC_m) {
-            return false;
-        }
-        double x_o = line.p.getXValue();
-        double x_m = mapLine.p.getXValue();
-        double y_o = line.p.getYValue();
-        double y_m = mapLine.p.getYValue();
-        if (Math.pow(x_o - x_m, 2) + Math.pow(y_o - y_m, 2) > line.h + mapLine.h) {
-            return false;
-        }
-        return true;
-    }
-    
-    public static void updateMapSegment(Line observedLine, Line mapLine) {
-        // Update c
-        double k_c = 0.01;
-        mapLine.c += k_c * (observedLine.c - mapLine.c);
-        
-        // Update theta
-        double k_theta = 0.01;
-        mapLine.theta += k_theta * (observedLine.theta - mapLine.theta);
-        
-        // Update parameters
-        mapLine.aPar = findA(mapLine.theta);
-        mapLine.bPar = findB(mapLine.theta);
-        
-        // Project endpoints onto corrected segment
-        Position observedL = projectOntoLine(observedLine.pL, mapLine);
-        Position observedR = projectOntoLine(observedLine.pR, mapLine);
-        Position mapL = projectOntoLine(mapLine.pL, mapLine);
-        Position mapR = projectOntoLine(mapLine.pR, mapLine);
-        
-        if (Position.distanceBetween(observedL, mapR) > Position.distanceBetween(mapL, mapR)) {
-            mapLine.pL = observedL;
-        } else {
-            mapLine.pL = mapL;
-        }
-        if (Position.distanceBetween(observedR, mapL) > Position.distanceBetween(mapR, mapL)) {
-            mapLine.pR = observedR;
-        } else {
-            mapLine.pR = mapR;
-        }
-        
-        // Update midpoint and h
-        mapLine.p = getMidpoint(mapLine.pL, mapLine.pR);
-        mapLine.h = distanceBetween(mapLine.pL, mapLine.p);
-    }
-    
-    public static Position projectOntoLine(Position p, Line line) {
-        double x = Math.pow(line.aPar, 2) * p.getXValue() - line.aPar * line.bPar * p.getYValue() - line.bPar * line.c;
-        double y = Math.pow(line.bPar, 2) * p.getYValue() - line.aPar * line.bPar * p.getXValue() - line.aPar * line.c;
-        return new Position(x, y);
-    }
-    
-    
     public static void lineCreate(ArrayList<Position> pointBuffer, List<Line> lineBuffer) {
         if (pointBuffer.size() <= 1) {
             pointBuffer.clear();
@@ -419,6 +161,7 @@ public class Line {
         pointBuffer.clear();
     }
     */
+    
     /**
      * 
      * @param pointBuffer
@@ -490,19 +233,19 @@ public class Line {
                     if (!(Math.abs(m1 - m2) <= u)) {
                         continue;
                     }
-                    double dist1 = Position.distanceBetween(bufferLine.getA(), line.getA());
-                    double dist2 = Position.distanceBetween(bufferLine.getA(), line.getB());
-                    double dist3 = Position.distanceBetween(bufferLine.getB(), line.getA());
-                    double dist4 = Position.distanceBetween(bufferLine.getB(), line.getB());
+                    double dist1 = Position.distanceBetween(bufferLine.getP(), line.getP());
+                    double dist2 = Position.distanceBetween(bufferLine.getP(), line.getQ());
+                    double dist3 = Position.distanceBetween(bufferLine.getQ(), line.getP());
+                    double dist4 = Position.distanceBetween(bufferLine.getQ(), line.getQ());
                     
                     if (dist1 <= d || dist4 <= d) {
                         Line newLine = bufferLine;
                         iter2.set(newLine);
                     } else if (dist2 <= d) {
-                        Line newLine = new Line(line.getA(), bufferLine.getB());
+                        Line newLine = new Line(line.getP(), bufferLine.getQ());
                         iter2.set(newLine);
                     } else if (dist3 <= d) {
-                        Line newLine = new Line(bufferLine.getA(), line.getB());
+                        Line newLine = new Line(bufferLine.getP(), line.getQ());
                         iter2.set(newLine);
                     } else {
                         continue;
@@ -693,7 +436,7 @@ public class Line {
     
     /**
      * Creates p new Line object between the two Position given in the input
- parameters
+     * parameters
      * @param startPos Position
      * @param endPos Position
      * @return Line
