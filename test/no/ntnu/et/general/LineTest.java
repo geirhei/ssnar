@@ -280,14 +280,14 @@ public class LineTest {
     }
 
     /**
-     * Test of lineMerge1 method, of class Line.
+     * Test of lineMerge method, of class Line.
      */
     //@Test
     public void testLineMerge1() {
         System.out.println("lineMerge1");
         Line[] lineBuffer = null;
         Line[] lineRepo = null;
-        //Line.lineMerge1(lineBuffer, lineRepo);
+        //Line.lineMerge(lineBuffer, lineRepo);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -408,7 +408,7 @@ public class LineTest {
     }
 
     /**
-     * Test of isMergeable1 method, of class Line.
+     * Test of isMergeable method, of class Line.
      */
     //@Test
     public void testIsMergeable1() {
@@ -416,7 +416,7 @@ public class LineTest {
         Line line1 = new Line(new Position(0,1), new Position(2,1));
         Line line2 = new Line(new Position(1,0.5), new Position(2.5,1.5));
         boolean expResult = true;
-        boolean result = Line.isMergeable1(line1, line2);
+        boolean result = Line.isMergeable(line1, line2);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");

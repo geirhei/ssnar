@@ -211,6 +211,7 @@ public class Line {
         }
     }
     
+    /*
     public static void lineMerge(List<Line> lineBuffer, List<Line> lineRepository) {
         // Array size check here
 
@@ -274,17 +275,39 @@ public class Line {
         }
         lineBuffer.clear();
     }
+    */
     
-    public static void lineMerge1(Line[] lineBuffer, Line[] lineRepo, int bufferCtr, int repoCtr) {
+    public static void lineMerge(Line[] lineBuffer, Line[] lineRepo, int bufferCtr, int repoCtr) {
         if (lineBuffer == null || lineRepo == null) {
             throw new NullPointerException("Invalid line arguments.");
         }
-        for (int i = 0; i < bufferCtr; i++) {
-            
+        
+        if (repoCtr == 0) {
+            for (int i = 0; i < bufferCtr; i++) {
+                lineRepo[repoCtr] = lineBuffer[i];
+                repoCtr++;
+            }
+        } else {
+            int index = repoCtr;
+            boolean merged = false;
+            for (int j = 0; j < bufferCtr; j++) {
+                for (int k = 0; k < repoCtr; k++) {
+                    if (isMergeable(lineBuffer[j], lineRepo[k])) {
+                        lineRepo[k] = mergeSegments(lineBuffer[j], lineRepo[k]);
+                        merged = true;
+                        break;
+                    }
+                }
+                if (!merged) {
+                    lineRepo[index] = lineBuffer[j];
+                    index++;
+                    merged = false;
+                }
+            }
         }
     }
     
-    public static boolean isMergeable1(Line line1, Line line2) {
+    public static boolean isMergeable(Line line1, Line line2) {
         if (line1 == null || line2 == null) {
             throw new NullPointerException("Invalid line arguments.");
         }
@@ -344,7 +367,7 @@ public class Line {
     }
     
     
-    
+    /*
     static boolean isMergeable(Line lineA, Line lineB) {
         //u1
         double slopeA = lineA.getSlope();
@@ -371,6 +394,7 @@ public class Line {
         //double similarityThreshold = 0.6;
         return (u1 >= 0.6 && u3 >= 0.6); // add u2 and u4
     }
+    */
     
     /**
      * Angle between the two line segments.

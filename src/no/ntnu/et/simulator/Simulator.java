@@ -289,13 +289,11 @@ public class Simulator {
                     if (myName.equals("SLAM")) {
                         myRobot.addObservation();
                         if (myRobot.getTowerAngle().getValue() >= 89) {
-                            //sweepCompleted = true;
                             lineCreate(myRobot.pointBuffer, myRobot.lineBuffer, myRobot.pointBufferCtr);
-                            Line[] lineBuffer = myRobot.lineBuffer;
                             int i = 0;
-                            while (lineBuffer[i] != null) {
+                            while (myRobot.lineBuffer[i] != null) {
                                 //System.out.println("L: (" + lX + ", " + lY + ") R: (" + rX + ", " + rY + ")");
-                                LineUpdateMessage lum = SimRobot.generateLineUpdate(lineBuffer[i]);
+                                LineUpdateMessage lum = SimRobot.generateLineUpdate(myRobot.lineBuffer[i]);
                                 byte[] lumBytes = lum.getBytes();
                                 byte[] lumMessageBytes = new byte[lumBytes.length + 1];
                                 lumMessageBytes[0] = Message.LINE_UPDATE;
