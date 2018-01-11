@@ -236,7 +236,7 @@ public class LineTest {
    
     
     /**
-     * Test of lineCreate1 method, of class Line.
+     * Test of lineCreate method, of class Line.
      */
     //@Test
     public void testLineCreate1() {
@@ -244,7 +244,7 @@ public class LineTest {
         Position[] pointBuffer = null;
         Line[] lineBuffer = null;
         int bufferSize = 0;
-        Line.lineCreate1(pointBuffer, lineBuffer, bufferSize);
+        Line.lineCreate(pointBuffer, lineBuffer, bufferSize);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

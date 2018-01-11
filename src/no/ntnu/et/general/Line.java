@@ -27,7 +27,7 @@ public class Line {
     public Position p;
     public Position q;
     
-    static final double TOLERANCE = 50.0;
+    static final double TOLERANCE = 40.0;
     
     /**
      * Creates p new Line object
@@ -105,7 +105,7 @@ public class Line {
     }
     
     /*
-    public static void lineCreate(ArrayList<Position> pointBuffer, List<Line> lineBuffer) {
+    public static void lineCreate1(ArrayList<Position> pointBuffer, List<Line> lineBuffer) {
         if (pointBuffer.size() <= 1) {
             pointBuffer.clear();
             return;
@@ -168,7 +168,7 @@ public class Line {
      * @param lineBuffer
      * @param bufferSize number of values in pointBuffer
      */
-    public static void lineCreate1(Position[] pointBuffer, Line[] lineBuffer, int bufferSize) {
+    public static void lineCreate(Position[] pointBuffer, Line[] lineBuffer, int bufferSize) {
         if (pointBuffer == null || bufferSize < 2) {
             return;
         }
@@ -184,7 +184,7 @@ public class Line {
         
         for (int i = 2; i < bufferSize; i++) {
             Line line;
-            if (isCollinear(a, b, pointBuffer[i])) {
+            if (areCollinear(a, b, pointBuffer[i])) {
                 if (i == bufferSize - 1) {
                     line = new Line(a, pointBuffer[i]);
                 } else {
@@ -267,6 +267,25 @@ public class Line {
         lineBuffer.clear();
     }
     
+    public static boolean isMergeable1(Line line1, Line line2) {
+        double u = 1e-9;
+        double delta = 1e-9;
+        double m1 = line1.getSlope();
+        double m2 = line2.getSlope();
+        
+        // Test slope
+        if (Math.abs(m1 - m2) > u) {
+            return false;
+        }
+        double d1 = Position.distanceBetween(line1.p, line2.p);
+        double d2 = Position.distanceBetween(line1.p, line2.q);
+        double d3 = Position.distanceBetween(line1.q, line2.p);
+        double d4 = Position.distanceBetween(line1.q, line2.q);
+        
+        // Test distances
+        return (d1 <= delta) || (d2 <= delta) || (d3 <= delta) || (d4 <= delta);
+    }
+    
     public static Line mergeSegments(Line line1, Line line2) {
         double a1 = (line1.q.getYValue() - line1.p.getYValue()) / (line1.q.getXValue() - line1.p.getXValue());
         double a2 = (line2.q.getYValue() - line2.p.getYValue()) / (line2.q.getXValue() - line2.p.getXValue());
@@ -301,9 +320,7 @@ public class Line {
         return new Line(p, q);
     }
     
-    public static void lineMerge1(Line[] lineBuffer, Line[] lineRepo) {
-        
-    }
+    
     
     static boolean isMergeable(Line lineA, Line lineB) {
         //u1
@@ -463,7 +480,7 @@ public class Line {
      * @param c
      * @return 
      */
-    private static boolean isCollinear(Position a, Position b, Position c) {
+    private static boolean areCollinear(Position a, Position b, Position c) {
         double x1 = a.getXValue();
         double y1 = a.getYValue();
         double x2 = b.getXValue();

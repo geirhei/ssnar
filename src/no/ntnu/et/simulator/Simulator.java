@@ -12,7 +12,6 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.JFrame;
 import no.ntnu.et.general.Line;
-import static no.ntnu.et.general.Line.lineCreate1;
 import no.ntnu.et.general.Pose;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.tem.communication.DroneUpdateMessage;
@@ -20,6 +19,7 @@ import no.ntnu.tem.communication.HandshakeMessage;
 import no.ntnu.tem.communication.LineUpdateMessage;
 import no.ntnu.tem.communication.Message;
 import no.ntnu.tem.communication.UpdateMessage;
+import static no.ntnu.et.general.Line.lineCreate;
 
 /**
  * This class contains both the interface and the control system of the
@@ -328,7 +328,7 @@ public class Simulator {
                 }
             }
             
-            lineCreate1(myRobot.pointBuffer, myRobot.lineBuffer, myRobot.pointBufferCtr);
+            lineCreate(myRobot.pointBuffer, myRobot.lineBuffer, myRobot.pointBufferCtr);
             
             Line[] lineBuffer = myRobot.lineBuffer;
             int i = 0;
