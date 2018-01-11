@@ -253,8 +253,6 @@ public class Simulator {
             System.arraycopy(hmBytes, 0, hmMessageBytes, 1, hmBytes.length);
             inbox.add(new Message(myRobot.getAddress(), hmMessageBytes));
             
-            //boolean sweepCompleted = false;
-            
             while (true) {
                 // Wait between each loop
                 try {
@@ -296,13 +294,8 @@ public class Simulator {
                             Line[] lineBuffer = myRobot.lineBuffer;
                             int i = 0;
                             while (lineBuffer[i] != null) {
-                                //myRobot.lineBuffer[i].print();
-                                int lX = (int) lineBuffer[i].p.getXValue();
-                                int rX = (int) lineBuffer[i].q.getXValue();
-                                int lY = (int) lineBuffer[i].p.getYValue();
-                                int rY = (int) lineBuffer[i].q.getYValue();
                                 //System.out.println("L: (" + lX + ", " + lY + ") R: (" + rX + ", " + rY + ")");
-                                LineUpdateMessage lum = SimRobot.generateLineUpdate(lX, lY, rX, rY);
+                                LineUpdateMessage lum = SimRobot.generateLineUpdate(lineBuffer[i]);
                                 byte[] lumBytes = lum.getBytes();
                                 byte[] lumMessageBytes = new byte[lumBytes.length + 1];
                                 lumMessageBytes[0] = Message.LINE_UPDATE;

@@ -432,16 +432,16 @@ public class SimRobot {
         return um;
     }
     
-    static LineUpdateMessage generateLineUpdate(int startX, int startY, int stopX, int stopY) {
+    static LineUpdateMessage generateLineUpdate(Line line) {
 
         ByteBuffer msg = ByteBuffer.allocate(8);
         msg.order(ByteOrder.LITTLE_ENDIAN);
         LineUpdateMessage um = null;
         try {
-            msg.putShort((short) startX);
-            msg.putShort((short) startY);
-            msg.putShort((short) stopX);
-            msg.putShort((short) stopY);
+            msg.putShort((short) line.p.getXValue());
+            msg.putShort((short) line.p.getYValue());
+            msg.putShort((short) line.q.getXValue());
+            msg.putShort((short) line.q.getYValue());
 
             msg.rewind();
             byte[] data = new byte[8];
