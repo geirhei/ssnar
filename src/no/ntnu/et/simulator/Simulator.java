@@ -254,6 +254,8 @@ public class Simulator {
             System.arraycopy(hmBytes, 0, hmMessageBytes, 1, hmBytes.length);
             inbox.add(new Message(myRobot.getAddress(), hmMessageBytes));
             
+            int lastTowerDir = myRobot.towerDirection;
+            
             while (true) {
                 // Wait between each loop
                 try {
@@ -289,10 +291,11 @@ public class Simulator {
                     
                     if (myName.equals("SLAM")) {
                         myRobot.updatePointBuffers();
-                        if (myRobot.getTowerAngle().getValue() >= 89 || myRobot.getTowerAngle().getValue() <= 1) {
+                        if (lastTowerDir != myRobot.towerDirection) {
                             myRobot.createLines();
                             myRobot.mergeLines();
                             myRobot.sendLineUpdates(inbox);
+                            lastTowerDir = myRobot.towerDirection;
                         }
                     }
                         

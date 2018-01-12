@@ -23,7 +23,7 @@ public class Line {
     public Position p;
     public Position q;
     
-    static final double TOLERANCE = 40.0;
+    static final double TOLERANCE = 30.0;
     
     /**
      * Creates p new Line object
@@ -220,8 +220,8 @@ public class Line {
         if (line1 == null || line2 == null) {
             throw new NullPointerException("Invalid line arguments.");
         }
-        final double u = 10.0;
-        final double delta = 100.0;
+        final double u = 1.0;
+        final double delta = 1.0;
         double m1 = line1.getSlope();
         double m2 = line2.getSlope();
         

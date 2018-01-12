@@ -38,14 +38,6 @@ public class MappingController extends Thread {
     private boolean paused;
     private Thread mapCleaner;
     private boolean debug = false;
-    private boolean mergeNeeded = false;
-    
-    ArrayList<ArrayList<Position>> pointBuffers;
-    //ArrayList<ArrayList<Line>> lineBuffers;
-    List<Line> lineBuffer;
-    List<Line> lineRepository;
-    
-    
 
     /**
      * Constructor
@@ -62,12 +54,6 @@ public class MappingController extends Thread {
         mapCleaner = new Thread(new MapCleaningWorker());
         mapCleaner.start();
         mapCleaner.setName("Map Cleaner");
-        pointBuffers = map.getPointBuffers();
-        //lineBuffers = map.getLineBuffers();
-        lineBuffer = map.getLineBuffer();
-        lineRepository = map.getLineRepository();
-        
-        
     }
     
     /**
@@ -188,69 +174,6 @@ public class MappingController extends Thread {
                     });
                     continue;
                 }
-                
-                // SLAMrobot handling. Does not currently care about other robots.
-                // 2D list of positions should be ok
-                /*
-                if (robot.getName().equals("SLAM")) {
-                    
-                    for (int j = 0; j < 4; j++) {
-                        if (sensors[j].isMeasurement()) {
-                            Position measurementPoint = sensors[j].getPosition();
-                            //pointBuffers.get(j).add(measurementPoint);
-                            
-                            
-                        } else {
-                            // If no obstacle is measured, set the point values av infinity
-                            //Position inf = new Position(Double.MAX_VALUE, Double.MAX_VALUE);
-                            //pointBuffers.get(j).add(inf);
-                        }
-                        if (pointBuffers.get(j).size() > 15) {
-                            mergeNeeded = true;
-                        }
-                    }
-                    
-                    if (mergeNeeded) {
-                        for (int k = 0; k < 4; k++) {
-                            Line.lineCreate(pointBuffers.get(k), lineBuffer);
-                        }
-                        
-                        Line.lineMerge(lineBuffer, lineRepository);
-                        
-                        /*
-                        for (int l = 0; l < 4; l++) {
-                            Line.lineMerge(lineBuffers.get(l), lineRepository);
-                        }
-                        */
-                        /*
-                        for (int m = 0; m < lineRepository.size(); m++) {
-                            Position start = lineRepository.get(m).getA();
-                            Position end = lineRepository.get(m).getB();
-                            map.resize(start);
-                            map.resize(end);
-                            ArrayList<MapLocation> line = getLineBetweenPoints(map.findLocationInMap(start), map.findLocationInMap(end));
-                            line.forEach((location) -> {
-                                map.addMeasurement(location, true);
-                            });
-                        }
-                        */
-                        /*
-                        System.out.println("pointBuffer0 size: " + pointBuffers.get(0).size());
-                        System.out.println("Lines created.");
-                        System.out.println("lineBuffer size: " + lineBuffer.size());
-                        //System.out.println("lineBuffer0 size: " + lineBuffers.get(0).size());
-                        System.out.println("Lines merged.");
-                        System.out.println("lineRepository size: " + lineRepository.size());
-                        */
-                        /*
-                        mergeNeeded = false;
-                    }
-                    
-                    //System.out.println("Point buffer 1 length: " + pointBuffers.get(0).size());
-                    
-                    //continue;
-                }
-                */
                 
                 int sensorOneValue = 0;
 
