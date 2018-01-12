@@ -18,7 +18,6 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import no.ntnu.et.general.Position;
 import no.ntnu.et.map.GridMap;
@@ -27,10 +26,8 @@ import no.ntnu.tem.communication.Communication;
 import no.ntnu.tem.gui.MainGUI;
 import no.ntnu.et.simulator.Simulator;
 import no.ntnu.et.mapping.MappingController;
-import no.ntnu.et.navigation.SlamNavigationController;
 import no.ntnu.tem.robot.Robot;
 import no.ntnu.hkm.particlefilter.Particlefilter;
-import no.ntnu.hkm.particlefilter.MapMerger;
 
 /**
  * This class is the main class of the program. It connects the packages in the
@@ -47,7 +44,6 @@ public final class Application {
     private final MainGUI gui;
     private Simulator sim;
     private final NavigationController navigation;
-    //private final SlamNavigationController slamNavigation;
     private final MappingController slam;
     private final MapGraphic worldMapGraphic;
     private final GridMap worldMap;
