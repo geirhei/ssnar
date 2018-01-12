@@ -119,8 +119,6 @@ public class SimRobot {
         } else {
             moveSpeed = 0.1;
         }
-        observations = Collections.synchronizedList(new ArrayList<Position>());
-        lineMap = Collections.synchronizedList(new ArrayList<Line>());
         
         pointBuffer = new Position[50];
         lineBuffer = new Line[50];
@@ -142,38 +140,6 @@ public class SimRobot {
         
         lineBufferLengths = new int[4];
         lineRepoLength = 0;
-    }
-    
-    List<Position> getObservations() {
-        return observations;
-    }
-    
-    List<Line> getLineMap() {
-        return lineMap;
-    }
-    
-    void addPointObservation() {
-        Angle theta = sum(towerAngle, pose.getHeading());
-        double r = lastIrMeasurement[0];
-        if (r <= 0 || r > 40) {
-            return;
-        }
-        Position pos = Utilities.polar2cart(theta, r);
-        pos.add(pose.getPosition());
-        
-        ///
-    }
-    
-    void addObservation() {
-        Angle theta = sum(towerAngle, pose.getHeading());
-        double r = lastIrMeasurement[0];
-        if (r <= 0 || r > 40) {
-            return;
-        }
-        Position pos = Utilities.polar2cart(theta, r);
-        pos.add(pose.getPosition());
-        pointBuffer[pointBufferCtr] = pos;
-        pointBufferCtr++;
     }
     
     void updatePointBuffers() {
@@ -226,22 +192,6 @@ public class SimRobot {
             }
         }
     }
-    
-    /*
-    void addObservation() {
-        Angle theta = sum(towerAngle, pose.getHeading());
-        double r = lastIrMeasurement[0];
-        if (r <= 0 || r > 40) {
-            return;
-        }
-        Position pos = Utilities.polar2cart(theta, r);
-        pos.add(pose.getPosition());
-        synchronized (observations) {
-            observations.add(pos);
-            //System.out.println("Observation added: (" + pos.getXValue() + ", " + pos.getYValue() + ")");
-        }
-    }
-*/
     
     double[] getMeasurement() {
         return lastIrMeasurement;

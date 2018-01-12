@@ -6,10 +6,6 @@
  */
 package no.ntnu.et.general;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-import static no.ntnu.et.general.Position.distanceBetween;
 import static no.ntnu.et.general.Utilities.getProjectedPoint;
 import no.ntnu.et.simulator.Feature;
 
