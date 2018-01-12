@@ -250,8 +250,8 @@ public class Line {
         if (line1 == null || line2 == null) {
             throw new NullPointerException("Line arguments cannot be null.");
         }
-        double a1 = (line1.q.getYValue() - line1.p.getYValue()) / (line1.q.getXValue() - line1.p.getXValue());
-        double a2 = (line2.q.getYValue() - line2.p.getYValue()) / (line2.q.getXValue() - line2.p.getXValue());
+        double a1 = line1.getSlope();
+        double a2 = line2.getSlope();
         double b1 = line1.p.getYValue() - a1 * line1.p.getXValue();
         double b2 = line2.p.getYValue() - a2 * line2.p.getXValue();
         double l1 = Position.distanceBetween(line1.p, line1.q);
