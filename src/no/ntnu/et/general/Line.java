@@ -109,64 +109,6 @@ public class Line {
         return q;
     }
     
-    /*
-    public static void lineCreate1(ArrayList<Position> pointBuffer, List<Line> lineBuffer) {
-        if (pointBuffer.size() <= 1) {
-            pointBuffer.clear();
-            return;
-        } else if (pointBuffer.size() == 2) {
-            Line line = new Line(pointBuffer.get(0), pointBuffer.get(1));
-            lineBuffer.add(line);
-            pointBuffer.clear();
-            return;
-        }
-        
-        Position a = pointBuffer.get(0);
-        Position b = pointBuffer.get(1);
-        
-        int i = 2;
-        while (i < pointBuffer.size()) {
-            Line line;
-            if (i == pointBuffer.size() - 1) {
-                if (!isCollinear(a, b, pointBuffer.get(i))) {
-                    line = new Line(a, pointBuffer.get(i-1));
-                } else {
-                    line = new Line(a, pointBuffer.get(i));
-                }
-                i++;
-            } else if (i == pointBuffer.size() - 2) {
-                if (!isCollinear(a, b, pointBuffer.get(i))) {
-                    line = new Line(a, pointBuffer.get(i-1));
-                    a = pointBuffer.get(i);
-                    b = pointBuffer.get(i+1);
-                    i++;
-                } else {
-                    i++;
-                    break;
-                }
-            } else {
-                if (!isCollinear(a, b, pointBuffer.get(i))) {
-                    line = new Line(a, pointBuffer.get(i-1));
-                    a = pointBuffer.get(i);
-                    b = pointBuffer.get(i+1);
-                    i += 2;
-                } else {
-                    i++;
-                    break;
-                }
-            }
-            
-            System.out.println("length :" + line.getLength());
-            // Discard lines that are too long
-            if (line.getLength() < 20) {
-                lineBuffer.add(line);
-            }
-            
-        }
-        pointBuffer.clear();
-    }
-    */
-    
     /**
      * Finds and extract line segments from a set of points in sequence.
      * 
@@ -224,72 +166,6 @@ public class Line {
         }
         return lineIndex;
     }
-    
-    /*
-    public static void lineMerge(List<Line> lineBuffer, List<Line> lineRepository) {
-        // Array size check here
-
-        if (lineRepository.isEmpty()) {
-            synchronized (lineRepository) {
-                for (Line bufferLine : lineBuffer) {
-                    lineRepository.add(bufferLine);
-                }
-            }
-            lineBuffer.clear();
-            return;
-        }
-          
-        double u = 0; // slope tolerance
-        double d = 0; // distance tolerance
-        
-        ArrayList<Line> toAdd = new ArrayList<Line>();
-        ListIterator<Line> iter1 = lineBuffer.listIterator();
-        while (iter1.hasNext()) {
-            Line bufferLine = iter1.next();
-            boolean merged = false;
-            double m1 = bufferLine.getSlope();
-            synchronized (lineRepository) {
-                ListIterator<Line> iter2 = lineBuffer.listIterator();
-                while (iter2.hasNext()) {
-                    Line line = iter2.next();
-                    double m2 = line.getSlope();
-                    if (!(Math.abs(m1 - m2) <= u)) {
-                        continue;
-                    }
-                    double dist1 = Position.distanceBetween(bufferLine.getP(), line.getP());
-                    double dist2 = Position.distanceBetween(bufferLine.getP(), line.getQ());
-                    double dist3 = Position.distanceBetween(bufferLine.getQ(), line.getP());
-                    double dist4 = Position.distanceBetween(bufferLine.getQ(), line.getQ());
-                    
-                    if (dist1 <= d || dist4 <= d) {
-                        Line newLine = bufferLine;
-                        iter2.set(newLine);
-                    } else if (dist2 <= d) {
-                        Line newLine = new Line(line.getP(), bufferLine.getQ());
-                        iter2.set(newLine);
-                    } else if (dist3 <= d) {
-                        Line newLine = new Line(bufferLine.getP(), line.getQ());
-                        iter2.set(newLine);
-                    } else {
-                        continue;
-                    }
-                    merged = true;
-                }
-            }
-            if (!merged) {
-                toAdd.add(bufferLine);
-            }
-        }
-        
-        // Add non-merged lines to end of lineRepository
-        synchronized (lineRepository) {
-            for (Line bufferLine : toAdd) {
-                lineRepository.add(bufferLine);
-            }
-        }
-        lineBuffer.clear();
-    }
-    */
     
     /**
      * Compares each line in lineBuffer with all lines in lineRepo, and replaces
