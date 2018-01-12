@@ -8,6 +8,7 @@ package no.ntnu.tem.application;
 import no.ntnu.tem.robot.Robot;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import no.ntnu.et.general.Line;
 
 /**
  * This class holds a List over all the robots in the system. It holds methods
@@ -123,7 +124,7 @@ public class RobotController {
      * @param line
      * @return 
      */
-    public void addLineUpdate(int address, int[] line) {
+    public void addLineUpdate(int address, Line line, int index) {
         Robot robot = getRobotFromAddress(address);
         if (robot == null) {
             return;
@@ -131,7 +132,7 @@ public class RobotController {
         if (debug) {
             System.out.println("Robot <" + robot.getName() + "> updated!");
         }
-        robot.addLine(line);
+        robot.addLine(line, index);
     }
     
             /**

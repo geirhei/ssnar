@@ -23,6 +23,7 @@ import static no.ntnu.et.general.Line.lineMerge;
 import no.ntnu.et.general.Point;
 import no.ntnu.tem.communication.DroneUpdateMessage;
 import no.ntnu.tem.communication.HandshakeMessage;
+import no.ntnu.tem.communication.LineRepoMessage;
 import no.ntnu.tem.communication.LineUpdateMessage;
 import no.ntnu.tem.communication.Message;
 import no.ntnu.tem.communication.UpdateMessage;
@@ -82,6 +83,8 @@ public class SimRobot {
     Line[] lineRepo;
     int lineRepoCtr = 0;
     int lineRepoLength;
+    
+    boolean[] updated;
 
     /**
      * Constructor for Robot.
@@ -122,10 +125,15 @@ public class SimRobot {
         pointBuffer = new Position[50];
         lineBuffer = new Line[50];
         lineRepo = new Line[50];
+        updated = new boolean[50];
+        for (int j = 0; j < 50; j++) {
+            updated[j] = false;
+        }
         
         pointBuffers = new Position[4][];
         lineBuffers = new Line[4][];
         pointBufferLengths = new int[4];
+        
         for (int i = 0; i < 4; i++) {
             pointBuffers[i] = new Position[50];
             lineBuffers[i] = new Line[50];
@@ -196,7 +204,7 @@ public class SimRobot {
     
     void mergeLines() {
         for (int i = 0; i < 4; i++) {
-            lineRepoLength = lineMerge(lineBuffers[i], lineRepo, lineBufferLengths[i], lineRepoLength);
+            lineRepoLength = lineMerge(lineBuffers[i], lineRepo, lineBufferLengths[i], lineRepoLength, updated);
             
             // Reset lineBuffer lengths
             lineBufferLengths[i] = 0;
@@ -204,26 +212,18 @@ public class SimRobot {
     }
     
     void sendLineUpdates(ConcurrentLinkedQueue<Message> inbox) {
-        /*
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < lineBufferLengths[i]; j++) {
-                LineUpdateMessage lum = SimRobot.generateLineUpdate(lineBuffers[i][j]);
-                byte[] lumBytes = lum.getBytes();
-                byte[] lumMessageBytes = new byte[lumBytes.length + 1];
-                lumMessageBytes[0] = Message.LINE_UPDATE;
-                System.arraycopy(lumBytes, 0, lumMessageBytes, 1, lumBytes.length);
-                inbox.add(new Message(getAddress(), lumMessageBytes));
-            }
-        }
-        */
-        
         for (int i = 0; i < lineRepoLength; i++) {
-            LineUpdateMessage lum = SimRobot.generateLineUpdate(lineRepo[i]);
-            byte[] lumBytes = lum.getBytes();
-            byte[] lumMessageBytes = new byte[lumBytes.length + 1];
-            lumMessageBytes[0] = Message.LINE_UPDATE;
-            System.arraycopy(lumBytes, 0, lumMessageBytes, 1, lumBytes.length);
-            inbox.add(new Message(getAddress(), lumMessageBytes));
+            if (updated[i]) {
+                LineRepoMessage lrm = generateLineRepoUpdate(lineRepo[i], i);
+                byte[] lrmBytes = lrm.getBytes();
+                byte[] lrmMessageBytes = new byte[lrmBytes.length + 1];
+                lrmMessageBytes[0] = Message.REPO_UPDATE;
+                System.arraycopy(lrmBytes, 0, lrmMessageBytes, 1, lrmBytes.length);
+                inbox.add(new Message(getAddress(), lrmMessageBytes));
+                
+                // Clear update status for all lines in repo
+                updated[i] = false;
+            }
         }
     }
     
@@ -514,12 +514,34 @@ public class SimRobot {
         return um;
     }
     
+    
+    static LineRepoMessage generateLineRepoUpdate(Line line, int index) {
+        ByteBuffer msg = ByteBuffer.allocate(10); // 8 for coordinates + 2 for index
+        msg.order(ByteOrder.LITTLE_ENDIAN);
+        LineRepoMessage rm = null;
+        try {
+            msg.putShort((short) line.p.getXValue());
+            msg.putShort((short) line.p.getYValue());
+            msg.putShort((short) line.q.getXValue());
+            msg.putShort((short) line.q.getYValue());
+            msg.putShort((short) index);
+            
+            msg.rewind();
+            byte[] data = new byte[10];
+            msg.get(data);
+            rm = new LineRepoMessage(data);
+        } catch (Exception e) {}
+        return rm;
+    }
+    
+    
     static LineUpdateMessage generateLineUpdate(Line line) {
 
         ByteBuffer msg = ByteBuffer.allocate(8);
         msg.order(ByteOrder.LITTLE_ENDIAN);
         LineUpdateMessage um = null;
         try {
+            // problem using short instead of byte?
             msg.putShort((short) line.p.getXValue());
             msg.putShort((short) line.p.getYValue());
             msg.putShort((short) line.q.getXValue());

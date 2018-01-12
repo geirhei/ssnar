@@ -125,16 +125,24 @@ public class Robot {
         lines = new ArrayList<Line>();
     }
 
-    public void addLine(int[] line) {
-        Position a = new Position(line[0], line[1]);
-        Position b = new Position(line[2], line[3]);
-        Line newLine = new Line(a, b);
-        lines.add(newLine);
+    public void addLine(Line line, int index) {
+        //Position a = new Position(line[0], line[1]);
+        //Position b = new Position(line[2], line[3]);
+        //Line newLine = new Line(a, b);
+        if (!lines.isEmpty() && index < lines.size()) {
+            lines.set(index, line);
+        } else {
+            lines.add(line);
+        }
         //System.out.println("Line added in RC.");
     }
     
     public ArrayList<Line> getLines() {
         return lines;
+    }
+    
+    public void clearLines() {
+        lines.clear();
     }
     
     public void setManualMode(boolean b) {

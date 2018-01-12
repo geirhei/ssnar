@@ -7,6 +7,7 @@
 package no.ntnu.tem.communication;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+import no.ntnu.et.general.Line;
 import no.ntnu.tem.application.RobotController;
 import no.ntnu.tem.robot.Robot;
 
@@ -78,10 +79,18 @@ public class InboxReader extends Thread {
                             int[] line = droneUpdate.getLine();
                             doDroneUpdate(address, droneOrientation, dronePosition, line);
                             break;
+                            /*
                         case Message.LINE_UPDATE:
                             LineUpdateMessage lineUpdate = new LineUpdateMessage(message.getData());
-                            int[] newLine = lineUpdate.getLine();
+                            Line newLine = lineUpdate.getLine();
                             doLineUpdate(address, newLine);
+                            break;
+                            */
+                        case Message.REPO_UPDATE:
+                            LineRepoMessage repoMessage = new LineRepoMessage(message.getData());
+                            Line currentLine = repoMessage.getLine();
+                            int repoIndex = repoMessage.getIndex();
+                            doLineUpdate(address, currentLine, repoIndex);
                             break;
                         case Message.IDLE:
                             doIdleUpdate(address);
@@ -174,8 +183,8 @@ public class InboxReader extends Thread {
      * @param address
      * @param line 
      */
-    private void doLineUpdate(int address, int[] line) {
-        rc.addLineUpdate(address, line);
+    private void doLineUpdate(int address, Line line, int index) {
+        rc.addLineUpdate(address, line, index);
     }
     
         private void doBatteryUpdate(int address, int level) {

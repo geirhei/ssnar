@@ -105,6 +105,7 @@ public class MapGraphic extends JPanel {
         numberOfColumns = gridmap.getNumberOfColumns();
         cellSize = gridmap.getCellSize();
         paintMap(g2D);
+        /*
         ArrayList<Line> lines = new ArrayList();
         try {
              lines = rc.getRobot("SLAM").getLines();
@@ -112,7 +113,8 @@ public class MapGraphic extends JPanel {
         } catch (NullPointerException e) {
             
         }
-        paintLines(g2D, lines);
+        */
+        paintLines(g2D);
         paintRobots(g2D);
         g2D.setTransform(initial);
 
@@ -158,9 +160,16 @@ public class MapGraphic extends JPanel {
      * 
      * @param g2D 
      */
-    private void paintLines(Graphics2D g2D, ArrayList<Line> lines) {
-        if (lines == null || lines.size() == 0) {
-            //System.out.println("lines == null!");
+    private void paintLines(Graphics2D g2D) {
+        ArrayList<Line> lines;
+        try {
+             lines = rc.getRobot("SLAM").getLines();
+             if (lines.isEmpty()) {
+                //System.out.println("lines == null!");
+                return;
+            }
+        } catch (NullPointerException e) {
+            //System.out.println(e);
             return;
         }
         g2D.setPaint(Color.ORANGE);
@@ -180,6 +189,7 @@ public class MapGraphic extends JPanel {
             g2D.drawLine(posx, posy, destx, desty);
             //System.out.println("Line painted!");
         }
+        //rc.getRobot("SLAM").clearLines();
     }
     
     

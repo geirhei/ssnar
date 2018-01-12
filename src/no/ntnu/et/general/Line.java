@@ -302,7 +302,7 @@ public class Line {
      * @param repoCtr 
      * @return  
      */
-    public static int lineMerge(Line[] lineBuffer, Line[] lineRepo, int bufferCtr, int repoCtr) {
+    public static int lineMerge(Line[] lineBuffer, Line[] lineRepo, int bufferCtr, int repoCtr, boolean[] updated) {
         if (lineBuffer == null || lineRepo == null) {
             throw new NullPointerException("Invalid line arguments.");
         }
@@ -310,6 +310,7 @@ public class Line {
         if (repoCtr == 0) {
             for (int i = 0; i < bufferCtr; i++) {
                 lineRepo[repoCtr] = lineBuffer[i];
+                updated[repoCtr] = true;
                 repoCtr++;
             }
         } else {
@@ -319,12 +320,14 @@ public class Line {
                 for (int k = 0; k < repoCtr; k++) {
                     if (isMergeable(lineBuffer[j], lineRepo[k])) {
                         lineRepo[k] = mergeSegments(lineBuffer[j], lineRepo[k]);
+                        updated[k] = true;
                         merged = true;
                         break;
                     }
                 }
                 if (!merged) {
                     lineRepo[index] = lineBuffer[j];
+                    updated[index] = true;
                     index++;
                     merged = false;
                 }

@@ -29,6 +29,7 @@ public class Message {
     public static final int DRONE_UPDATE = 11;
     public static final int BATTERY_UPDATE = 12;
     public static final int LINE_UPDATE = 13;
+    public static final int REPO_UPDATE = 14;
    
     private final int sender;
     private final int type;
