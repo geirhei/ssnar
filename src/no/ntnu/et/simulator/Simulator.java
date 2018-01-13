@@ -11,16 +11,12 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.JFrame;
-import no.ntnu.et.general.Line;
 import no.ntnu.et.general.Pose;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.tem.communication.DroneUpdateMessage;
 import no.ntnu.tem.communication.HandshakeMessage;
-import no.ntnu.tem.communication.LineUpdateMessage;
 import no.ntnu.tem.communication.Message;
 import no.ntnu.tem.communication.UpdateMessage;
-import static no.ntnu.et.general.Line.lineCreate;
-import static no.ntnu.et.general.Line.lineMerge;
 
 /**
  * This class contains both the interface and the control system of the
@@ -200,7 +196,7 @@ public class Simulator {
     private abstract class RobotHandler extends Thread {
         private boolean paused;
         
-        public RobotHandler(SimRobot robot) {
+        RobotHandler(SimRobot robot) {
             paused = false;
         }
         
@@ -238,7 +234,7 @@ public class Simulator {
          *
          * @param robot SimRobot
          */
-        public SlamRobotHandler(SimRobot robot) {
+        SlamRobotHandler(SimRobot robot) {
             super(robot);
             myRobot = robot;
             noiseGenerator = new Random();
@@ -339,7 +335,7 @@ public class Simulator {
          *
          * @param robot SimRobot
          */
-        public SimRobotHandler(SimRobot robot) {
+        SimRobotHandler(SimRobot robot) {
             super(robot);
             myRobot = robot;
             noiseGenerator = new Random();
