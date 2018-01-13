@@ -301,32 +301,21 @@ public class Simulator {
                     myRobot.measureIR(sensorNoise);
                     update = myRobot.createMeasurement();
                     
-                    if (myRobot.getName().equals("SLAM")) {
-                        myRobot.updatePointBuffers();
-                        if (lastTowerDir != myRobot.towerDirection) {
-                            myRobot.createLines();
-                            myRobot.mergeLines();
-                            myRobot.sendLineUpdates(inbox);
-                            lastTowerDir = myRobot.towerDirection;
-                        }
+                    myRobot.updatePointBuffers();
+                    if (lastTowerDir != myRobot.towerDirection) {
+                        myRobot.createLines();
+                        myRobot.mergeLines();
+                        myRobot.sendLineUpdates(inbox);
+                        lastTowerDir = myRobot.towerDirection;
                     }
-                        
-                    if (myRobot.getName().equals("Drone")) {
-                        DroneUpdateMessage um = SimRobot.generateDroneUpdate(update[0], update[1], update[2], update[4], update[5], update[6], update[7]);
-                        byte[] umBytes = um.getBytes();
-                        byte[] umMessageBytes = new byte[umBytes.length + 1];
-                        umMessageBytes[0] = Message.DRONE_UPDATE;
-                        System.arraycopy(umBytes, 0, umMessageBytes, 1, umBytes.length);
-                        inbox.add(new Message(myRobot.getAddress(), umMessageBytes));
-                    } else {
-                        UpdateMessage um = SimRobot.generateUpdate(update[0], update[1], update[2], update[3], update[4], update[5], update[6], update[7]);
-                        byte[] umBytes = um.getBytes();
-                        byte[] umMessageBytes = new byte[umBytes.length + 1];
-                        umMessageBytes[0] = Message.UPDATE;
-                        System.arraycopy(umBytes, 0, umMessageBytes, 1, umBytes.length);
-                        inbox.add(new Message(myRobot.getAddress(), umMessageBytes));
-                    }
-
+                    
+                    UpdateMessage um = SimRobot.generateUpdate(update[0], update[1], update[2], update[3], update[4], update[5], update[6], update[7]);
+                    byte[] umBytes = um.getBytes();
+                    byte[] umMessageBytes = new byte[umBytes.length + 1];
+                    umMessageBytes[0] = Message.UPDATE;
+                    System.arraycopy(umBytes, 0, umMessageBytes, 1, umBytes.length);
+                    inbox.add(new Message(myRobot.getAddress(), umMessageBytes));
+                    
                     counter = 0;
                 }
                 counter++;
@@ -344,11 +333,6 @@ public class Simulator {
         private double sensorNoise;
         private final Random noiseGenerator;
         public int update[];
-        
-        //private final BoundaryFollowingController boundaryFollowingController;
-        //private final NxtNavigation nxtNavigation;
-        //private final NxtMapping nxtMapping;
-        
 
         /**
          * Constructor
@@ -359,9 +343,6 @@ public class Simulator {
             super(robot);
             myRobot = robot;
             noiseGenerator = new Random();
-            //boundaryFollowingController = new BoundaryFollowingController(myRobot);
-            //nxtNavigation = new NxtNavigation(myRobot);
-            //nxtMapping = new NxtMapping(myRobot, worldMap);
         }
 
         /**
@@ -370,10 +351,6 @@ public class Simulator {
          */
         @Override
         public void run() {
-            //boundaryFollowingController.start();
-            //nxtNavigation.start();
-            //nxtMapping.start();
-            
             int counter = 0;
 
             HandshakeMessage hm = myRobot.generateHandshake();
@@ -382,8 +359,6 @@ public class Simulator {
             hmMessageBytes[0] = Message.HANDSHAKE;
             System.arraycopy(hmBytes, 0, hmMessageBytes, 1, hmBytes.length);
             inbox.add(new Message(myRobot.getAddress(), hmMessageBytes));
-            
-            int lastTowerDir = myRobot.towerDirection;
             
             while (true) {
                 // Wait between each loop
@@ -418,16 +393,6 @@ public class Simulator {
                     myRobot.measureIR(sensorNoise);
                     update = myRobot.createMeasurement();
                     
-                    if (myRobot.getName().equals("SLAM")) {
-                        myRobot.updatePointBuffers();
-                        if (lastTowerDir != myRobot.towerDirection) {
-                            myRobot.createLines();
-                            myRobot.mergeLines();
-                            myRobot.sendLineUpdates(inbox);
-                            lastTowerDir = myRobot.towerDirection;
-                        }
-                    }
-                        
                     if (myRobot.getName().equals("Drone")) {
                         DroneUpdateMessage um = SimRobot.generateDroneUpdate(update[0], update[1], update[2], update[4], update[5], update[6], update[7]);
                         byte[] umBytes = um.getBytes();
