@@ -438,7 +438,7 @@ public class LineTest {
     /**
      * Test of segmentToSegment method, of class Line.
      */
-    @Test
+    //@Test
     public void testSegmentToSegment() {
         System.out.println("segmentToSegment");
         Line line1 = new Line(new Position(-2, -2), new Position(4, 4));
@@ -446,6 +446,21 @@ public class LineTest {
         double expResult = 2.0;
         double result = Line.segmentToSegment(line1, line2);
         assertEquals(expResult, result, 0.1);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of pointToSegment method, of class Line.
+     */
+    @Test
+    public void testPointToSegment() {
+        System.out.println("pointToSegment");
+        Position p = new Position(2, 2);
+        Line s = new Line(new Position(0, 2), new Position(4, 2));
+        double expResult = 0.0;
+        double result = Line.pointToSegment(p, s);
+        assertEquals(expResult, result, 0.0001);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }

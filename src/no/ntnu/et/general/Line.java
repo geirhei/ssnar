@@ -6,6 +6,7 @@
  */
 package no.ntnu.et.general;
 
+import static no.ntnu.et.general.Position.distanceBetween;
 import static no.ntnu.et.general.Utilities.dot;
 import static no.ntnu.et.general.Utilities.getProjectedPoint;
 import static no.ntnu.et.general.Utilities.norm;
@@ -466,6 +467,23 @@ public class Line {
         double x3 = c.getXValue();
         double y3 = c.getYValue();
         return Math.abs((y1 - y2) * (x1 - x3) - (y1 - y3) * (x1 - x2)) <= TOLERANCE; // epsilon because of float comparison 1e-9
+    }
+    
+    public static double pointToSegment(Position p, Line s) {
+        double[] v = new double[]{ s.q.getXValue() - s.p.getXValue(), s.q.getYValue() - s.p.getYValue() };
+        double[] w = new double[]{ p.getXValue() - s.p.getXValue(), p.getYValue() - s.p.getYValue() };
+
+        double c1 = dot(w,v);
+        if ( c1 <= 0 )
+             return distanceBetween(p, s.p);
+
+        double c2 = dot(v,v);
+        if ( c2 <= c1 )
+             return distanceBetween(p, s.q);
+
+        double b = c1 / c2;
+        Position Pb = new Position(s.p.getXValue() + b * v[0], s.p.getYValue() + b * v[1]);
+        return distanceBetween(p, Pb);
     }
     
     /**
