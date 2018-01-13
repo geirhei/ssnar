@@ -209,6 +209,11 @@ public class Line {
         return repoCtr;
     }
     
+    public static Line[] selfMerge(Line[] buffer, int length) {
+        Line[] result = new Line[length];
+        
+    }
+    
     /**
      * Determines if two lines satisfy the conditions for merging.
      * 
@@ -220,8 +225,8 @@ public class Line {
         if (line1 == null || line2 == null) {
             throw new NullPointerException("Invalid line arguments.");
         }
-        final double u = 1.0;
-        final double delta = 1.0;
+        final double u = 5.0;
+        final double delta = 5.0;
         double m1 = line1.getSlope();
         double m2 = line2.getSlope();
         
@@ -284,24 +289,24 @@ public class Line {
     }
     
     
-    /*
-    static boolean isMergeable(Line lineA, Line lineB) {
+    
+    static boolean isMergeable1(Line line1, Line line2) {
         //u1
-        double slopeA = lineA.getSlope();
-        double slopeB = lineB.getSlope();
+        double slopeA = line1.getSlope();
+        double slopeB = line2.getSlope();
         double angle = Math.abs(slopeB - slopeA);
         double u1 = calculateU1(angle);
         System.out.println("u1: " + u1);
         
         // u2
-        Position midA = getMidpoint(lineA);
-        Position midB = getMidpoint(lineB);
+        Position midA = getMidpoint(line1);
+        Position midB = getMidpoint(line2);
         // double u2 = calculateU2()
         
         //u3
         double midPointDist = Position.distanceBetween(midA, midB);
-        double lengthA = lineA.getLength();
-        double lengthB = lineB.getLength();
+        double lengthA = line1.getLength();
+        double lengthB = line2.getLength();
         double u3 = calculateU3(midPointDist, lengthA, lengthB);
         System.out.println("u3: " + u3);
         
@@ -311,23 +316,23 @@ public class Line {
         //double similarityThreshold = 0.6;
         return (u1 >= 0.6 && u3 >= 0.6); // add u2 and u4
     }
-    */
+    
     
     /**
      * Angle between the two line segments.
      * 
-     * @param angle
+     * @param slope
      * @return 
      */
-    static double calculateU1(double angle) {
-        double a = 10.0;
-        double b = 20.0;
+    static double calculateU1(double slope) {
+        double a = 0.2;
+        double b = 0.35;
         double res = 1.0;
-        if (angle >= 0 && angle < a) {
-            res = 1.0 - 0.5 / a * angle;
-        } else if (angle >= a && angle <= b) {
-            res = 0.5 - 0.5 / (b - a) * (angle - a);
-        } else if (angle > b) {
+        if (slope >= 0 && slope < a) {
+            res = 1.0 - 0.5 / a * slope;
+        } else if (slope >= a && slope <= b) {
+            res = 0.5 - 0.5 / (b - a) * (slope - a);
+        } else if (slope > b) {
             res = 0.0;
         }
         return res;
