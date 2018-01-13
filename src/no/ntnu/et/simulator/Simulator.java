@@ -123,6 +123,7 @@ public class Simulator {
         if (!robotHandlers.containsKey(robot.getName())) {
             RobotHandler robotHandler;
             if (robot.getName().equals("SLAM")) {
+                // Seperate type of handler for the SLAM robot
                 robotHandler = this.new SlamRobotHandler(robot);
             } else {
                 robotHandler = this.new SimRobotHandler(robot);
