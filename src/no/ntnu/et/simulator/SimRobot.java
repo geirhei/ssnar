@@ -69,8 +69,11 @@ public class SimRobot {
     int[] pointBufferLengths;
     int[] lineBufferLengths;
     int lineRepoLength;
-    
     boolean[] updated;
+    Position[] observationHistory;
+    Position[] actionHistory;
+    
+    final double stepSize = 15.0;
 
     /**
      * Constructor for Robot.
@@ -118,6 +121,8 @@ public class SimRobot {
         pointBufferLengths = new int[4];
         lineBufferLengths = new int[4];
         lineRepoLength = 0;
+        observationHistory = new Position[50];
+        actionHistory = new Position[50];
         
         for (int i = 0; i < 4; i++) {
             pointBuffers[i] = new Position[50];
