@@ -229,7 +229,8 @@ public class Line {
      * @param line2
      * @return true if mergeable, else false
      */
-    public static boolean isMergeable(Line line1, Line line2) {
+    /*
+    public static boolean isMergeable1(Line line1, Line line2) {
         if (line1 == null || line2 == null) {
             throw new NullPointerException("Invalid line arguments.");
         }
@@ -250,6 +251,7 @@ public class Line {
         // Test distances
         return (d1 <= delta) || (d2 <= delta) || (d3 <= delta) || (d4 <= delta);
     }
+    */
     
     /**
      * Performs a merge procedure on the two lines, and returns the resulting
@@ -297,32 +299,58 @@ public class Line {
     }
     
     
-    
-    static boolean isMergeable1(Line line1, Line line2) {
+    /**
+     * Determines if two lines should be combined. Uses some fuzzy parameters.
+     * See the individual u-methods for how the calculations work.
+     * 
+     * @param line1
+     * @param line2
+     * @return true if lines should be merged
+     */
+    public static boolean isMergeable(Line line1, Line line2) {
         // u1
         double a1 = line1.getSlope();
         double a2 = line2.getSlope();
         double slope = Math.abs(a1 - a2);
         double u1 = calculateU1(slope);
-        System.out.println("u1: " + u1);
+        //System.out.println("u1: " + u1);
         
         // u2
         Position mid1 = getMidpoint(line1);
         Position mid2 = getMidpoint(line2);
-        // double u2 = calculateU2()
+        double dist1 = pointToSegment(mid1, line2) * 10; // convert to [mm]
+        double dist2 = pointToSegment(mid2, line1) * 10;
+        double u2;
+        if (dist1 <= dist2) {
+            u2 = calculateU2(dist1);
+        } else {
+            u2 = calculateU2(dist2);
+        }
+        //System.out.println("u2: " + u2);
         
         // u3
-        double midPointDist = Position.distanceBetween(mid1, mid2);
-        double len1 = line1.getLength();
-        double len2 = line2.getLength();
+        double midPointDist = Position.distanceBetween(mid1, mid2) * 10; // [mm]
+        double len1 = line1.getLength() * 10;
+        double len2 = line2.getLength() * 10;
         double u3 = calculateU3(midPointDist, len1, len2);
-        System.out.println("u3: " + u3);
+        //System.out.println("u3: " + u3);
         
         // u4
-        // double u4 = calculateU4()
+        double[] dist = new double[4];
+        dist[0] = pointToSegment(line1.p, line2) * 10;
+        dist[1] = pointToSegment(line1.q, line2) * 10;
+        dist[2] = pointToSegment(line2.p, line1) * 10;
+        dist[3] = pointToSegment(line2.q, line1) * 10;
+        double u4 = calculateU4(dist[0]);
+        for (double d : dist) {
+            if (d < dist[0]) {
+                u4 = calculateU4(d);
+            }
+        }
+        //System.out.println("u4: " + u4);
         
         //double similarityThreshold = 0.6;
-        return (u1 >= 0.6 && u3 >= 0.6); // add u2 and u4
+        return (u1 >= 0.6 && u2 >= 0.6 && u3 >= 0.6 && u4 >= 0.6); // add u4
     }
     
     
@@ -469,6 +497,15 @@ public class Line {
         return Math.abs((y1 - y2) * (x1 - x3) - (y1 - y3) * (x1 - x2)) <= TOLERANCE; // epsilon because of float comparison 1e-9
     }
     
+    /**
+     * Calculates the shortest distance between a point in the plane and a
+     * line segment.
+     * http://geomalgorithms.com/a02-_lines.html#Distance-to-Ray-or-Segment
+     * 
+     * @param p
+     * @param s
+     * @return 
+     */
     public static double pointToSegment(Position p, Line s) {
         double[] v = new double[]{ s.q.getXValue() - s.p.getXValue(), s.q.getYValue() - s.p.getYValue() };
         double[] w = new double[]{ p.getXValue() - s.p.getXValue(), p.getYValue() - s.p.getYValue() };
