@@ -227,6 +227,27 @@ public class Utilities {
         return null;
     }
     
+    /**
+     * Calculate the dot product of two vectors.
+     * 
+     * @param u
+     * @param v
+     * @return 
+     */
+    public static double dot(double[] u, double[] v) {
+        return u[0] * v[0] + u[1] * v[1];
+    }
+    
+    /**
+     * Calculates the norm of a vector.
+     * 
+     * @param u
+     * @return 
+     */
+    public static double norm(double[] u) {
+        return Math.sqrt(dot(u, u));
+    }
+    
     public static Position getProjectedPoint(Position p, double a, double b) {
         double x = (p.getXValue() + a * p.getYValue() - a * b) / (1 + Math.pow(a, 2));
         double y = (a * p.getXValue() + Math.pow(a, 2) * p.getYValue() + b) / (1 + Math.pow(a, 2));

@@ -6,7 +6,9 @@
  */
 package no.ntnu.et.general;
 
+import static no.ntnu.et.general.Utilities.dot;
 import static no.ntnu.et.general.Utilities.getProjectedPoint;
+import static no.ntnu.et.general.Utilities.norm;
 import no.ntnu.et.simulator.Feature;
 
 /**
@@ -45,6 +47,9 @@ public class Line {
     public Line(Position p, Position q) {
         this.p = p;
         this.q = q;
+        this.start = null;
+        this.direction = null;
+        this.length = Position.distanceBetween(p, q);
     }
     
     /**
@@ -61,8 +66,8 @@ public class Line {
     }
     
     public static Position getMidpoint(Line line) {
-        double midX = (line.getP().getXValue() + line.getQ().getXValue()) / 2;
-        double midY = (line.getP().getYValue() + line.getQ().getYValue()) / 2;
+        double midX = (line.getP().getXValue() + line.getQ().getXValue()) / 2.0;
+        double midY = (line.getP().getYValue() + line.getQ().getYValue()) / 2.0;
         return new Position(midX, midY);
     }
     
@@ -209,10 +214,12 @@ public class Line {
         return repoCtr;
     }
     
+    /**
     public static Line[] selfMerge(Line[] buffer, int length) {
         Line[] result = new Line[length];
         
     }
+    */
     
     /**
      * Determines if two lines satisfy the conditions for merging.
@@ -291,26 +298,26 @@ public class Line {
     
     
     static boolean isMergeable1(Line line1, Line line2) {
-        //u1
-        double slopeA = line1.getSlope();
-        double slopeB = line2.getSlope();
-        double angle = Math.abs(slopeB - slopeA);
-        double u1 = calculateU1(angle);
+        // u1
+        double a1 = line1.getSlope();
+        double a2 = line2.getSlope();
+        double slope = Math.abs(a1 - a2);
+        double u1 = calculateU1(slope);
         System.out.println("u1: " + u1);
         
         // u2
-        Position midA = getMidpoint(line1);
-        Position midB = getMidpoint(line2);
+        Position mid1 = getMidpoint(line1);
+        Position mid2 = getMidpoint(line2);
         // double u2 = calculateU2()
         
-        //u3
-        double midPointDist = Position.distanceBetween(midA, midB);
-        double lengthA = line1.getLength();
-        double lengthB = line2.getLength();
-        double u3 = calculateU3(midPointDist, lengthA, lengthB);
+        // u3
+        double midPointDist = Position.distanceBetween(mid1, mid2);
+        double len1 = line1.getLength();
+        double len2 = line2.getLength();
+        double u3 = calculateU3(midPointDist, len1, len2);
         System.out.println("u3: " + u3);
         
-        //u4
+        // u4
         // double u4 = calculateU4()
         
         //double similarityThreshold = 0.6;
@@ -319,7 +326,8 @@ public class Line {
     
     
     /**
-     * Angle between the two line segments.
+     * Angle between the two line segments. Slope values a and b correspond
+     * to 10 and 20 degrees
      * 
      * @param slope
      * @return 
@@ -339,15 +347,16 @@ public class Line {
     }
     
     /**
-     * Maximum distance of each line's midpoint to the other line.
+     * Maximum distance of each line's midpoint to the other line. Values are
+     * given in mm.
      * 
-     * @param dist
+     * @param dist [mm]
      * @return 
      */
     static double calculateU2(double dist) {
-        double c = 10.0;
-        double d = 30.0;
-        double e = 60.0;
+        final double c = 10.0; //[mm]
+        final double d = 30.0; //[mm]
+        final double e = 60.0; //[mm]
         double res = 1.0;
         if (dist > c && dist <= d) {
             res = 0.5;
@@ -362,9 +371,9 @@ public class Line {
     /**
      * Distance between the midpoints of the two-line segments.
      * 
-     * @param dist
-     * @param lenA
-     * @param lenB
+     * @param dist [mm]
+     * @param lenA [mm]
+     * @param lenB [mm]
      * @return 
      */
     static double calculateU3(double dist, double lenA, double lenB) {
@@ -374,7 +383,7 @@ public class Line {
         } else {
             f = lenB;
         }
-        double g = f + 10.0;
+        final double g = f + 10.0; //[mm]
         double res = 1.0;
         if (dist > f && dist < g) {
             res = 1.0 - 1.0 / (g - f) * (dist - f);
@@ -387,12 +396,12 @@ public class Line {
     /**
      * Minimum distance from the endpoint of p line-segment to the other line-segment.
      * 
-     * @param dist
+     * @param dist [mm]
      * @return 
      */
     static double calculateU4(double dist) {
-        double h = 10.0;
-        double i = 20.0;
+        final double h = 10.0; //[mm]
+        final double i = 20.0; //[mm]
         double res = 1.0;
         if (dist > h && h < i) {
             res = 1.0 - 1.0 / (i - h) * (dist - h);
@@ -457,6 +466,88 @@ public class Line {
         double x3 = c.getXValue();
         double y3 = c.getYValue();
         return Math.abs((y1 - y2) * (x1 - x3) - (y1 - y3) * (x1 - x2)) <= TOLERANCE; // epsilon because of float comparison 1e-9
+    }
+    
+    /**
+     * Calculates the minimum distance between 2 segments. Adapted from 3D-version
+     * at http://geomalgorithms.com/a07-_distance.html#dist3D_Segment_to_Segment()
+     * 
+     * @param line1
+     * @param line2
+     * @return 
+     */
+    public static double segmentToSegment(Line line1, Line line2) {
+        final double SMALL_NUM = 1e-9;
+        double[] u = new double[]{ line1.q.getXValue() - line1.p.getXValue(), line1.q.getYValue() - line1.p.getYValue() };
+        double[] v = new double[]{ line2.q.getXValue() - line2.p.getXValue(), line2.q.getYValue() - line2.p.getYValue() };
+        double[] w = new double[]{ line1.p.getXValue() - line2.p.getXValue(), line1.p.getYValue() - line2.p.getYValue() };
+        double a = dot(u, u);         // always >= 0
+        double b = dot(u, v);
+        double c = dot(v, v);         // always >= 0
+        double d = dot(u, w);
+        double e = dot(v, w);
+        double D = a * c - b * b;        // always >= 0
+        double sc, sN, sD = D;       // sc = sN / sD, default sD = D >= 0
+        double tc, tN, tD = D;       // tc = tN / tD, default tD = D >= 0
+
+        // compute the line parameters of the two closest points
+        if (D < SMALL_NUM) { // the lines are almost parallel
+            sN = 0.0;         // force using point P0 on segment S1
+            sD = 1.0;         // to prevent possible division by 0.0 later
+            tN = e;
+            tD = c;
+        }
+        else {                 // get the closest points on the infinite lines
+            sN = (b * e - c * d);
+            tN = (a * e - b * d);
+            if (sN < 0.0) {        // sc < 0 => the s=0 edge is visible
+                sN = 0.0;
+                tN = e;
+                tD = c;
+            }
+            else if (sN > sD) {  // sc > 1  => the s=1 edge is visible
+                sN = sD;
+                tN = e + b;
+                tD = c;
+            }
+        }
+
+        if (tN < 0.0) {            // tc < 0 => the t=0 edge is visible
+            tN = 0.0;
+            // recompute sc for this edge
+            if (-d < 0.0)
+                sN = 0.0;
+            else if (-d > a)
+                sN = sD;
+            else {
+                sN = -d;
+                sD = a;
+            }
+        }
+        else if (tN > tD) {      // tc > 1  => the t=1 edge is visible
+            tN = tD;
+            // recompute sc for this edge
+            if ((-d + b) < 0.0)
+                sN = 0;
+            else if ((-d + b) > a)
+                sN = sD;
+            else {
+                sN = (-d +  b);
+                sD = a;
+            }
+        }
+        // finally do the division to get sc and tc
+        sc = (Math.abs(sN) < SMALL_NUM ? 0.0 : sN / sD);
+        tc = (Math.abs(tN) < SMALL_NUM ? 0.0 : tN / tD);
+
+        // get the difference of the two closest points
+        u[0] *= sc;
+        u[1] *= sc;
+        v[0] *= tc;
+        v[1] *= tc;
+        double[] dP = new double[] {w[0] + u[0] - v[0], w[1] + u[1] - v[1] }; // =  S1(sc) - S2(tc)
+
+        return norm(dP);   // return the closest distance
     }
     
     /**
