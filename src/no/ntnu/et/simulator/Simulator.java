@@ -125,7 +125,12 @@ public class Simulator {
             return;
         }
         if (!robotHandlers.containsKey(robot.getName())) {
-            RobotHandler robotHandler = this.new RobotHandler(robot);
+            RobotHandler robotHandler;
+            if (robot.getName().equals("SLAM")) {
+                robotHandler = this.new SlamRobotHandler(robot);
+            } else {
+                robotHandler = this.new SimRobotHandler(robot);
+            }
             robotHandler.setName(robot.getName());
             robotHandlers.put(robot.getName(), robotHandler);
             robotHandler.paused = true;
@@ -191,19 +196,36 @@ public class Simulator {
             gui.checkEstimationErrorOff();
         }
     }
+    
+    private abstract class RobotHandler extends Thread {
+        private boolean paused;
+        
+        public RobotHandler(SimRobot robot) {
+            paused = false;
+        }
+        
+        void pause() {
+            paused = true;
+        }
+
+        void unpause() {
+            paused = false;
+        }
+        
+        boolean isPaused() {
+            return paused;
+        }
+    }
 
     /**
     * Controller object for p robot. This class contains p SimRobot object
  and is responsible for making that robot run.
     */
-    private class RobotHandler extends Thread {
+    private class SlamRobotHandler extends RobotHandler {
         final private SimRobot myRobot;
-        final private String myName;
-        final private int myID;
         private double estimateNoise;
         private double sensorNoise;
         private final Random noiseGenerator;
-        private boolean paused;
         public int update[];
         
         //private final BoundaryFollowingController boundaryFollowingController;
@@ -216,23 +238,13 @@ public class Simulator {
          *
          * @param robot SimRobot
          */
-        public RobotHandler(SimRobot robot) {
+        public SlamRobotHandler(SimRobot robot) {
+            super(robot);
             myRobot = robot;
-            myName = robot.getName();
-            myID = robot.getId();
             noiseGenerator = new Random();
-            paused = false;
             //boundaryFollowingController = new BoundaryFollowingController(myRobot);
             //nxtNavigation = new NxtNavigation(myRobot);
             //nxtMapping = new NxtMapping(myRobot, worldMap);
-        }
-
-        void pause() {
-            paused = true;
-        }
-
-        void unpause() {
-            paused = false;
         }
 
         /**
@@ -263,7 +275,7 @@ public class Simulator {
                 } catch (InterruptedException e) {
                     break;
                 }
-                if (paused) {
+                if (isPaused()) {
                     continue;
                 }
 
@@ -289,7 +301,7 @@ public class Simulator {
                     myRobot.measureIR(sensorNoise);
                     update = myRobot.createMeasurement();
                     
-                    if (myName.equals("SLAM")) {
+                    if (myRobot.getName().equals("SLAM")) {
                         myRobot.updatePointBuffers();
                         if (lastTowerDir != myRobot.towerDirection) {
                             myRobot.createLines();
@@ -299,7 +311,7 @@ public class Simulator {
                         }
                     }
                         
-                    if (myName.equals("Drone")) {
+                    if (myRobot.getName().equals("Drone")) {
                         DroneUpdateMessage um = SimRobot.generateDroneUpdate(update[0], update[1], update[2], update[4], update[5], update[6], update[7]);
                         byte[] umBytes = um.getBytes();
                         byte[] umMessageBytes = new byte[umBytes.length + 1];
@@ -322,5 +334,121 @@ public class Simulator {
         }
     }
     
+    /**
+    * Controller object for p robot. This class contains p SimRobot object
+ and is responsible for making that robot run.
+    */
+    private class SimRobotHandler extends RobotHandler {
+        final private SimRobot myRobot;
+        private double estimateNoise;
+        private double sensorNoise;
+        private final Random noiseGenerator;
+        public int update[];
+        
+        //private final BoundaryFollowingController boundaryFollowingController;
+        //private final NxtNavigation nxtNavigation;
+        //private final NxtMapping nxtMapping;
+        
+
+        /**
+         * Constructor
+         *
+         * @param robot SimRobot
+         */
+        public SimRobotHandler(SimRobot robot) {
+            super(robot);
+            myRobot = robot;
+            noiseGenerator = new Random();
+            //boundaryFollowingController = new BoundaryFollowingController(myRobot);
+            //nxtNavigation = new NxtNavigation(myRobot);
+            //nxtMapping = new NxtMapping(myRobot, worldMap);
+        }
+
+        /**
+         * A continuous loop that calls methods of the robot in p specific way
+ in order to generate the robot behavior.
+         */
+        @Override
+        public void run() {
+            //boundaryFollowingController.start();
+            //nxtNavigation.start();
+            //nxtMapping.start();
+            
+            int counter = 0;
+
+            HandshakeMessage hm = myRobot.generateHandshake();
+            byte[] hmBytes = hm.getBytes();
+            byte[] hmMessageBytes = new byte[hmBytes.length + 1];
+            hmMessageBytes[0] = Message.HANDSHAKE;
+            System.arraycopy(hmBytes, 0, hmMessageBytes, 1, hmBytes.length);
+            inbox.add(new Message(myRobot.getAddress(), hmMessageBytes));
+            
+            int lastTowerDir = myRobot.towerDirection;
+            
+            while (true) {
+                // Wait between each loop
+                try {
+                    Thread.sleep((int) (10 / simulationSpeed));
+                } catch (InterruptedException e) {
+                    break;
+                }
+                if (isPaused()) {
+                    continue;
+                }
+
+                // Move robot
+                if (estimateNoiseEnabled) {
+                    //estimateNoise = noiseGenerator.nextGaussian() * 0.1;
+                    estimateNoise = noiseGenerator.nextGaussian() * 0.01;
+                } else {
+                    estimateNoise = 0;
+                }
+                if (myRobot.moveRobot(estimateNoise) == true) {
+                    inbox.add(new Message(myRobot.getAddress(), new byte[]{Message.IDLE}));
+                }
+                myRobot.turnTower();
+
+                // Measure
+                if (counter > 19) { // Every 200 ms ( Counter is increased every 10 ms )
+                    if (sensorNoiseEnabled) {
+                        sensorNoise = noiseGenerator.nextGaussian() * 2;
+                    } else {
+                        sensorNoise = 0;
+                    }
+                    myRobot.measureIR(sensorNoise);
+                    update = myRobot.createMeasurement();
+                    
+                    if (myRobot.getName().equals("SLAM")) {
+                        myRobot.updatePointBuffers();
+                        if (lastTowerDir != myRobot.towerDirection) {
+                            myRobot.createLines();
+                            myRobot.mergeLines();
+                            myRobot.sendLineUpdates(inbox);
+                            lastTowerDir = myRobot.towerDirection;
+                        }
+                    }
+                        
+                    if (myRobot.getName().equals("Drone")) {
+                        DroneUpdateMessage um = SimRobot.generateDroneUpdate(update[0], update[1], update[2], update[4], update[5], update[6], update[7]);
+                        byte[] umBytes = um.getBytes();
+                        byte[] umMessageBytes = new byte[umBytes.length + 1];
+                        umMessageBytes[0] = Message.DRONE_UPDATE;
+                        System.arraycopy(umBytes, 0, umMessageBytes, 1, umBytes.length);
+                        inbox.add(new Message(myRobot.getAddress(), umMessageBytes));
+                    } else {
+                        UpdateMessage um = SimRobot.generateUpdate(update[0], update[1], update[2], update[3], update[4], update[5], update[6], update[7]);
+                        byte[] umBytes = um.getBytes();
+                        byte[] umMessageBytes = new byte[umBytes.length + 1];
+                        umMessageBytes[0] = Message.UPDATE;
+                        System.arraycopy(umBytes, 0, umMessageBytes, 1, umBytes.length);
+                        inbox.add(new Message(myRobot.getAddress(), umMessageBytes));
+                    }
+
+                    counter = 0;
+                }
+                counter++;
+            }
+        }
+    }
     
 }
