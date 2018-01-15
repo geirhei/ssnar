@@ -451,7 +451,7 @@ public class LineTest {
     }
 
     /**
-     * Test of pointToSegment method, of class Line.
+     * Test of distancePointToSegment method, of class Line.
      */
     @Test
     public void testPointToSegment() {
@@ -459,7 +459,7 @@ public class LineTest {
         Position p = new Position(2, 2);
         Line s = new Line(new Position(0, 2), new Position(4, 2));
         double expResult = 0.0;
-        double result = Line.pointToSegment(p, s);
+        double result = Line.distancePointToSegment(p, s);
         assertEquals(expResult, result, 0.0001);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");

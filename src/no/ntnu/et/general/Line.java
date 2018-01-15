@@ -308,18 +308,23 @@ public class Line {
      * @return true if lines should be merged
      */
     public static boolean isMergeable(Line line1, Line line2) {
+        final double THRESHOLD = 0.6;
         // u1
         double a1 = line1.getSlope();
         double a2 = line2.getSlope();
         double slope = Math.abs(a1 - a2);
         double u1 = calculateU1(slope);
         //System.out.println("u1: " + u1);
+        if (u1 < THRESHOLD) {
+            System.out.println("u1 failed.");
+            return false;
+        }
         
         // u2
         Position mid1 = getMidpoint(line1);
         Position mid2 = getMidpoint(line2);
-        double dist1 = pointToSegment(mid1, line2) * 10; // convert to [mm]
-        double dist2 = pointToSegment(mid2, line1) * 10;
+        double dist1 = distancePointToSegment(mid1, line2) * 10; // convert to [mm]
+        double dist2 = distancePointToSegment(mid2, line1) * 10;
         double u2;
         if (dist1 <= dist2) {
             u2 = calculateU2(dist1);
@@ -327,6 +332,10 @@ public class Line {
             u2 = calculateU2(dist2);
         }
         //System.out.println("u2: " + u2);
+        if (u2 < THRESHOLD) {
+            System.out.println("u2 failed.");
+            return false;
+        }
         
         // u3
         double midPointDist = Position.distanceBetween(mid1, mid2) * 10; // [mm]
@@ -334,36 +343,44 @@ public class Line {
         double len2 = line2.getLength() * 10;
         double u3 = calculateU3(midPointDist, len1, len2);
         //System.out.println("u3: " + u3);
+        if (u3 < THRESHOLD) {
+            System.out.println("u3 failed.");
+            return false;
+        }
         
         // u4
-        double[] dist = new double[4];
-        dist[0] = pointToSegment(line1.p, line2) * 10;
-        dist[1] = pointToSegment(line1.q, line2) * 10;
-        dist[2] = pointToSegment(line2.p, line1) * 10;
-        dist[3] = pointToSegment(line2.q, line1) * 10;
-        double u4 = calculateU4(dist[0]);
-        for (double d : dist) {
-            if (d < dist[0]) {
-                u4 = calculateU4(d);
+        double[] dist = new double[] {
+            distancePointToSegment(line1.p, line2) * 10,
+            distancePointToSegment(line1.q, line2) * 10,
+            distancePointToSegment(line2.p, line1) * 10,
+            distancePointToSegment(line2.q, line1) * 10
+        };
+        double minDist = dist[0];
+        for (int i = 1; i < 4; i++) {
+            if (dist[i] < minDist) {
+                minDist = dist[i];
             }
         }
+        double u4 = calculateU4(minDist);
         //System.out.println("u4: " + u4);
+        if (u4 < THRESHOLD) {
+            System.out.println("u4 failed.");
+            return false;
+        }
         
-        //double similarityThreshold = 0.6;
-        return (u1 >= 0.6 && u2 >= 0.6 && u3 >= 0.6 && u4 >= 0.6); // add u4
+        return true;
     }
-    
     
     /**
      * Angle between the two line segments. Slope values a and b correspond
-     * to 10 and 20 degrees
+     * 
      * 
      * @param slope
      * @return 
      */
     static double calculateU1(double slope) {
-        double a = 0.2;
-        double b = 0.35;
+        double a = 0.35;
+        double b = 0.50;
         double res = 1.0;
         if (slope >= 0 && slope < a) {
             res = 1.0 - 0.5 / a * slope;
@@ -506,7 +523,7 @@ public class Line {
      * @param s
      * @return 
      */
-    public static double pointToSegment(Position p, Line s) {
+    public static double distancePointToSegment(Position p, Line s) {
         double[] v = new double[]{ s.q.getXValue() - s.p.getXValue(), s.q.getYValue() - s.p.getYValue() };
         double[] w = new double[]{ p.getXValue() - s.p.getXValue(), p.getYValue() - s.p.getYValue() };
 
