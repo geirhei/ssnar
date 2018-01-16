@@ -431,7 +431,33 @@ public class SimRobot {
         }
     }
     
+    static double getForward(double towerAngle, double[] measurements) {
+        double dist;
+        if (towerAngle >= 0 && towerAngle < 30) {
+            dist = Math.cos(Math.toRadians(towerAngle)) * measurements[0];
+        } else if (towerAngle >= 60 && towerAngle <= 60) {
+            dist = 40.0;
+        } else if (towerAngle > 60 && towerAngle <= 90) {
+            dist = Math.cos(Math.toRadians(90 - towerAngle)) * measurements[3];
+        } else {
+            dist = -1;
+        }
+        return dist;
+    }
     
+    static double getLeft(double towerAngle, double[] measurements) {
+        double dist;
+        if (towerAngle >= 0 && towerAngle < 30) {
+            dist = Math.cos(Math.toRadians(towerAngle)) * measurements[1];
+        } else if (towerAngle >= 30 && towerAngle <= 60) {
+            dist = (Math.cos(Math.toRadians(90 - towerAngle)) * measurements[0] + Math.cos(Math.toRadians(towerAngle)) * measurements[1]) / 2.0;
+        } else if (towerAngle > 60 && towerAngle <= 90) {
+            dist = Math.cos(Math.toRadians(90 - towerAngle)) * measurements[0];
+        } else {
+            dist = -1;
+        }
+        return dist;
+    }
 
     static DroneUpdateMessage generateDroneUpdate(int xPos, int yPos, int robotHeading, int startX, int startY, int stopX, int stopY) {
 
