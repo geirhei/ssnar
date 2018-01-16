@@ -26,7 +26,7 @@ public class Line {
     public Position p;
     public Position q;
     
-    static final double TOLERANCE = 30.0;
+    static final double TOLERANCE = 100.0;
     
     /**
      * Creates p new Line object
@@ -134,18 +134,14 @@ public class Line {
         }
         */
         
-        if (bufferSize < 2) {
+        // At least 3 measurements are required before line creation is attempted
+        if (bufferSize < 3) {
             return 0;
         }
         
         int lineIndex = 0;
         Position a = pointBuffer[0];
         Position b = pointBuffer[1];
-        if (bufferSize == 2) {
-            Line line = new Line(a, b);
-            lineBuffer[lineIndex] = line;
-            return 1;
-        }
         
         for (int i = 2; i < bufferSize; i++) {
             Line line;
@@ -157,9 +153,11 @@ public class Line {
                 }
             } else {
                 line = new Line(a, pointBuffer[i-1]);
-                a = pointBuffer[i];
-                b = pointBuffer[i+1];
-                if (i < bufferSize - 2) {
+                if (i > bufferSize - 3) {
+                    break;
+                } else {
+                    a = pointBuffer[i];
+                    b = pointBuffer[i+1];
                     i++;
                 }
             }
@@ -196,7 +194,7 @@ public class Line {
             boolean merged = false;
             for (int j = 0; j < bufferCtr; j++) {
                 for (int k = 0; k < repoCtr; k++) {
-                    if (isMergeable(lineBuffer[j], lineRepo[k])) {
+                    if (isMergeable1(lineBuffer[j], lineRepo[k])) {
                         lineRepo[k] = mergeSegments(lineBuffer[j], lineRepo[k]);
                         updated[k] = true;
                         merged = true;
@@ -229,20 +227,25 @@ public class Line {
      * @param line2
      * @return true if mergeable, else false
      */
-    /*
+    
     public static boolean isMergeable1(Line line1, Line line2) {
         if (line1 == null || line2 == null) {
             throw new NullPointerException("Invalid line arguments.");
         }
-        final double u = 5.0;
-        final double delta = 5.0;
+        final double u = 1.0; // 45 deg
+        final double delta = 10.0; // cm
         double m1 = line1.getSlope();
         double m2 = line2.getSlope();
         
         // Test slope
         if (Math.abs(m1 - m2) > u) {
+            System.out.println("Slope test failed.");
             return false;
         }
+        
+        // Test distance between midpoints
+        
+        
         double d1 = Position.distanceBetween(line1.p, line2.p);
         double d2 = Position.distanceBetween(line1.p, line2.q);
         double d3 = Position.distanceBetween(line1.q, line2.p);
@@ -251,7 +254,7 @@ public class Line {
         // Test distances
         return (d1 <= delta) || (d2 <= delta) || (d3 <= delta) || (d4 <= delta);
     }
-    */
+    
     
     /**
      * Performs a merge procedure on the two lines, and returns the resulting
@@ -333,8 +336,8 @@ public class Line {
         }
         //System.out.println("u2: " + u2);
         if (u2 < THRESHOLD) {
-            System.out.println("u2 failed.");
-            return false;
+            //System.out.println("u2 failed.");
+            //return false;
         }
         
         // u3
@@ -379,8 +382,8 @@ public class Line {
      * @return 
      */
     static double calculateU1(double slope) {
-        double a = 0.35;
-        double b = 0.50;
+        double a = 0.80;
+        double b = 1.70;
         double res = 1.0;
         if (slope >= 0 && slope < a) {
             res = 1.0 - 0.5 / a * slope;
@@ -446,8 +449,8 @@ public class Line {
      * @return 
      */
     static double calculateU4(double dist) {
-        final double h = 10.0; //[mm]
-        final double i = 20.0; //[mm]
+        final double h = 15.0; //[mm]
+        final double i = 30.0; //[mm]
         double res = 1.0;
         if (dist > h && h < i) {
             res = 1.0 - 1.0 / (i - h) * (dist - h);

@@ -173,7 +173,7 @@ public class MapGraphic extends JPanel {
             return;
         }
         g2D.setPaint(Color.ORANGE);
-        g2D.setStroke(new BasicStroke(2));
+        g2D.setStroke(new BasicStroke(1));
         //System.out.println("lines length: " + lines.size());
         for (int i = 0; i < lines.size(); i++) {
             //lines.get(i).print();
