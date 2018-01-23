@@ -8,6 +8,8 @@ package no.ntnu.tem.communication;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import no.ntnu.et.general.Line;
+import no.ntnu.et.general.Position;
 
 /**
  * A received update message has the follow fields, with byte length in parentheses:
@@ -39,5 +41,8 @@ public class LineUpdateMessage {
         return data;
     }
     
-    public int[] getLine() { return new int[]{startX, startY, stopX, stopY}; }
+    public Line getLine() {
+        return new Line(new Position(startX, startY), new Position(stopX, stopY));
+    }
+    
 }
