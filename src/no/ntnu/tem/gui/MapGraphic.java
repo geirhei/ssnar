@@ -176,7 +176,7 @@ public class MapGraphic extends JPanel {
         g2D.setStroke(new BasicStroke(1));
         //System.out.println("lines length: " + lines.size());
         for (int i = 0; i < lines.size(); i++) {
-            lines.get(i).print();
+            //lines.get(i).print();
             int pLX = (int) Math.round(lines.get(i).p.getXValue());
             int pLY = (int) Math.round(lines.get(i).p.getYValue());
             int pRX = (int) Math.round(lines.get(i).q.getXValue());
