@@ -129,6 +129,7 @@ public class Robot {
         //Position a = new Position(line[0], line[1]);
         //Position b = new Position(line[2], line[3]);
         //Line newLine = new Line(a, b);
+        line.print();
         if (!lines.isEmpty() && index < lines.size()) {
             lines.set(index, line);
         } else {

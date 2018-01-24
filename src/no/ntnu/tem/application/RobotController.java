@@ -129,9 +129,9 @@ public class RobotController {
         if (robot == null) {
             return;
         }
-        if (debug) {
-            System.out.println("Robot <" + robot.getName() + "> updated!");
-        }
+        //if (debug) {
+        //System.out.println("Robot <" + robot.getName() + "> updated!");
+        //}
         robot.addLine(line, index);
     }
     

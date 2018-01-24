@@ -79,13 +79,14 @@ public class InboxReader extends Thread {
                             int[] line = droneUpdate.getLine();
                             doDroneUpdate(address, droneOrientation, dronePosition, line);
                             break;
-                            /*
-                        case Message.LINE_UPDATE:
+                            
+                        case Message.LINE:
                             LineUpdateMessage lineUpdate = new LineUpdateMessage(message.getData());
                             Line newLine = lineUpdate.getLine();
-                            doLineUpdate(address, newLine);
+                            int index = 0;
+                            doLineUpdate(address, newLine, index);
                             break;
-                            */
+                            
                         case Message.REPO_UPDATE:
                             LineRepoMessage repoMessage = new LineRepoMessage(message.getData());
                             Line currentLine = repoMessage.getLine();
