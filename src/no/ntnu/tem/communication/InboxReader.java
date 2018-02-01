@@ -82,6 +82,8 @@ public class InboxReader extends Thread {
                             
                         case Message.LINE:
                             LineUpdateMessage lineUpdate = new LineUpdateMessage(message.getData());
+                            System.out.println("Line received in inbox reader.");
+                            //lineUpdate.print();
                             Line newLine = lineUpdate.getLine();
                             int index = 0;
                             doLineUpdate(address, newLine, index);

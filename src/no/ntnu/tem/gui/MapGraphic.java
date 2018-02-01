@@ -165,7 +165,7 @@ public class MapGraphic extends JPanel {
         try {
              lines = rc.getRobot("NXT").getLines();
              if (lines.isEmpty()) {
-                System.out.println("lines == null!");
+                //System.out.println("lines == null!");
                 return;
             }
         } catch (NullPointerException e) {

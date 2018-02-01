@@ -129,13 +129,16 @@ public class Robot {
         //Position a = new Position(line[0], line[1]);
         //Position b = new Position(line[2], line[3]);
         //Line newLine = new Line(a, b);
-        line.print();
+        //line.print();
+        lines.add(line);
+        /*
         if (!lines.isEmpty() && index < lines.size()) {
             lines.set(index, line);
         } else {
             lines.add(line);
         }
-        //System.out.println("Line added in RC.");
+        */
+        System.out.println("Line added in Robot.");
     }
     
     public ArrayList<Line> getLines() {

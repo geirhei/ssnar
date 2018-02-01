@@ -45,4 +45,8 @@ public class LineUpdateMessage {
         return new Line(new Position(startX, startY), new Position(stopX, stopY));
     }
     
+    public void print() {
+        System.out.println("(" + startX + ", " + startY + ") --> (" + stopX + ", " + stopY + ")");
+    }
+    
 }
