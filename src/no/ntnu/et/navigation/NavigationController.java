@@ -43,7 +43,7 @@ public class NavigationController extends Thread {
 
     private boolean paused;
 
-    private boolean debug = false;
+    private boolean debug = true;
     
     
 
