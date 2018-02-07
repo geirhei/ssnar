@@ -124,15 +124,15 @@ public class RobotController {
      * @param line
      * @return 
      */
-    public void addLineUpdate(int address, Line line, int index) {
+    public boolean addLineMeasurement(int address, int measuredOrientation, int[] measuredPosition, int[] line) {
         Robot robot = getRobotFromAddress(address);
         if (robot == null) {
-            return;
+            return false;
         }
-        //if (debug) {
-        //System.out.println("Robot <" + robot.getName() + "> updated!");
-        //}
-        robot.addLine(line, index);
+        if (debug) {
+            System.out.println("Robot <" + robot.getName() + "> updated!");
+        }
+        return robot.addMeasurement(measuredOrientation, measuredPosition, 0, line);
     }
     
             /**

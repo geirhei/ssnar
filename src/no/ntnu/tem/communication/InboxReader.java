@@ -63,8 +63,7 @@ public class InboxReader extends Thread {
                             doHandshake(address, name, width, length, axleOffset, messageDeadline, towerOffset, sensorOffset, irHeading);
 
                             break;
-                        case Message.UPDATE:
-                           
+                        case Message.UPDATE: {
                             UpdateMessage update = new UpdateMessage(message.getData());
                             int orientation = update.getHeading();
                             int[] position = update.getPosition();
@@ -72,29 +71,33 @@ public class InboxReader extends Thread {
                             int[] irData = update.getSensorValues();
                             doUpdate(address, orientation, position, towerAngle, irData);
                             break;
-                        case Message.DRONE_UPDATE:
+                        }
+                        case Message.DRONE_UPDATE: {
                             DroneUpdateMessage droneUpdate = new DroneUpdateMessage(message.getData());
                             int droneOrientation = droneUpdate.getHeading();
                             int[] dronePosition = droneUpdate.getPosition();
                             int[] line = droneUpdate.getLine();
                             doDroneUpdate(address, droneOrientation, dronePosition, line);
                             break;
-                            
-                        case Message.LINE:
+                        }
+                        
+                        case Message.LINE: {
                             LineUpdateMessage lineUpdate = new LineUpdateMessage(message.getData());
-                            System.out.println("Line received in inbox reader.");
-                            //lineUpdate.print();
-                            Line newLine = lineUpdate.getLine();
-                            int index = 0;
-                            doLineUpdate(address, newLine, index);
+                            //System.out.println("Line received in inbox reader.");
+                            int orientation = lineUpdate.getHeading();
+                            int[] position = lineUpdate.getPosition();
+                            int[] line = lineUpdate.getLine();
+                            doLineUpdate(address, orientation, position, line);
                             break;
-                            
+                        }
+                        /*
                         case Message.REPO_UPDATE:
                             LineRepoMessage repoMessage = new LineRepoMessage(message.getData());
                             Line currentLine = repoMessage.getLine();
                             int repoIndex = repoMessage.getIndex();
                             doLineUpdate(address, currentLine, repoIndex);
                             break;
+                        */
                         case Message.IDLE:
                             doIdleUpdate(address);
                             break;
@@ -186,11 +189,11 @@ public class InboxReader extends Thread {
      * @param address
      * @param line 
      */
-    private void doLineUpdate(int address, Line line, int index) {
-        rc.addLineUpdate(address, line, index);
+    private void doLineUpdate(int address, int orientation, int[] position, int[] line) {
+        rc.addLineMeasurement(address, orientation, position, line);
     }
     
-        private void doBatteryUpdate(int address, int level) {
+    private void doBatteryUpdate(int address, int level) {
         rc.updateBattery(address, level);
     }
 

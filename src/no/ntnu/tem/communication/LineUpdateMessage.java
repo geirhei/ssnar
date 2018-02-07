@@ -22,16 +22,23 @@ import no.ntnu.et.general.Position;
 public class LineUpdateMessage {
     
     private byte[] data;
+    private int x;
+    private int y;
+    private int heading;
     private int startY;
     private int startX;
     private int stopY;
     private int stopX;
+    
     public LineUpdateMessage(byte[] data) throws Message.MessageCorruptException, Message.ValueCorruptException {
         ByteBuffer buffer = ByteBuffer.wrap(data);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         this.data = data;
-        if(buffer.remaining() != 8)  throw new Message.MessageCorruptException();
+        if(buffer.remaining() != 14)  throw new Message.MessageCorruptException();
         
+        x = buffer.getShort();
+        y = buffer.getShort();
+        heading = buffer.getShort();
         startX = buffer.getShort();
         startY = buffer.getShort();
         stopX = buffer.getShort();
@@ -40,13 +47,7 @@ public class LineUpdateMessage {
     public byte[] getBytes() {
         return data;
     }
-    
-    public Line getLine() {
-        return new Line(new Position(startX, startY), new Position(stopX, stopY));
-    }
-    
-    public void print() {
-        System.out.println("(" + startX + ", " + startY + ") --> (" + stopX + ", " + stopY + ")");
-    }
-    
+    public int[] getPosition() { return new int[]{x,y}; }
+    public int getHeading() { return heading; }
+    public int[] getLine() { return new int[]{startX, startY, stopX, stopY}; }
 }
