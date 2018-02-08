@@ -150,19 +150,18 @@ public class MappingController extends Thread {
                 robot.setPosition(position);
                 robot.setRobotOrientation((int) Math.round(robotAngle.getValue()) + robot.getAdjustDirection());
                 
-                 
-
                 // Find the location of the robot in the map
                 map.resize(robotPosition);
                 MapLocation robotLocation = map.findLocationInMap(robotPosition);
 
                 Sensor[] sensors = measurementHandlers.get(name).getIRSensorData();
 				
-				//Drone Handling
+		//Drone Handling
                 //The drone uses the same structure that the sensor data uses,
                 //but they represents start and end points for lines.
                 //Must be handled separately
-                if (robot.getName().equals("Drone")) {
+                // Do the same for the NXT
+                if (robot.getName().equals("Drone") || robot.getName().equals("NXT")) {
                     //Sensor[] sensors = measurementHandlers.get(name).getIRSensorData();
                     Position start = sensors[0].getPosition();
                     Position end = sensors[1].getPosition();
