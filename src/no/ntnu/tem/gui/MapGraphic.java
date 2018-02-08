@@ -114,7 +114,7 @@ public class MapGraphic extends JPanel {
             
         }
         */
-        paintLines(g2D);
+        //paintLines(g2D);
         paintRobots(g2D);
         g2D.setTransform(initial);
 
