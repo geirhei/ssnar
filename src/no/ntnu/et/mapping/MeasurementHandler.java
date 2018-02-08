@@ -51,29 +51,34 @@ public class MeasurementHandler {
         // Update sensor data
         int[] irData = currentMeasurement.getIRdata();
         int[] irheading = currentMeasurement.getIRHeading();
-
-        //Drone data handling
-        if (robot.getName().equals("Drone")) {
-            sensors[0].setPosition(new Position(irData[0], irData[1]));
-            sensors[1].setPosition(new Position(irData[2], irData[3]));
-            return true;
+        
+        String unitName = robot.getName();
+        switch (unitName)
+        {
+            case "Drone":
+            case "NXT":
+                sensors[0].setPosition(new Position(irData[0], irData[1]));
+                sensors[1].setPosition(new Position(irData[2], irData[3]));
+                break;
+                
+            default:
+                for (int i = 0; i < 4; i++) {
+                    int measurementDistance = irData[i];
+                    if (measurementDistance == 0 || measurementDistance > sensorRange) {
+                        sensors[i].setMeasurement(false);
+                        measurementDistance = sensorRange;
+                    } else {
+                        sensors[i].setMeasurement(true);
+                    }
+                    Angle towerAngle = new Angle((double) irheading[i]);
+                    Angle sensorAngle = Angle.sum(towerAngle, robotPose.getHeading());
+                    double xOffset = measurementDistance * Math.cos(Math.toRadians(sensorAngle.getValue()));
+                    double yOffset = measurementDistance * Math.sin(Math.toRadians(sensorAngle.getValue()));
+                    Position measurementPosition = Position.sum(robotPose.getPosition(), new Position(xOffset, yOffset));
+                    sensors[i].setPosition(measurementPosition);
+                }
         }
-
-        for (int i = 0; i < 4; i++) {
-            int measurementDistance = irData[i];
-            if (measurementDistance == 0 || measurementDistance > sensorRange) {
-                sensors[i].setMeasurement(false);
-                measurementDistance = sensorRange;
-            } else {
-                sensors[i].setMeasurement(true);
-            }
-            Angle towerAngle = new Angle((double) irheading[i]);
-            Angle sensorAngle = Angle.sum(towerAngle, robotPose.getHeading());
-            double xOffset = measurementDistance * Math.cos(Math.toRadians(sensorAngle.getValue()));
-            double yOffset = measurementDistance * Math.sin(Math.toRadians(sensorAngle.getValue()));
-            Position measurementPosition = Position.sum(robotPose.getPosition(), new Position(xOffset, yOffset));
-            sensors[i].setPosition(measurementPosition);
-        }
+        
         return true;
     }
 
