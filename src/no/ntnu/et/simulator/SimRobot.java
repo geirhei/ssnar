@@ -63,6 +63,7 @@ public class SimRobot {
     private final int address;
     private final int maxLineOfSight = 40;
     
+    boolean isLost = true;
     Position[][] pointBuffers;
     Line[][] lineBuffers;
     Line[] lineRepo;
@@ -431,28 +432,28 @@ public class SimRobot {
         }
     }
     
-    static double getForward(double towerAngle, double[] measurements) {
+    double getForward() {
         double dist;
-        if (towerAngle >= 0 && towerAngle < 30) {
-            dist = Math.cos(Math.toRadians(towerAngle)) * measurements[0];
-        } else if (towerAngle >= 60 && towerAngle <= 60) {
+        if (towerAngle.getValue() >= 0 && towerAngle.getValue() < 30) {
+            dist = Math.cos(Math.toRadians(towerAngle.getValue())) * lastIrMeasurement[0];
+        } else if (towerAngle.getValue() >= 60 && towerAngle.getValue() <= 60) {
             dist = 40.0;
-        } else if (towerAngle > 60 && towerAngle <= 90) {
-            dist = Math.cos(Math.toRadians(90 - towerAngle)) * measurements[3];
+        } else if (towerAngle.getValue() > 60 && towerAngle.getValue() <= 90) {
+            dist = Math.cos(Math.toRadians(90 - towerAngle.getValue())) * lastIrMeasurement[3];
         } else {
             dist = -1;
         }
         return dist;
     }
     
-    static double getLeft(double towerAngle, double[] measurements) {
+    double getLeft() {
         double dist;
-        if (towerAngle >= 0 && towerAngle < 30) {
-            dist = Math.cos(Math.toRadians(towerAngle)) * measurements[1];
-        } else if (towerAngle >= 30 && towerAngle <= 60) {
-            dist = (Math.cos(Math.toRadians(90 - towerAngle)) * measurements[0] + Math.cos(Math.toRadians(towerAngle)) * measurements[1]) / 2.0;
-        } else if (towerAngle > 60 && towerAngle <= 90) {
-            dist = Math.cos(Math.toRadians(90 - towerAngle)) * measurements[0];
+        if (towerAngle.getValue() >= 0 && towerAngle.getValue() < 30) {
+            dist = Math.cos(Math.toRadians(towerAngle.getValue())) * lastIrMeasurement[1];
+        } else if (towerAngle.getValue() >= 30 && towerAngle.getValue() <= 60) {
+            dist = (Math.cos(Math.toRadians(90 - towerAngle.getValue())) * lastIrMeasurement[0] + Math.cos(Math.toRadians(towerAngle.getValue())) * lastIrMeasurement[1]) / 2.0;
+        } else if (towerAngle.getValue() > 60 && towerAngle.getValue() <= 90) {
+            dist = Math.cos(Math.toRadians(90 - towerAngle.getValue())) * lastIrMeasurement[0];
         } else {
             dist = -1;
         }

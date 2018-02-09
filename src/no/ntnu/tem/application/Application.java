@@ -64,10 +64,10 @@ public final class Application {
         this.rc = new RobotController();
         this.com = new Communication(this, rc);
         /* Testing begin */
-        //this.worldMap = new GridMap(2, 50, 50);
-        this.worldMap = new GridMap(1, 100, 100);
-        this.worldMap.resize(new Position(-200, -200));
-        this.worldMap.resize(new Position(200, 200));
+        this.worldMap = new GridMap(2, 50, 50);
+        //this.worldMap = new GridMap(1, 100, 100);
+        //this.worldMap.resize(new Position(-200, -200));
+        //this.worldMap.resize(new Position(200, 200));
         /* Testing end */
         this.worldMapGraphic = new MapGraphic(worldMap, rc);
         this.slam = new MappingController(rc, worldMap);

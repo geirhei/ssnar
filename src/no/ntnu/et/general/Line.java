@@ -239,7 +239,7 @@ public class Line {
         
         // Test slope
         if (Math.abs(m1 - m2) > u) {
-            System.out.println("Slope test failed.");
+            //System.out.println("Slope test failed.");
             return false;
         }
         

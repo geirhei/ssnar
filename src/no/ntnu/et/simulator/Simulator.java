@@ -225,10 +225,10 @@ public class Simulator {
         private final Random noiseGenerator;
         public int update[];
         
-        //private final BoundaryFollowingController boundaryFollowingController;
-        //private final NxtNavigation nxtNavigation;
-        //private final NxtMapping nxtMapping;
-        
+        private double frontDist = 0;
+        private double leftDist = 0;
+        private double rearDist = 0;
+        private double rightDist = 0;
 
         /**
          * Constructor
@@ -239,9 +239,6 @@ public class Simulator {
             super(robot);
             myRobot = robot;
             noiseGenerator = new Random();
-            //boundaryFollowingController = new BoundaryFollowingController(myRobot);
-            //nxtNavigation = new NxtNavigation(myRobot);
-            //nxtMapping = new NxtMapping(myRobot, worldMap);
         }
 
         /**
@@ -249,11 +246,7 @@ public class Simulator {
  in order to generate the robot behavior.
          */
         @Override
-        public void run() {
-            //boundaryFollowingController.start();
-            //nxtNavigation.start();
-            //nxtMapping.start();
-            
+        public void run() {       
             int counter = 0;
 
             HandshakeMessage hm = myRobot.generateHandshake();
@@ -262,8 +255,6 @@ public class Simulator {
             hmMessageBytes[0] = Message.HANDSHAKE;
             System.arraycopy(hmBytes, 0, hmMessageBytes, 1, hmBytes.length);
             inbox.add(new Message(myRobot.getAddress(), hmMessageBytes));
-            
-            int lastTowerDir = myRobot.towerDirection;
             
             while (true) {
                 // Wait between each loop
@@ -275,6 +266,8 @@ public class Simulator {
                 if (isPaused()) {
                     continue;
                 }
+                
+                int lastTowerDir = myRobot.towerDirection;
 
                 // Move robot
                 if (estimateNoiseEnabled) {
@@ -286,6 +279,7 @@ public class Simulator {
                 if (myRobot.moveRobot(estimateNoise) == true) {
                     inbox.add(new Message(myRobot.getAddress(), new byte[]{Message.IDLE}));
                 }
+                
                 myRobot.turnTower();
 
                 // Measure
@@ -298,7 +292,10 @@ public class Simulator {
                     myRobot.measureIR(sensorNoise);
                     update = myRobot.createMeasurement();
                     
+                    // Add point measurements to buffers
                     myRobot.updatePointBuffers();
+                    
+                    // If the tower switches direction, create lines and send them
                     if (lastTowerDir != myRobot.towerDirection) {
                         myRobot.createLines();
                         myRobot.mergeLines();
@@ -316,6 +313,17 @@ public class Simulator {
                     counter = 0;
                 }
                 counter++;
+                
+                // Navigation begin
+                if (myRobot.isLost) {
+                    frontDist = myRobot.getForward();
+                    leftDist = myRobot.getLeft();
+                    
+                } else {
+                    
+                }
+                
+                // Navigation end
             }
         }
     }
