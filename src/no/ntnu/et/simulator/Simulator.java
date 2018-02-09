@@ -231,9 +231,11 @@ public class Simulator {
         private double previousLeftDist = leftDist;
         private double rearDist = 0;
         private double rightDist = 0;
-        private final double maxWallThreshold = 15.0;
+        private final double maxWallThreshold = 20.0;
         private final double minWallThreshold = 10.0;
-        private final double step = 2.0; //cm
+        
+        public final double DEF_TURN_SPEED = 0.5f;
+        static final double DEF_MOVE_SPEED = 0.1f;
 
         /**
          * Constructor
@@ -245,6 +247,9 @@ public class Simulator {
             myRobot = robot;
             noiseGenerator = new Random();
             lastTowerDir = myRobot.towerDirection;
+            myRobot.rotationFinished = false;
+            myRobot.translationFinished = false;
+            
         }
 
         /**
@@ -326,10 +331,12 @@ public class Simulator {
                     
                     if (myRobot.isLost && !myRobot.isAligned) {
                         if (leftDist > maxWallThreshold && frontDist > maxWallThreshold) {
-                            myRobot.setMovement(0, step);
+                            myRobot.moveSpeed = DEF_MOVE_SPEED;
+                            myRobot.turnSpeed = 0;
                         } else {
-                            myRobot.setMovement(0, 0);
                             myRobot.isLost = false;
+                            myRobot.moveSpeed = 0;
+                            myRobot.turnSpeed = 0;
                         }
                     } else if (!myRobot.isLost && !myRobot.isAligned) {
                         if (leftDist <= previousLeftDist) {

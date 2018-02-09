@@ -48,9 +48,8 @@ public class SimRobot {
     public boolean rotationFinished;
     public boolean translationFinished;
     private Angle towerAngle;
-    final private double turnSpeed = 0.5;
-    //final private double turnSpeed = 1;
-    private double moveSpeed;
+    double turnSpeed;
+    double moveSpeed;
     final private double towerSpeed = 0.25; // = 5 deg resolution
     //final private double towerSpeed = 0.05; // = 1 deg resolution
     int towerDirection;
@@ -106,9 +105,11 @@ public class SimRobot {
         targetPosition = Position.copy(pose.getPosition());
         
         if (name.equals("SLAM")) {
-            moveSpeed = 0.05;
+            moveSpeed = 0;
+            turnSpeed = 0;
         } else {
             moveSpeed = 0.1;
+            turnSpeed = 0.5;
         }
         
         updated = new boolean[50];
@@ -262,7 +263,7 @@ public class SimRobot {
      * @param theta number of degrees to rotate
      * @param distance number of cm to translate
      */
-    /*
+    
     void setMovement(int thetaTarget, double distance) {
         synchronized (movementLock) {
             Angle targetAngle = new Angle(thetaTarget);
@@ -279,7 +280,7 @@ public class SimRobot {
             translationFinished = false;
         }
     }
-    */
+    
     
     /**
      * Sets the target rotation and target heading. Also resets the measured

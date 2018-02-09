@@ -14,11 +14,6 @@ import no.ntnu.et.general.Pose;
  * @author geirhei
  */
 public class SlamRobot extends SimRobot {
-    static final double DEF_TURN_SPEED = 0.5f;
-    static final double DEF_MOVE_SPEED = 0.1f;
-    
-    private double turnSpeed = DEF_TURN_SPEED;
-    private double moveSpeed = DEF_MOVE_SPEED;
     
     /**
      * Constructor for SlamRobot.
@@ -31,22 +26,6 @@ public class SlamRobot extends SimRobot {
      */
     SlamRobot(SimWorld world, Pose initialPose, String name, int id, int address) {
         super(world, initialPose, name, id, address);
-    }
-    
-    public double getTurnSpeed() {
-        return turnSpeed;
-    }
-
-    public void setTurnSpeed(double turnSpeed) {
-        this.turnSpeed = turnSpeed;
-    }
-
-    public double getMoveSpeed() {
-        return moveSpeed;
-    }
-
-    public void setMoveSpeed(double moveSpeed) {
-        this.moveSpeed = moveSpeed;
     }
     
     /**
@@ -85,6 +64,7 @@ public class SlamRobot extends SimRobot {
             testPose.move(moveSpeed * movementDirection);
             estimatedPose.move((moveSpeed + noise) * movementDirection);
             measuredDistance += (moveSpeed + noise) * movementDirection;
+            pose.move(moveSpeed * movementDirection);
         }
 
         return false;
