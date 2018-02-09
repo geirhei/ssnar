@@ -112,7 +112,7 @@ public class InitialRobotParameterGUI extends javax.swing.JDialog {
         jLabel8.setText("orientation:");
 
         ftxtfXPos.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        ftxtfXPos.setText("0");
+        ftxtfXPos.setText("50");
         ftxtfXPos.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 ftxtfXPosFocusGained(evt);
@@ -130,7 +130,7 @@ public class InitialRobotParameterGUI extends javax.swing.JDialog {
         });
 
         ftxtfYPos.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        ftxtfYPos.setText("0");
+        ftxtfYPos.setText("50");
         ftxtfYPos.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 ftxtfYPosFocusGained(evt);
@@ -143,7 +143,7 @@ public class InitialRobotParameterGUI extends javax.swing.JDialog {
         });
 
         ftxtfOrientation.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        ftxtfOrientation.setText("0");
+        ftxtfOrientation.setText("90");
         ftxtfOrientation.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 ftxtfOrientationFocusGained(evt);

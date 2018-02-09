@@ -64,6 +64,7 @@ public class SimRobot {
     private final int maxLineOfSight = 40;
     
     boolean isLost = true;
+    boolean isAligned = false;
     Position[][] pointBuffers;
     Line[][] lineBuffers;
     Line[] lineRepo;
@@ -298,8 +299,8 @@ public class SimRobot {
             Angle targetAngle = Angle.sum(pose.getHeading(), new Angle(theta));
             Position offset = Utilities.polar2cart(targetAngle, distance);
             targetPosition = Position.sum(pose.getPosition(), offset);
-            rotationFinished = false;
-            translationFinished = false;
+            //rotationFinished = false;
+            //translationFinished = false;
         }
     }
 
@@ -433,29 +434,31 @@ public class SimRobot {
     }
     
     double getForward() {
-        double dist;
+        double dist = 0;
         if (towerAngle.getValue() >= 0 && towerAngle.getValue() < 30) {
             dist = Math.cos(Math.toRadians(towerAngle.getValue())) * lastIrMeasurement[0];
         } else if (towerAngle.getValue() >= 60 && towerAngle.getValue() <= 60) {
             dist = 40.0;
         } else if (towerAngle.getValue() > 60 && towerAngle.getValue() <= 90) {
             dist = Math.cos(Math.toRadians(90 - towerAngle.getValue())) * lastIrMeasurement[3];
-        } else {
-            dist = -1;
+        }
+        if (dist == 0) {
+            dist = 40;
         }
         return dist;
     }
     
     double getLeft() {
-        double dist;
+        double dist = 0;
         if (towerAngle.getValue() >= 0 && towerAngle.getValue() < 30) {
             dist = Math.cos(Math.toRadians(towerAngle.getValue())) * lastIrMeasurement[1];
         } else if (towerAngle.getValue() >= 30 && towerAngle.getValue() <= 60) {
             dist = (Math.cos(Math.toRadians(90 - towerAngle.getValue())) * lastIrMeasurement[0] + Math.cos(Math.toRadians(towerAngle.getValue())) * lastIrMeasurement[1]) / 2.0;
         } else if (towerAngle.getValue() > 60 && towerAngle.getValue() <= 90) {
             dist = Math.cos(Math.toRadians(90 - towerAngle.getValue())) * lastIrMeasurement[0];
-        } else {
-            dist = -1;
+        }
+        if (dist == 0) {
+            dist = 40;
         }
         return dist;
     }

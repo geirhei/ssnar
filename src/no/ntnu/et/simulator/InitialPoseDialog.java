@@ -81,7 +81,7 @@ public class InitialPoseDialog extends javax.swing.JDialog {
         jLabel8.setText("orientation:");
 
         ftxtfXPos.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        ftxtfXPos.setText("200");
+        ftxtfXPos.setText("50");
         ftxtfXPos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ftxtfXPosActionPerformed(evt);
@@ -89,7 +89,7 @@ public class InitialPoseDialog extends javax.swing.JDialog {
         });
 
         ftxtfYPos.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        ftxtfYPos.setText("80");
+        ftxtfYPos.setText("50");
         ftxtfYPos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ftxtfYPosActionPerformed(evt);

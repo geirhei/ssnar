@@ -224,11 +224,16 @@ public class Simulator {
         private double sensorNoise;
         private final Random noiseGenerator;
         public int update[];
+        private int lastTowerDir;
         
         private double frontDist = 0;
         private double leftDist = 0;
+        private double previousLeftDist = leftDist;
         private double rearDist = 0;
         private double rightDist = 0;
+        private final double maxWallThreshold = 15.0;
+        private final double minWallThreshold = 10.0;
+        private final double step = 2.0; //cm
 
         /**
          * Constructor
@@ -239,6 +244,7 @@ public class Simulator {
             super(robot);
             myRobot = robot;
             noiseGenerator = new Random();
+            lastTowerDir = myRobot.towerDirection;
         }
 
         /**
@@ -248,6 +254,7 @@ public class Simulator {
         @Override
         public void run() {       
             int counter = 0;
+            int movementCounter = 0;
 
             HandshakeMessage hm = myRobot.generateHandshake();
             byte[] hmBytes = hm.getBytes();
@@ -266,8 +273,6 @@ public class Simulator {
                 if (isPaused()) {
                     continue;
                 }
-                
-                int lastTowerDir = myRobot.towerDirection;
 
                 // Move robot
                 if (estimateNoiseEnabled) {
@@ -315,13 +320,29 @@ public class Simulator {
                 counter++;
                 
                 // Navigation begin
-                if (myRobot.isLost) {
-                    frontDist = myRobot.getForward();
+                if (movementCounter > 99) {
                     leftDist = myRobot.getLeft();
+                    frontDist = myRobot.getForward();
                     
-                } else {
+                    if (myRobot.isLost && !myRobot.isAligned) {
+                        if (leftDist > maxWallThreshold && frontDist > maxWallThreshold) {
+                            myRobot.setMovement(0, step);
+                        } else {
+                            myRobot.setMovement(0, 0);
+                            myRobot.isLost = false;
+                        }
+                    } else if (!myRobot.isLost && !myRobot.isAligned) {
+                        if (leftDist <= previousLeftDist) {
+                            previousLeftDist = leftDist;
+
+                        }
+                    } else {
+
+                    }
                     
+                    movementCounter = 0;
                 }
+                movementCounter++;
                 
                 // Navigation end
             }
