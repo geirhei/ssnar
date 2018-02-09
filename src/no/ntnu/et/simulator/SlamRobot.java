@@ -62,24 +62,29 @@ public class SlamRobot extends SimRobot {
     @Override
     boolean moveRobot(double noise) {
         if (!rotationFinished) {
+            /*
             if (Math.abs(measuredRotation) >= Math.abs(targetRotation)) {
                 measuredRotation = 0;
                 rotationFinished = true;
             }
+            */
             pose.rotate(new Angle(turnSpeed * rotationDirection));
             estimatedPose.rotate(new Angle((turnSpeed + noise) * rotationDirection));
             measuredRotation += (turnSpeed + noise) * rotationDirection;
-        } else if (!translationFinished) {
+        }
+        //} else if (!translationFinished) {
+        if (!translationFinished) {
+            /*
             if (Math.abs(measuredDistance) >= Math.abs(targetDistance)) {
                 measuredDistance = 0;
                 translationFinished = true;
                 return true;
             }
+            */
             Pose testPose = Pose.copy(pose);
             testPose.move(moveSpeed * movementDirection);
             estimatedPose.move((moveSpeed + noise) * movementDirection);
             measuredDistance += (moveSpeed + noise) * movementDirection;
-
         }
 
         return false;
