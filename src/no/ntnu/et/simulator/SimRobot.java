@@ -438,12 +438,12 @@ public class SimRobot {
         double dist = 0;
         if (towerAngle.getValue() >= 0 && towerAngle.getValue() < 30) {
             dist = Math.cos(Math.toRadians(towerAngle.getValue())) * lastIrMeasurement[0];
-        } else if (towerAngle.getValue() >= 60 && towerAngle.getValue() <= 60) {
-            dist = 40.0;
+        } else if (towerAngle.getValue() >= 30 && towerAngle.getValue() <= 60) {
+            dist = -1;
         } else if (towerAngle.getValue() > 60 && towerAngle.getValue() <= 90) {
             dist = Math.cos(Math.toRadians(90 - towerAngle.getValue())) * lastIrMeasurement[3];
         }
-        if (dist == 0) {
+        if (dist == 0 || dist > 40) {
             dist = 40;
         }
         return dist;
@@ -458,7 +458,22 @@ public class SimRobot {
         } else if (towerAngle.getValue() > 60 && towerAngle.getValue() <= 90) {
             dist = Math.cos(Math.toRadians(90 - towerAngle.getValue())) * lastIrMeasurement[0];
         }
-        if (dist == 0) {
+        if (dist == 0 || dist > 40) {
+            dist = 40;
+        }
+        return dist;
+    }
+    
+    double getRearLeft() {
+        double dist = 0;
+        if (towerAngle.getValue() >= 0 && towerAngle.getValue() <= 5) {
+            dist = Math.cos(Math.toRadians(towerAngle.getValue())) * lastIrMeasurement[1];
+        } else if (towerAngle.getValue() >= 85 && towerAngle.getValue() <= 90) {
+            dist = Math.cos(Math.toRadians(90 - towerAngle.getValue())) * lastIrMeasurement[0];            
+        } else {
+            dist = -1;
+        }
+        if (dist == 0 || dist > 40) {
             dist = 40;
         }
         return dist;

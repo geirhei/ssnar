@@ -226,16 +226,15 @@ public class Simulator {
         public int update[];
         private int lastTowerDir;
         
-        private double frontDist = 0;
-        private double leftDist = 0;
-        private double previousLeftDist = leftDist;
-        private double rearDist = 0;
-        private double rightDist = 0;
+        private double frontDist = 40.0;
+        private double leftDist = 40.0;
+        private double rearLeftDist = 40.0;
+        private double previousRearLeftDist = 40.0;
         private final double maxWallThreshold = 20.0;
         private final double minWallThreshold = 10.0;
         
-        public final double DEF_TURN_SPEED = 0.5f;
-        static final double DEF_MOVE_SPEED = 0.1f;
+        private final double DEF_TURN_SPEED = 0.05;
+        private final double DEF_MOVE_SPEED = 0.08;
 
         /**
          * Constructor
@@ -249,6 +248,7 @@ public class Simulator {
             lastTowerDir = myRobot.towerDirection;
             myRobot.rotationFinished = false;
             myRobot.translationFinished = false;
+            myRobot.rotationDirection = -1;
             
         }
 
@@ -325,26 +325,48 @@ public class Simulator {
                 counter++;
                 
                 // Navigation begin
-                if (movementCounter > 99) {
+                if (movementCounter > 4) {
+                    double newFrontDist = myRobot.getForward();
+                    if (newFrontDist != -1) {
+                        frontDist = newFrontDist;
+                    }
                     leftDist = myRobot.getLeft();
-                    frontDist = myRobot.getForward();
+                    double newRearLeftDist = myRobot.getRearLeft();
+                    if (newRearLeftDist != -1) {
+                        rearLeftDist = newRearLeftDist;
+                    }
                     
+                    // If in open space, move forward until a wall is reached
                     if (myRobot.isLost && !myRobot.isAligned) {
                         if (leftDist > maxWallThreshold && frontDist > maxWallThreshold) {
                             myRobot.moveSpeed = DEF_MOVE_SPEED;
                             myRobot.turnSpeed = 0;
                         } else {
-                            myRobot.isLost = false;
                             myRobot.moveSpeed = 0;
                             myRobot.turnSpeed = 0;
+                            myRobot.isLost = false;
                         }
+                        
+                    // If wall reached, rotate to align with the left side
                     } else if (!myRobot.isLost && !myRobot.isAligned) {
-                        if (leftDist <= previousLeftDist) {
-                            previousLeftDist = leftDist;
-
+                        
+                        // Rotate until we get a smaller left distance
+                        if (rearLeftDist <= previousRearLeftDist) {
+                            previousRearLeftDist = rearLeftDist;
+                            
+                            // Rotate more if almost bumping in front
+                            if (Math.min(leftDist, frontDist) == frontDist) {
+                                myRobot.turnSpeed = DEF_TURN_SPEED * 3;
+                            } else {
+                                myRobot.turnSpeed = DEF_TURN_SPEED;
+                            }
+                            
+                        } else {
+                            myRobot.turnSpeed = 0;
+                            myRobot.isAligned = true;
                         }
                     } else {
-
+                        //myRobot.moveSpeed = DEF_MOVE_SPEED;
                     }
                     
                     movementCounter = 0;
