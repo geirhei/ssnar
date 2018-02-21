@@ -325,7 +325,6 @@ public class Simulator {
                 counter++;
                 
                 // Navigation begin
-                /*
                 if (movementCounter > 4) {
                     double newFrontDist = myRobot.getForward();
                     if (newFrontDist != -1) {
@@ -375,7 +374,6 @@ public class Simulator {
                 movementCounter++;
                 
                 // Navigation end
-                */
             }
         }
     }

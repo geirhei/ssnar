@@ -100,7 +100,7 @@ public class CollisionManager extends Thread {
             for (int i = 0; i < robotNames.size(); i++){
                 String robot1Name = robotNames.get(i);
                 
-                //if (robot1Name.equals("SLAM")) { continue; }
+                if (robot1Name.equals("SLAM")) { continue; }
                 
                 if(handlers.containsKey(robot1Name)){
                     continue;
