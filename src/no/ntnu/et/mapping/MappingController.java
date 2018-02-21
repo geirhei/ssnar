@@ -161,7 +161,8 @@ public class MappingController extends Thread {
                 //but they represents start and end points for lines.
                 //Must be handled separately
                 // Do the same for the NXT
-                if (robot.getName().equals("Drone") || robot.getName().equals("NXT")) {
+                //if (robot.getName().equals("Drone") || robot.getName().equals("NXT")) {
+                if (robot.getName().equals("Drone")) {
                     //Sensor[] sensors = measurementHandlers.get(name).getIRSensorData();
                     Position start = sensors[0].getPosition();
                     Position end = sensors[1].getPosition();

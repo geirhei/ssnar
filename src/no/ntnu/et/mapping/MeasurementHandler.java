@@ -56,7 +56,7 @@ public class MeasurementHandler {
         switch (unitName)
         {
             case "Drone":
-            case "NXT":
+            //case "NXT":
                 sensors[0].setPosition(new Position(irData[0], irData[1]));
                 sensors[1].setPosition(new Position(irData[2], irData[3]));
                 break;
