@@ -176,7 +176,7 @@ public class SimRobot {
                 LineRepoMessage lrm = generateLineRepoUpdate(lineRepo[i], i);
                 byte[] lrmBytes = lrm.getBytes();
                 byte[] lrmMessageBytes = new byte[lrmBytes.length + 1];
-                lrmMessageBytes[0] = Message.REPO_UPDATE;
+                lrmMessageBytes[0] = Message.LINE_UPDATE;
                 System.arraycopy(lrmBytes, 0, lrmMessageBytes, 1, lrmBytes.length);
                 inbox.add(new Message(getAddress(), lrmMessageBytes));
                 

@@ -22,7 +22,7 @@ public class InboxReader extends Thread {
 
     private final RobotController rc;
     private final ConcurrentLinkedQueue<Message> inbox;
-    private final boolean debug = false;
+    private final boolean debug = true;
 
     /**
      * Constructor of the class InboxReader
@@ -88,6 +88,9 @@ public class InboxReader extends Thread {
                             int[] position = lineUpdate.getPosition();
                             int[] line = lineUpdate.getLine();
                             doLineUpdate(address, orientation, position, line);
+                            if (debug) {
+                                System.out.println("Line: " + line[0] + ", " + line[1] + ", " + line[2] + ", " + line[3]);
+                            }
                             break;
                         }
                         /*

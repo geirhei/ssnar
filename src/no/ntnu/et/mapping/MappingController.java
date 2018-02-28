@@ -161,17 +161,19 @@ public class MappingController extends Thread {
                 //but they represents start and end points for lines.
                 //Must be handled separately
                 // Do the same for the NXT
-                //if (robot.getName().equals("Drone") || robot.getName().equals("NXT")) {
-                if (robot.getName().equals("Drone")) {
+                if (robot.getName().equals("Drone") || robot.getName().equals("NXT")) {
+                //if (robot.getName().equals("Drone") || robot.getName().equals("SLAM")) {
                     //Sensor[] sensors = measurementHandlers.get(name).getIRSensorData();
                     Position start = sensors[0].getPosition();
                     Position end = sensors[1].getPosition();
-                    map.resize(start);
-                    map.resize(end);
-                    ArrayList<MapLocation> line = getLineBetweenPoints(map.findLocationInMap(start), map.findLocationInMap(end));
-                    line.forEach((location) -> {
-                        map.addMeasurement(location, true);
-                    });
+                    if (start.getXValue() != 0 && start.getYValue() != 0 && end.getXValue() != 0 && end.getYValue() != 0) {
+                        map.resize(start);
+                        map.resize(end);
+                        ArrayList<MapLocation> line = getLineBetweenPoints(map.findLocationInMap(start), map.findLocationInMap(end));
+                        line.forEach((location) -> {
+                            map.addMeasurement(location, true);
+                        });
+                    }
                     continue;
                 }
                 

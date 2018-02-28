@@ -165,6 +165,7 @@ public class NavigationController extends Thread {
                 Robot applicationRobot = robotController.getRobot(name);
                 
                 //if (name.equals("SLAM")){continue;}
+                if (name.equals("NXT")){continue;}
                 
                 if (applicationRobot.isInManualMode()) {continue;}
                 int id = applicationRobot.getId();
