@@ -37,7 +37,9 @@ public class MappingController extends Thread {
     private Object nameLock = new Object();
     private boolean paused;
     private Thread mapCleaner;
-    private boolean debug = false;
+    private boolean debug = true;
+    
+    private int lineCtr = 0;
 
     /**
      * Constructor
@@ -173,6 +175,11 @@ public class MappingController extends Thread {
                         line.forEach((location) -> {
                             map.addMeasurement(location, true);
                         });
+                        
+                        lineCtr++;
+                        if (debug) {
+                            System.out.println("No. of lines: " + lineCtr);
+                        }
                     }
                     continue;
                 }

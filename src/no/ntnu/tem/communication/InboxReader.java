@@ -22,7 +22,7 @@ public class InboxReader extends Thread {
 
     private final RobotController rc;
     private final ConcurrentLinkedQueue<Message> inbox;
-    private final boolean debug = true;
+    private final boolean debug = false;
 
     /**
      * Constructor of the class InboxReader
