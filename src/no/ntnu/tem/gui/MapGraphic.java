@@ -134,7 +134,8 @@ public class MapGraphic extends JPanel {
             if (!cell.isPreviouslyObserved()) {
                 g2D.setPaint(Color.gray);
             } else if (cell.isOccupied()) {
-                g2D.setPaint(Color.black);
+                //g2D.setPaint(Color.black);
+                g2D.setPaint(Color.orange);
             } else if (cell.isRestricted()) {
                 g2D.setPaint(Color.lightGray);
             } /*else if (cell.isWeaklyRestricted()) {
@@ -221,9 +222,11 @@ public class MapGraphic extends JPanel {
             g2D.setFont(f);
             g2D.translate(getWidth() - 1, 0);
             g2D.scale(-1, 1);
-            g2D.drawString(robot.getName(), getWidth() - posx, posy - 20 * scrollSize.intValue());
+            // Robot name label disabled
+            //g2D.drawString(robot.getName(), getWidth() - posx, posy - 20 * scrollSize.intValue());
             g2D.setPaint(robotColor);
-            g2D.drawString("X", getWidth() - destx, desty);
+            // Target cross disabled
+            //g2D.drawString("X", getWidth() - destx, desty);
             g2D.setTransform(temp);
         }
     }
