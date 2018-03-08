@@ -120,20 +120,6 @@ public class Line {
      * @return the number of lines created
      */
     public static int lineCreate(Position[] pointBuffer, Line[] lineBuffer, int bufferSize) {
-        //if (pointBuffer == null || lineBuffer == null) {
-        //    throw new NullPointerException("Buffers cannot be null.");
-        //}
-        /*
-        if (pointBuffer[bufferSize-1] == null) {
-            throw new NullPointerException("Buffers cannot be null.");
-        }
-        */
-        /*
-        if (bufferSize <= 0) {
-            throw new IllegalArgumentException("Buffer size cannot be zero or less.");
-        }
-        */
-        
         // At least 3 measurements are required before line creation is attempted
         if (bufferSize < 3) {
             return 0;
@@ -176,6 +162,7 @@ public class Line {
      * @param lineRepo
      * @param bufferCtr
      * @param repoCtr 
+     * @param updated 
      * @return  
      */
     public static int lineMerge(Line[] lineBuffer, Line[] lineRepo, int bufferCtr, int repoCtr, boolean[] updated) {
@@ -214,13 +201,6 @@ public class Line {
     }
     
     /**
-    public static Line[] selfMerge(Line[] buffer, int length) {
-        Line[] result = new Line[length];
-        
-    }
-    */
-    
-    /**
      * Determines if two lines satisfy the conditions for merging.
      * 
      * @param line1
@@ -244,8 +224,6 @@ public class Line {
         }
         
         // Test distance between midpoints
-        
-        
         double d1 = Position.distanceBetween(line1.p, line2.p);
         double d2 = Position.distanceBetween(line1.p, line2.q);
         double d3 = Position.distanceBetween(line1.q, line2.p);

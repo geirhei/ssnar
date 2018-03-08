@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import no.ntnu.et.general.Line;
 import no.ntnu.et.general.Position;
-import no.ntnu.et.general.Vertex;
 import no.ntnu.et.mapping.MappingController;
 
 /**
@@ -50,7 +49,6 @@ public class GridMap{
     private int rightColumn;
     private int leftColumn;
     
-    private ArrayList<Vertex> vertices = new ArrayList();
     
     //SLAMrobot simulation
     private ArrayList<MapLocation> obstructed = new ArrayList();
@@ -89,7 +87,6 @@ public class GridMap{
                 }
             }
             
-            vertices.add( new Vertex(Vertex.INTERIOR, new Position(25, 25)) );
             for (int k = 0; k < 4; k++) {
                 pointBuffers.add(new ArrayList<Position>());
                 //lineBuffers.add(new ArrayList<Line>());
@@ -143,14 +140,6 @@ public class GridMap{
     public void clearLocation(MapLocation loc) {
         frontiers.remove(loc);
         obstructed.remove(loc);
-    }
-    
-    public void addVertex(Vertex vertex) {
-        vertices.add(vertex);
-    }
-    
-    public ArrayList<Vertex> getVertices() {
-        return vertices;
     }
     
     /**

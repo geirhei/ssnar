@@ -15,9 +15,7 @@ import java.math.RoundingMode;
  * @author Eirik Thon
  */
 public class Position {
-    
     private double xValue;
-    
     private double yValue;
     
     /**
@@ -89,6 +87,7 @@ public class Position {
      * scale parameter can be used o mace the circle bigger and smaller
      * @param g2D Graphics2D
      * @param diameter double
+     * @param scale
      */
     public void drawCircle(Graphics2D g2D, int diameter, double scale) {
         g2D.drawOval((int)((Math.round(xValue)-diameter/2)*scale),(int)((Math.round(yValue)-diameter/2)*scale), (int)((double)diameter*scale), (int)((double)diameter*scale));
@@ -99,6 +98,7 @@ public class Position {
      * determines the distance from the center of the cross to the end points
      * @param g2D Graphics2D
      * @param size integer
+     * @param scale
      */
     public void drawCross(Graphics2D g2D, int size, double scale) {
         g2D.drawLine((int)(Math.round(xValue-size)*scale), (int)(Math.round(yValue-size)*scale),
@@ -161,32 +161,6 @@ public class Position {
         xValue = Math.cos(rad)*xTemp+-Math.sin(rad)*yTemp;
         yValue = Math.sin(rad)*xTemp+Math.cos(rad)*yTemp;
     }
-    
-    private boolean areEqual(double aThis, double aThat){
-        //System.out.println("double");
-        return (Math.abs(Double.doubleToLongBits(aThis) - Double.doubleToLongBits(aThat)) <= 1e-9);
-    }
-    
-    /*
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if ( !(obj instanceof Position) ) {
-            return false;
-        }
-        Position otherPos = (Position) obj;
-        if (Double.compare(this.xValue, otherPos.xValue) != 0) {
-            return false;
-        }
-        if (Double.compare(this.yValue, otherPos.yValue) != 0) {
-            return false;
-        }
-        return true;
-
-    }
-    */
 
     @Override
     public int hashCode() {

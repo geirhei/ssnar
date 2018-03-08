@@ -21,7 +21,6 @@ public class Angle {
 
     /**
      * Constructs a new Angle with value 0
-     * @param angle value of initial angle
      */
     public Angle() {
         value = 0;
@@ -29,7 +28,7 @@ public class Angle {
     
     /**
      * Constructs a new Angle with value specified by the input parameter
-     * @param angle value of the angle
+     * @param value
      */
     public Angle(double value) {
         this.value = value % 360;
@@ -57,8 +56,7 @@ public class Angle {
     
     /**
      * Adds the value input Angle to the value of the Angle. The
-     * @param addedAngle Angle to be added
-     * @return 
+     * @param addedAngle Angle to be added 
      */
     public void add(Angle addedAngle){
         value = (value + addedAngle.value) % 360;
@@ -112,8 +110,10 @@ public class Angle {
      * Draws a line onto g2D starting in "start", with length "length" in the
      * direction of the angle
      * @param g2D
-     * @param start
+     * @param xStart
+     * @param yStart
      * @param length 
+     * @param scale 
      */
     public void drawAngle (Graphics2D g2D, double xStart, double yStart, int length, double scale) {
         Position headingPoint = Utilities.polar2cart(this, length);
