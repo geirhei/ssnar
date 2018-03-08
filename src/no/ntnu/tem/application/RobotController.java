@@ -8,16 +8,15 @@ package no.ntnu.tem.application;
 import no.ntnu.tem.robot.Robot;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import no.ntnu.et.general.Line;
 
 /**
  * This class holds a List over all the robots in the system. It holds methods
  * for adding and removing robots as well as searching for special robots.
  *
  * @author Thor Eivind and Mats (Master 2016 @ NTNU)
+ * Modified by Geir Eikeland (Master 2018 @ NTNU)
  */
 public class RobotController {
-
     private final ObservableList<Robot> robotList;
     private final boolean debug = false;
     private int idCounter = 0;
@@ -121,6 +120,8 @@ public class RobotController {
      * Method that adds a line update to a robot.
      * 
      * @param address
+     * @param measuredOrientation
+     * @param measuredPosition
      * @param line
      * @return 
      */
@@ -135,10 +136,10 @@ public class RobotController {
         return robot.addMeasurement(measuredOrientation, measuredPosition, 0, line);
     }
     
-            /**
-     * Mathod for updating the current battery level of a robot
+     /**
+     * Method for updating the current battery level of a robot
      * 
-     * @param name  of th robot
+     * @param adress
      * @param level current battery level
      */
     
@@ -163,8 +164,6 @@ public class RobotController {
         }
     }
     
-
-
     /**
      * Method that returns the robot, if existing, with the given name
      *
@@ -237,7 +236,7 @@ public class RobotController {
     }
 
     /**
-     * Mathod for updating the current battery level of a robot
+     * Method for updating the current battery level of a robot
      *
      * @param name of th robot
      * @param level current battery level

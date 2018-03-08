@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.ObservableList;
-import no.ntnu.et.general.Position;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.et.navigation.NavigationController;
 import no.ntnu.tem.communication.Communication;
@@ -48,7 +47,7 @@ public final class Application {
     private final MapGraphic worldMapGraphic;
     private final GridMap worldMap;
     private boolean simulatorActive = false;
-    private boolean pause = false;
+    private boolean paused = false;
     private boolean activateParticlefilter = false;
     private double[] particleFilterOptions = {0,0,0,0,0};
     
@@ -70,7 +69,6 @@ public final class Application {
         this.worldMapGraphic = new MapGraphic(worldMap, rc);
         this.slam = new MappingController(rc, worldMap);
         this.navigation = new NavigationController(rc, this, worldMap);
-        //this.slamNavigation = new SlamNavigationController(rc, this, worldMap);
         this.gui = new MainGUI(this);
         if (System.getProperty("os.name").startsWith("Windows")) {
             getPDFList();
@@ -156,6 +154,7 @@ public final class Application {
             for(Robot robot : rc.getRobotList()){
                 if(robot.getName().equals("Drone")){continue;} //Drone does not need PF
                 if(robot.getName().equals("SLAM")){continue;}
+                if(robot.getName().equals("NXT")){continue;}
                 Particlefilter p = new Particlefilter(robot, worldMap,particleFilterOptions);
                 robot.setParticleFilter(p);
             } 
@@ -265,7 +264,6 @@ public final class Application {
         rc.removeRobot(name);
         slam.removeRobot(name);
         navigation.removeRobot(name);
-        //slamNavigation.removeRobot("SLAM");
     }
 
     /**
@@ -388,7 +386,6 @@ public final class Application {
      */
     public void stopSystem() {
         navigation.pause();
-        //slamNavigation.pause();
         slam.pause();
         for(Robot robot : rc.getRobotList()){
             if(robot.getParticleFilter() != null){
