@@ -54,16 +54,6 @@ public class GridMap{
     private ArrayList<MapLocation> obstructed = new ArrayList();
     private ArrayList<MapLocation> frontiers = new ArrayList();
     
-    private ArrayList<Position> StateSpace = new ArrayList();
-    private ArrayList<int[]> actionHistory = new ArrayList();
-    private ArrayList<ArrayList<Position>> pointBuffers = new ArrayList<ArrayList<Position>>();
-    //private ArrayList<ArrayList<Line>> lineBuffers = new ArrayList<ArrayList<Line>>();
-    private List<Line> lineBuffer;
-    //private ArrayList<Line> lineRepository = new ArrayList<Line>();
-    private List<Line> lineRepository;
-    
-    public List<Line> lineArray;
-    
     /**
      * Constructor for the GridMap class
      * @param cellSize Specifies the size of cells in cm. Cells are quadratic
@@ -86,33 +76,7 @@ public class GridMap{
                     map.put(new MapLocation(i, j), new Cell());
                 }
             }
-            
-            for (int k = 0; k < 4; k++) {
-                pointBuffers.add(new ArrayList<Position>());
-                //lineBuffers.add(new ArrayList<Line>());
-            }
-            lineBuffer = Collections.synchronizedList(new ArrayList<Line>());
-            lineRepository = Collections.synchronizedList(new ArrayList<Line>());
-            lineArray = Collections.synchronizedList(new ArrayList<Line>());
         }
-    }
-    
-    public ArrayList<ArrayList<Position>> getPointBuffers() {
-        return pointBuffers;
-    }
-    
-    /*
-    public ArrayList<ArrayList<Line>> getLineBuffers() {
-        return lineBuffers;
-    }
-    */
-    
-    public List<Line> getLineBuffer() {
-        return lineBuffer;
-    }
-    
-    public List<Line> getLineRepository() {
-        return lineRepository;
     }
     
     public ArrayList<MapLocation> getObstructed() {

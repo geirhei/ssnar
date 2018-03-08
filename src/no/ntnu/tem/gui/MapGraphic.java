@@ -21,7 +21,6 @@ import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JPanel;
 import no.ntnu.et.general.Line;
-import no.ntnu.et.general.Vertex;
 import no.ntnu.et.map.Cell;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.et.map.MapLocation;
