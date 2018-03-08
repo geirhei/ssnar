@@ -6,7 +6,6 @@
  */
 package no.ntnu.et.mapping;
 
-import no.ntnu.et.general.Angle;
 import no.ntnu.et.general.Position;
 
 /**

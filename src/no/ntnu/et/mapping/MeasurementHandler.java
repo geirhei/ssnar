@@ -6,7 +6,6 @@
  */
 package no.ntnu.et.mapping;
 
-import java.util.ArrayList;
 import no.ntnu.et.general.Angle;
 import no.ntnu.et.general.Position;
 import no.ntnu.et.general.Pose;
@@ -20,7 +19,6 @@ import no.ntnu.tem.robot.Robot;
  * @author Eirik Thon
  */
 public class MeasurementHandler {
-
     final private Pose initialPose;
     private int sensorRange;
     private Measurement currentMeasurement;
@@ -58,11 +56,13 @@ public class MeasurementHandler {
             case "Drone":
             case "SLAM":
             //case "NXT":
+                // Handling of line coordinates for drone and NXT
                 sensors[0].setPosition(new Position(irData[0], irData[1]));
                 sensors[1].setPosition(new Position(irData[2], irData[3]));
                 break;
                 
             default:
+                // Measurement handling for default robot type
                 for (int i = 0; i < 4; i++) {
                     int measurementDistance = irData[i];
                     if (measurementDistance == 0 || measurementDistance > sensorRange) {
@@ -95,7 +95,7 @@ public class MeasurementHandler {
         return sensors;
     }
 
-    int[] getSensorAngel() {
+    int[] getSensorAngle() {
         return currentMeasurement.getIRHeading();
     }
 

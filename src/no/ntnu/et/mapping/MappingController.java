@@ -7,7 +7,6 @@
 package no.ntnu.et.mapping;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import org.ejml.simple.SimpleMatrix;
 import java.util.HashMap;
 import java.util.List;
@@ -15,12 +14,9 @@ import no.ntnu.tem.application.RobotController;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.et.map.MapLocation;
 import no.ntnu.et.general.Angle;
-import no.ntnu.et.general.Line;
 import no.ntnu.et.general.Pose;
 import no.ntnu.et.general.Position;
-import no.ntnu.et.navigation.NavigationRobot;
 import no.ntnu.tem.robot.Robot;
-import no.ntnu.et.mapping.TransformationAlg;
 
 /**
  * This class creates the map from the measurements. See (Thon 2016) for more
@@ -158,14 +154,11 @@ public class MappingController extends Thread {
 
                 Sensor[] sensors = measurementHandlers.get(name).getIRSensorData();
 				
-		//Drone Handling
-                //The drone uses the same structure that the sensor data uses,
-                //but they represents start and end points for lines.
-                //Must be handled separately
-                // Do the same for the NXT
+		// Drone and NXT robot handling, based on unit name.
+                // Uses the same structure that the sensor data uses,
+                // but they represents start and end points for lines.
                 //if (robot.getName().equals("Drone") || robot.getName().equals("NXT")) {
                 if (robot.getName().equals("Drone") || robot.getName().equals("SLAM")) {
-                    //Sensor[] sensors = measurementHandlers.get(name).getIRSensorData();
                     Position start = sensors[0].getPosition();
                     Position end = sensors[1].getPosition();
                     if (start.getXValue() != 0 && start.getYValue() != 0 && end.getXValue() != 0 && end.getYValue() != 0) {
@@ -206,7 +199,7 @@ public class MappingController extends Thread {
 
                     // The measurement is only added to the map if it is at a certain distance to the other robots
                     if (!tooClose) {
-                        int[] irheading = measurementHandlers.get(name).getSensorAngel();
+                        int[] irheading = measurementHandlers.get(name).getSensorAngle();
                         int[] irdata = measurementHandlers.get(name).getCurrentMeasurement().getIRdata();
 
                         map.resize(sensor.getPosition());
