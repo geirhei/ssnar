@@ -19,17 +19,11 @@ import no.ntnu.et.general.Position;
  */
 
 public class NavigationRobot {
-
     private ArrayList<Position> waypoints;
-
     private int[] priorityCommand;
-    
     private boolean hasPriority;
-
     private Position lastWaypoint;
-    
     private boolean inWallCollision;
-    
     private boolean inRobotCollision;
             
     public NavigationRobot(Position lastWaypoint) {
@@ -63,7 +57,7 @@ public class NavigationRobot {
     
 
     int[] getPriorityCommand() {
-        if(hasPriority == true){
+        if (hasPriority == true) {
             hasPriority = false;
             return priorityCommand;
         }

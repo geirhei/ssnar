@@ -18,14 +18,12 @@ public class MapNode {
     private double heuristicCost;
     private double traversedCost;
     private MapNode previous;
-    boolean gay;
 
     public MapNode(MapLocation location, double gCost, double hCost, MapNode previous) {
         this.location = location;
         this.traversedCost = gCost;
         this.heuristicCost = hCost;
         this.previous = previous;
-        
     }
 
     public MapLocation getLocation() {

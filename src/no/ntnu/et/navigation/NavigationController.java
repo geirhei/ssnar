@@ -28,24 +28,14 @@ import org.ejml.simple.SimpleMatrix;
  * @author Eirik Thon
  */
 public class NavigationController extends Thread {
-
     private CollisionManager collisionManager;
-
     private RobotTaskManager robotTaskManager;
-
     private RobotController robotController;
-
     private Application application;
-
     private HashMap<String, NavigationRobot> navigationRobots;
-
     private ArrayList<String> robotNames;
-
     private boolean paused;
-
     private boolean debug = true;
-    
-    
 
     public NavigationController(RobotController robotController, Application application, GridMap map) {
         this.robotController = robotController;
@@ -55,8 +45,6 @@ public class NavigationController extends Thread {
         collisionManager.setName("Collision management");
         robotNames = new ArrayList<String>();
         navigationRobots = new HashMap<String, NavigationRobot>();
-        
-        
     }
 
     public void addRobot(String robotName, int id) {
@@ -164,9 +152,11 @@ public class NavigationController extends Thread {
                 String name = robotNames.get(i);
                 Robot applicationRobot = robotController.getRobot(name);
                 
+                // Uncomment to ignore NXT robot
                 //if (name.equals("SLAM")){continue;}
                 //if (name.equals("NXT")){continue;}
                 
+                // Navigation is disabled if the robot is set to manual mode
                 if (applicationRobot.isInManualMode()) {continue;}
                 int id = applicationRobot.getId();
                 /*
@@ -208,9 +198,6 @@ public class NavigationController extends Thread {
                     }
                 }
                 */
-                
-                
-                
                 
                 if (navigationRobots.get(name).hasNewPriorityCommand()) {
                     int[] nextCommand = navigationRobots.get(name).getPriorityCommand();
