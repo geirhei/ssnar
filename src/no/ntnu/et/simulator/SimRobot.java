@@ -21,7 +21,7 @@ import static no.ntnu.et.general.Line.lineMerge;
 import no.ntnu.tem.communication.DroneUpdateMessage;
 import no.ntnu.tem.communication.HandshakeMessage;
 import no.ntnu.tem.communication.LineRepoMessage;
-import no.ntnu.tem.communication.LineUpdateMessage;
+import no.ntnu.tem.communication.LineMessage;
 import no.ntnu.tem.communication.Message;
 import no.ntnu.tem.communication.UpdateMessage;
 
@@ -549,11 +549,11 @@ public class SimRobot {
      * @param line
      * @return 
      */
-    static LineUpdateMessage generateLineUpdate(Line line) {
+    static LineMessage generateLineUpdate(Line line) {
 
         ByteBuffer msg = ByteBuffer.allocate(8);
         msg.order(ByteOrder.LITTLE_ENDIAN);
-        LineUpdateMessage um = null;
+        LineMessage um = null;
         try {
             // problem using short instead of byte?
             msg.putShort((short) line.p.getXValue());
@@ -564,7 +564,7 @@ public class SimRobot {
             msg.rewind();
             byte[] data = new byte[8];
             msg.get(data);
-            um = new LineUpdateMessage(data);
+            um = new LineMessage(data);
         } catch (Exception e) {
         }
         return um;

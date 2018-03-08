@@ -7,7 +7,6 @@
 package no.ntnu.tem.communication;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
-import no.ntnu.et.general.Line;
 import no.ntnu.tem.application.RobotController;
 import no.ntnu.tem.robot.Robot;
 
@@ -61,7 +60,6 @@ public class InboxReader extends Thread {
                             int[] sensorOffset = handshake.getSensorOffsets();
                             int[] irHeading = handshake.getSensorHeadings();
                             doHandshake(address, name, width, length, axleOffset, messageDeadline, towerOffset, sensorOffset, irHeading);
-
                             break;
                         case Message.UPDATE: {
                             UpdateMessage update = new UpdateMessage(message.getData());
@@ -82,7 +80,7 @@ public class InboxReader extends Thread {
                         }
                         
                         case Message.LINE: {
-                            LineUpdateMessage lineUpdate = new LineUpdateMessage(message.getData());
+                            LineMessage lineUpdate = new LineMessage(message.getData());
                             //System.out.println("Line received in inbox reader.");
                             int orientation = lineUpdate.getHeading();
                             int[] position = lineUpdate.getPosition();

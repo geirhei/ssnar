@@ -8,18 +8,16 @@ package no.ntnu.tem.communication;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import no.ntnu.et.general.Line;
-import no.ntnu.et.general.Position;
 
 /**
  * A received update message has the follow fields, with byte length in parentheses:
- * StartX (2) | StartY (2) | StopX (2) | StopY (2) 
+ * x (2) | y (2) | heading (2) | StartX (2) | StartY (2) | StopX (2) | StopY (2) 
  * 
- * Units are cm for lengths
+ * Units are cm for lengths and degrees for heading
  * 
  * @author Geir Eikeland
  */
-public class LineUpdateMessage {
+public class LineMessage {
     
     private byte[] data;
     private int x;
@@ -30,7 +28,7 @@ public class LineUpdateMessage {
     private int stopY;
     private int stopX;
     
-    public LineUpdateMessage(byte[] data) throws Message.MessageCorruptException, Message.ValueCorruptException {
+    public LineMessage(byte[] data) throws Message.MessageCorruptException, Message.ValueCorruptException {
         ByteBuffer buffer = ByteBuffer.wrap(data);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         this.data = data;
