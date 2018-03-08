@@ -1,8 +1,9 @@
-/*
+/**
  * This code is written as p part of p Master Thesis
  * the spring of 2016.
  *
  * Thor Eivind Andersen and Mats Rødseth (Master 2016 @ NTNU)
+ * Modified by Geir Eikeland (Master 2018 @ NTNU)
  */
 package no.ntnu.tem.gui;
 
@@ -16,15 +17,12 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JPanel;
 import no.ntnu.et.general.Line;
 import no.ntnu.et.map.Cell;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.et.map.MapLocation;
-import no.ntnu.et.simulator.SimRobot;
 import no.ntnu.tem.application.RobotController;
 import no.ntnu.tem.robot.Robot;
 
@@ -133,8 +131,8 @@ public class MapGraphic extends JPanel {
             if (!cell.isPreviouslyObserved()) {
                 g2D.setPaint(Color.gray);
             } else if (cell.isOccupied()) {
-                //g2D.setPaint(Color.black);
-                g2D.setPaint(Color.orange);
+                g2D.setPaint(Color.black);
+                //g2D.setPaint(Color.orange);
             } else if (cell.isRestricted()) {
                 g2D.setPaint(Color.lightGray);
             } /*else if (cell.isWeaklyRestricted()) {
@@ -221,11 +219,11 @@ public class MapGraphic extends JPanel {
             g2D.setFont(f);
             g2D.translate(getWidth() - 1, 0);
             g2D.scale(-1, 1);
-            // Robot name label disabled
-            //g2D.drawString(robot.getName(), getWidth() - posx, posy - 20 * scrollSize.intValue());
+            // Robot name label
+            g2D.drawString(robot.getName(), getWidth() - posx, posy - 20 * scrollSize.intValue());
             g2D.setPaint(robotColor);
-            // Target cross disabled
-            //g2D.drawString("X", getWidth() - destx, desty);
+            // Target cross
+            g2D.drawString("X", getWidth() - destx, desty);
             g2D.setTransform(temp);
         }
     }
