@@ -1,8 +1,8 @@
 /*
  * This code is written as a part of a Master Thesis
- * the fall of 2017.
+ * the spring of 2018.
  *
- * Geir Eikeland (Master 2017 @ NTNU)
+ * Geir Eikeland (Master 2018 @ NTNU)
  */
 package no.ntnu.et.simulator;
 
@@ -11,7 +11,7 @@ import no.ntnu.et.general.Pose;
 
 /**
  *
- * @author geirhei
+ * @author Geir Eikeland
  */
 public class SlamRobot extends SimRobot {
     

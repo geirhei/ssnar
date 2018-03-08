@@ -1,8 +1,9 @@
-/*
+/**
  * This code is written as a part of a Master Thesis
  * the spring of 2016.
  *
  * Eirik Thon(Master 2016 @ NTNU)
+ * Modified by Geir Eikeland (Master 2018 @ NTNU)
  */
 package no.ntnu.et.simulator;
 
@@ -32,36 +33,22 @@ import no.ntnu.tem.communication.UpdateMessage;
  * @author Eirik Thon
  */
 public class SimRobot {
-
-    private SimWorld world;
-    public Pose pose;
-    public Pose estimatedPose;
-    final private Pose initialPose;
-    private String name;
-    private int id;
-    public double measuredDistance;
-    public double measuredRotation;
-    public double targetDistance;
-    public double targetRotation;
-    public int rotationDirection;
-    public int movementDirection;
-    public boolean rotationFinished;
-    public boolean translationFinished;
-    private Angle towerAngle;
+    private final SimWorld world;
+    private final Pose initialPose;
+    private final String name;
+    private final int id;
+    private final Angle towerAngle;
+    private final double towerSpeed = 0.25; // = 5 deg resolution
+    //final private double towerSpeed = 0.05; // = 1 deg resolution
+    private final Object movementLock = new Object();
+    private final double maxVisualLength = 80;
+    private final double minVisualLength = 10;
+    private final int address;
+    private Position targetPosition;
+    
     double turnSpeed;
     double moveSpeed;
-    final private double towerSpeed = 0.25; // = 5 deg resolution
-    //final private double towerSpeed = 0.05; // = 1 deg resolution
     int towerDirection;
-    final private Object movementLock = new Object();
-    final private double maxVisualLength = 80;
-    final private double minVisualLength = 10;
-    public double[] lastIrMeasurement;
-    private Position targetPosition;
-    private int diameter = 10;
-    private final int address;
-    private final int maxLineOfSight = 40;
-    
     boolean isLost = true;
     boolean isAligned = false;
     Position[][] pointBuffers;
@@ -74,22 +61,34 @@ public class SimRobot {
     Position[] observationHistory;
     Position[] actionHistory;
     
-    final double stepSize = 15.0;
+    public Pose pose;
+    public Pose estimatedPose;
+    public double measuredDistance;
+    public double measuredRotation;
+    public double targetDistance;
+    public double targetRotation;
+    public int rotationDirection;
+    public int movementDirection;
+    public boolean rotationFinished;
+    public boolean translationFinished;
+    public double[] lastIrMeasurement;
 
     /**
      * Constructor for Robot.
      *
+     * @param world
      * @param initialPose
      * @param name
      * @param id
+     * @param address
      */
     public SimRobot(SimWorld world, Pose initialPose, String name, int id, int address) {
         this.address = address;
         this.world = world;
-        towerDirection = 1;
-        towerAngle = new Angle(0);
         this.name = name;
         this.id = id;
+        towerDirection = 1;
+        towerAngle = new Angle(0);
         pose = initialPose;
         this.initialPose = Pose.copy(initialPose);
         estimatedPose = new Pose(0, 0, 0);
@@ -135,6 +134,9 @@ public class SimRobot {
         }
     }
     
+    /**
+     * Add new measurements to point buffers.
+     */
     void updatePointBuffers() {
         Angle theta = sum(towerAngle, pose.getHeading());
         for (int i = 0; i < 4; i++) {
@@ -152,6 +154,9 @@ public class SimRobot {
         }
     }
     
+    /**
+     * Run the create lines procedure on the point buffers.
+     */
     void createLines() {
         for (int i = 0; i < 4; i++) {
             lineBufferLengths[i] = lineCreate(pointBuffers[i], lineBuffers[i], pointBufferLengths[i]);    
@@ -161,6 +166,9 @@ public class SimRobot {
         }
     }
     
+    /**
+     * Run the merge lines procedure on the line buffers
+     */
     void mergeLines() {
         for (int i = 0; i < 4; i++) {
             lineRepoLength = lineMerge(lineBuffers[i], lineRepo, lineBufferLengths[i], lineRepoLength, updated);
@@ -170,6 +178,11 @@ public class SimRobot {
         }
     }
     
+    /**
+     * Send generated line segments to server.
+     * 
+     * @param inbox 
+     */
     void sendLineUpdates(ConcurrentLinkedQueue<Message> inbox) {
         for (int i = 0; i < lineRepoLength; i++) {
             if (updated[i]) {
@@ -502,7 +515,14 @@ public class SimRobot {
         return um;
     }
     
-    
+    /**
+     * Generates an update in the proper format for sending line repo data
+     * to the server.
+     * 
+     * @param line
+     * @param index
+     * @return 
+     */
     static LineRepoMessage generateLineRepoUpdate(Line line, int index) {
         ByteBuffer msg = ByteBuffer.allocate(10); // 8 for coordinates + 2 for index
         msg.order(ByteOrder.LITTLE_ENDIAN);
@@ -522,7 +542,13 @@ public class SimRobot {
         return rm;
     }
     
-    
+    /**
+     * Generates an update in the proper format for sending line buffer data
+     * to the server.
+     * 
+     * @param line
+     * @return 
+     */
     static LineUpdateMessage generateLineUpdate(Line line) {
 
         ByteBuffer msg = ByteBuffer.allocate(8);

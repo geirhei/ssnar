@@ -1,8 +1,9 @@
-/*
+/**
  * This code is written as p part of p Master Thesis
  * the spring of 2016.
  *
  * Eirik Thon(Master 2016 @ NTNU)
+ * Modified by Geir Eikeland (Master 2018 @ NTNU)
  */
 package no.ntnu.et.simulator;
 
@@ -33,8 +34,6 @@ public class Simulator {
     HashMap<String, RobotHandler> robotHandlers;
     private double simulationSpeed;
     private ConcurrentLinkedQueue<Message> inbox;
-    private int mode;
-    private HashMap<Integer, String> idNameMapping;
     private GridMap worldMap;
 
     /**
@@ -42,8 +41,8 @@ public class Simulator {
  robots given by the length of "robotNames" and map from the file
  specified by "mapPath"
      *
-     * @param robotNames String[]
-     * @param mapPath String
+     * @param inbox
+     * @param worldMap
      */
     public Simulator(ConcurrentLinkedQueue<Message> inbox, GridMap worldMap) {
         simulationSpeed = 1;
@@ -58,7 +57,6 @@ public class Simulator {
         robotHandlers = new HashMap<String, RobotHandler>();
         estimateNoiseEnabled = true;
         sensorNoiseEnabled = true;
-        this.mode = mode;
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -249,7 +247,6 @@ public class Simulator {
             myRobot.rotationFinished = false;
             myRobot.translationFinished = false;
             myRobot.rotationDirection = -1;
-            
         }
 
         /**

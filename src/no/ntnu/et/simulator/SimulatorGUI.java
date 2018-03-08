@@ -25,18 +25,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JViewport;
 import javax.swing.Timer;
-import no.ntnu.et.general.Pose;
 /**
  * This class is the main GUI frame of the simulator and connects all of the
  * GUI
  * @author Eirik Thon
  */
 public class SimulatorGUI extends JFrame {
-    private Simulator simulator;
-    private InitialPoseDialog initDiag;
-    private SimWorld world;
-    private JDialog mapDiag;
-    private GraphicContent content;
+    private final Simulator simulator;
+    private final InitialPoseDialog initDiag;
+    private final SimWorld world;
+    private final JDialog mapDiag;
+    private final GraphicContent content;
     
     /**
      * Constructor.
