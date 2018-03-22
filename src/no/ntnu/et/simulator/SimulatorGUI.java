@@ -25,18 +25,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JViewport;
 import javax.swing.Timer;
-import no.ntnu.et.general.Pose;
 /**
  * This class is the main GUI frame of the simulator and connects all of the
  * GUI
  * @author Eirik Thon
  */
 public class SimulatorGUI extends JFrame {
-    private Simulator simulator;
-    private InitialPoseDialog initDiag;
-    private SimWorld world;
-    private JDialog mapDiag;
-    private GraphicContent content;
+    private final Simulator simulator;
+    private final InitialPoseDialog initDiag;
+    private final SimWorld world;
+    private final JDialog mapDiag;
+    private final GraphicContent content;
     
     /**
      * Constructor.
@@ -257,6 +256,7 @@ public class SimulatorGUI extends JFrame {
 
         jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        jCheckBox7.setSelected(true);
         jCheckBox7.setText("No estimate error");
         jCheckBox7.setToolTipText("Remove estimate error. (This only stops the error from accumulating further)");
         jCheckBox7.addActionListener(new java.awt.event.ActionListener() {
@@ -265,6 +265,7 @@ public class SimulatorGUI extends JFrame {
             }
         });
 
+        jCheckBox8.setSelected(true);
         jCheckBox8.setText("No measurement error");
         jCheckBox8.setToolTipText("Remove measurement-error");
         jCheckBox8.addActionListener(new java.awt.event.ActionListener() {

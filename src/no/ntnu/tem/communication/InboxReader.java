@@ -60,10 +60,8 @@ public class InboxReader extends Thread {
                             int[] sensorOffset = handshake.getSensorOffsets();
                             int[] irHeading = handshake.getSensorHeadings();
                             doHandshake(address, name, width, length, axleOffset, messageDeadline, towerOffset, sensorOffset, irHeading);
-
                             break;
-                        case Message.UPDATE:
-                           
+                        case Message.UPDATE: {
                             UpdateMessage update = new UpdateMessage(message.getData());
                             int orientation = update.getHeading();
                             int[] position = update.getPosition();
@@ -71,13 +69,36 @@ public class InboxReader extends Thread {
                             int[] irData = update.getSensorValues();
                             doUpdate(address, orientation, position, towerAngle, irData);
                             break;
-                        case Message.DRONE_UPDATE:
+                        }
+                        case Message.DRONE_UPDATE: {
                             DroneUpdateMessage droneUpdate = new DroneUpdateMessage(message.getData());
                             int droneOrientation = droneUpdate.getHeading();
                             int[] dronePosition = droneUpdate.getPosition();
                             int[] line = droneUpdate.getLine();
                             doDroneUpdate(address, droneOrientation, dronePosition, line);
                             break;
+                        }
+                        
+                        case Message.LINE: {
+                            LineMessage lineUpdate = new LineMessage(message.getData());
+                            //System.out.println("Line received in inbox reader.");
+                            int orientation = lineUpdate.getHeading();
+                            int[] position = lineUpdate.getPosition();
+                            int[] line = lineUpdate.getLine();
+                            doLineUpdate(address, orientation, position, line);
+                            if (debug) {
+                                System.out.println("Line: " + line[0] + ", " + line[1] + ", " + line[2] + ", " + line[3]);
+                            }
+                            break;
+                        }
+                        /*
+                        case Message.REPO_UPDATE:
+                            LineRepoMessage repoMessage = new LineRepoMessage(message.getData());
+                            Line currentLine = repoMessage.getLine();
+                            int repoIndex = repoMessage.getIndex();
+                            doLineUpdate(address, currentLine, repoIndex);
+                            break;
+                        */
                         case Message.IDLE:
                             doIdleUpdate(address);
                             break;
@@ -163,7 +184,17 @@ public class InboxReader extends Thread {
         rc.addDroneMeasurment(address, orientation, position, line);
     }
     
-        private void doBatteryUpdate(int address, int level) {
+    /**
+     * Method for updating a robot with a new line.
+     * 
+     * @param address
+     * @param line 
+     */
+    private void doLineUpdate(int address, int orientation, int[] position, int[] line) {
+        rc.addLineMeasurement(address, orientation, position, line);
+    }
+    
+    private void doBatteryUpdate(int address, int level) {
         rc.updateBattery(address, level);
     }
 

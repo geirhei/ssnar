@@ -1,8 +1,9 @@
-/*
- * This code is written as a part of a Master Thesis
+/**
+ * This code is written as p part of p Master Thesis
  * the spring of 2016.
  *
  * Thor Eivind Andersen and Mats Rødseth (Master 2016 @ NTNU)
+ * Modified by Geir Eikeland (Master 2018 @ NTNU)
  */
 package no.ntnu.tem.gui;
 
@@ -16,16 +17,12 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JPanel;
 import no.ntnu.et.general.Line;
-import no.ntnu.et.general.Vertex;
 import no.ntnu.et.map.Cell;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.et.map.MapLocation;
-import no.ntnu.et.simulator.SimRobot;
 import no.ntnu.tem.application.RobotController;
 import no.ntnu.tem.robot.Robot;
 
@@ -105,7 +102,16 @@ public class MapGraphic extends JPanel {
         numberOfColumns = gridmap.getNumberOfColumns();
         cellSize = gridmap.getCellSize();
         paintMap(g2D);
-        paintLines(g2D);
+        /*
+        ArrayList<Line> lines = new ArrayList();
+        try {
+             lines = rc.getRobot("SLAM").getLines();
+            //System.out.println("Lines printed!");
+        } catch (NullPointerException e) {
+            
+        }
+        */
+        //paintLines(g2D);
         paintRobots(g2D);
         g2D.setTransform(initial);
 
@@ -126,6 +132,7 @@ public class MapGraphic extends JPanel {
                 g2D.setPaint(Color.gray);
             } else if (cell.isOccupied()) {
                 g2D.setPaint(Color.black);
+                //g2D.setPaint(Color.orange);
             } else if (cell.isRestricted()) {
                 g2D.setPaint(Color.lightGray);
             } /*else if (cell.isWeaklyRestricted()) {
@@ -152,17 +159,38 @@ public class MapGraphic extends JPanel {
      * @param g2D 
      */
     private void paintLines(Graphics2D g2D) {
-        g2D.setPaint(Color.black);
-        List<Line> lines = gridmap.getLineRepository();
-        //ArrayList<ArrayList<Line>> lineBuffers = gridmap.getLineBuffers();
-        synchronized (lines) {
-            ListIterator<Line> iter = lines.listIterator();
-            while (iter.hasNext()) {
-                Line line = iter.next();
-                g2D.drawLine((int) line.getA().getXValue(), (int) line.getA().getYValue(), (int) line.getB().getXValue(), (int) line.getB().getYValue());
+        ArrayList<Line> lines;
+        try {
+             lines = rc.getRobot("NXT").getLines();
+             if (lines.isEmpty()) {
+                //System.out.println("lines == null!");
+                return;
             }
+        } catch (NullPointerException e) {
+            //System.out.println(e);
+            return;
         }
+        g2D.setPaint(Color.ORANGE);
+        g2D.setStroke(new BasicStroke(1));
+        //System.out.println("lines length: " + lines.size());
+        for (int i = 0; i < lines.size(); i++) {
+            //lines.get(i).print();
+            int pLX = (int) Math.round(lines.get(i).p.getXValue());
+            int pLY = (int) Math.round(lines.get(i).p.getYValue());
+            int pRX = (int) Math.round(lines.get(i).q.getXValue());
+            int pRY = (int) Math.round(lines.get(i).q.getYValue());
+            int posx = (pLX - gridmap.getLeftColumn() * cellSize) * scrollSize.intValue();
+            int posy = (pLY - gridmap.getBottomRow() * cellSize) * scrollSize.intValue();
+            int destx = (pRX - gridmap.getLeftColumn() * cellSize) * scrollSize.intValue();
+            int desty = (pRY - gridmap.getBottomRow() * cellSize) * scrollSize.intValue();
+            //g2D.drawLine(pLX, pLY, pRX, pRY);
+            g2D.drawLine(posx, posy, destx, desty);
+            //System.out.println("Line painted!");
+        }
+        //rc.getRobot("SLAM").clearLines();
     }
+    
+    
     
     /**
      * Paints the robots
@@ -191,8 +219,10 @@ public class MapGraphic extends JPanel {
             g2D.setFont(f);
             g2D.translate(getWidth() - 1, 0);
             g2D.scale(-1, 1);
+            // Robot name label
             g2D.drawString(robot.getName(), getWidth() - posx, posy - 20 * scrollSize.intValue());
             g2D.setPaint(robotColor);
+            // Target cross
             g2D.drawString("X", getWidth() - destx, desty);
             g2D.setTransform(temp);
         }

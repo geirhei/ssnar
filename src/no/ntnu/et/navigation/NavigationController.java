@@ -16,13 +16,10 @@ package no.ntnu.et.navigation;
  */
 import java.util.ArrayList;
 import java.util.HashMap;
-import static no.ntnu.et.general.Navigation.getShortestDistanceAngle;
 import no.ntnu.et.general.Position;
-import static no.ntnu.et.general.Utilities.getMeasurementHeadings;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.tem.application.Application;
 import no.ntnu.tem.application.RobotController;
-import no.ntnu.tem.robot.Measurement;
 import no.ntnu.tem.robot.Robot;
 import org.ejml.simple.SimpleMatrix;
 
@@ -31,24 +28,14 @@ import org.ejml.simple.SimpleMatrix;
  * @author Eirik Thon
  */
 public class NavigationController extends Thread {
-
     private CollisionManager collisionManager;
-
     private RobotTaskManager robotTaskManager;
-
     private RobotController robotController;
-
     private Application application;
-
     private HashMap<String, NavigationRobot> navigationRobots;
-
     private ArrayList<String> robotNames;
-
     private boolean paused;
-
-    private boolean debug = false;
-    
-    
+    private boolean debug = true;
 
     public NavigationController(RobotController robotController, Application application, GridMap map) {
         this.robotController = robotController;
@@ -58,8 +45,6 @@ public class NavigationController extends Thread {
         collisionManager.setName("Collision management");
         robotNames = new ArrayList<String>();
         navigationRobots = new HashMap<String, NavigationRobot>();
-        
-        
     }
 
     public void addRobot(String robotName, int id) {
@@ -166,7 +151,12 @@ public class NavigationController extends Thread {
             for (int i = 0; i < robotNames.size(); i++) {
                 String name = robotNames.get(i);
                 Robot applicationRobot = robotController.getRobot(name);
-                if (name.equals("SLAM")){continue;}
+                
+                // Uncomment to ignore NXT robot
+                //if (name.equals("SLAM")){continue;}
+                //if (name.equals("NXT")){continue;}
+                
+                // Navigation is disabled if the robot is set to manual mode
                 if (applicationRobot.isInManualMode()) {continue;}
                 int id = applicationRobot.getId();
                 /*
@@ -208,9 +198,6 @@ public class NavigationController extends Thread {
                     }
                 }
                 */
-                
-                
-                
                 
                 if (navigationRobots.get(name).hasNewPriorityCommand()) {
                     int[] nextCommand = navigationRobots.get(name).getPriorityCommand();

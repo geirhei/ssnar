@@ -18,7 +18,6 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.et.navigation.NavigationController;
@@ -26,10 +25,8 @@ import no.ntnu.tem.communication.Communication;
 import no.ntnu.tem.gui.MainGUI;
 import no.ntnu.et.simulator.Simulator;
 import no.ntnu.et.mapping.MappingController;
-import no.ntnu.et.navigation.SlamNavigationController;
 import no.ntnu.tem.robot.Robot;
 import no.ntnu.hkm.particlefilter.Particlefilter;
-import no.ntnu.hkm.particlefilter.MapMerger;
 
 /**
  * This class is the main class of the program. It connects the packages in the
@@ -46,12 +43,11 @@ public final class Application {
     private final MainGUI gui;
     private Simulator sim;
     private final NavigationController navigation;
-    //private final SlamNavigationController slamNavigation;
     private final MappingController slam;
     private final MapGraphic worldMapGraphic;
     private final GridMap worldMap;
     private boolean simulatorActive = false;
-    private boolean pause = false;
+    private boolean paused = false;
     private boolean activateParticlefilter = false;
     private double[] particleFilterOptions = {0,0,0,0,0};
     
@@ -66,12 +62,13 @@ public final class Application {
         this.MAPLOCATION = new File("maps\\big_map.txt").getAbsolutePath();
         this.rc = new RobotController();
         this.com = new Communication(this, rc);
-        this.worldMap = new GridMap(2, 50, 50);
-        //this.worldMap = new GridMap(1, 50, 50);
+        /* Testing begin */
+        //this.worldMap = new GridMap(2, 50, 50);
+        this.worldMap = new GridMap(1, 50, 50);
+        /* Testing end */
         this.worldMapGraphic = new MapGraphic(worldMap, rc);
         this.slam = new MappingController(rc, worldMap);
         this.navigation = new NavigationController(rc, this, worldMap);
-        //this.slamNavigation = new SlamNavigationController(rc, this, worldMap);
         this.gui = new MainGUI(this);
         if (System.getProperty("os.name").startsWith("Windows")) {
             getPDFList();
@@ -157,6 +154,7 @@ public final class Application {
             for(Robot robot : rc.getRobotList()){
                 if(robot.getName().equals("Drone")){continue;} //Drone does not need PF
                 if(robot.getName().equals("SLAM")){continue;}
+                if(robot.getName().equals("NXT")){continue;}
                 Particlefilter p = new Particlefilter(robot, worldMap,particleFilterOptions);
                 robot.setParticleFilter(p);
             } 
@@ -230,7 +228,7 @@ public final class Application {
      */
     public void setSimulatorActive(boolean active) {
         if (active) {
-            sim = new Simulator(com.getInbox());
+            sim = new Simulator(com.getInbox(), worldMap);
             com.startInboxReader();
             sim.openGui();
 
@@ -266,7 +264,6 @@ public final class Application {
         rc.removeRobot(name);
         slam.removeRobot(name);
         navigation.removeRobot(name);
-        //slamNavigation.removeRobot("SLAM");
     }
 
     /**
@@ -389,7 +386,6 @@ public final class Application {
      */
     public void stopSystem() {
         navigation.pause();
-        //slamNavigation.pause();
         slam.pause();
         for(Robot robot : rc.getRobotList()){
             if(robot.getParticleFilter() != null){

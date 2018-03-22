@@ -6,7 +6,6 @@
  */
 package no.ntnu.et.mapping;
 
-import java.util.ArrayList;
 import no.ntnu.et.general.Angle;
 import no.ntnu.et.general.Position;
 import no.ntnu.et.general.Pose;
@@ -20,7 +19,6 @@ import no.ntnu.tem.robot.Robot;
  * @author Eirik Thon
  */
 public class MeasurementHandler {
-
     final private Pose initialPose;
     private int sensorRange;
     private Measurement currentMeasurement;
@@ -51,29 +49,37 @@ public class MeasurementHandler {
         // Update sensor data
         int[] irData = currentMeasurement.getIRdata();
         int[] irheading = currentMeasurement.getIRHeading();
-
-        //Drone data handling
-        if (robot.getName().equals("Drone")) {
-            sensors[0].setPosition(new Position(irData[0], irData[1]));
-            sensors[1].setPosition(new Position(irData[2], irData[3]));
-            return true;
+        
+        String unitName = robot.getName();
+        switch (unitName)
+        {
+            case "Drone":
+            case "SLAM":
+            //case "NXT":
+                // Handling of line coordinates for drone and NXT
+                sensors[0].setPosition(new Position(irData[0], irData[1]));
+                sensors[1].setPosition(new Position(irData[2], irData[3]));
+                break;
+                
+            default:
+                // Measurement handling for default robot type
+                for (int i = 0; i < 4; i++) {
+                    int measurementDistance = irData[i];
+                    if (measurementDistance == 0 || measurementDistance > sensorRange) {
+                        sensors[i].setMeasurement(false);
+                        measurementDistance = sensorRange;
+                    } else {
+                        sensors[i].setMeasurement(true);
+                    }
+                    Angle towerAngle = new Angle((double) irheading[i]);
+                    Angle sensorAngle = Angle.sum(towerAngle, robotPose.getHeading());
+                    double xOffset = measurementDistance * Math.cos(Math.toRadians(sensorAngle.getValue()));
+                    double yOffset = measurementDistance * Math.sin(Math.toRadians(sensorAngle.getValue()));
+                    Position measurementPosition = Position.sum(robotPose.getPosition(), new Position(xOffset, yOffset));
+                    sensors[i].setPosition(measurementPosition);
+                }
         }
-
-        for (int i = 0; i < 4; i++) {
-            int measurementDistance = irData[i];
-            if (measurementDistance == 0 || measurementDistance > sensorRange) {
-                sensors[i].setMeasurement(false);
-                measurementDistance = sensorRange;
-            } else {
-                sensors[i].setMeasurement(true);
-            }
-            Angle towerAngle = new Angle((double) irheading[i]);
-            Angle sensorAngle = Angle.sum(towerAngle, robotPose.getHeading());
-            double xOffset = measurementDistance * Math.cos(Math.toRadians(sensorAngle.getValue()));
-            double yOffset = measurementDistance * Math.sin(Math.toRadians(sensorAngle.getValue()));
-            Position measurementPosition = Position.sum(robotPose.getPosition(), new Position(xOffset, yOffset));
-            sensors[i].setPosition(measurementPosition);
-        }
+        
         return true;
     }
 
@@ -89,7 +95,7 @@ public class MeasurementHandler {
         return sensors;
     }
 
-    int[] getSensorAngel() {
+    int[] getSensorAngle() {
         return currentMeasurement.getIRHeading();
     }
 

@@ -6,6 +6,8 @@
  */
 package no.ntnu.et.general;
 import java.awt.Graphics2D;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * This class represents a position using an x-value, an a y-value
@@ -13,9 +15,7 @@ import java.awt.Graphics2D;
  * @author Eirik Thon
  */
 public class Position {
-    
     private double xValue;
-    
     private double yValue;
     
     /**
@@ -74,7 +74,12 @@ public class Position {
      * prints the x-, y-values of the Position object
      */
     public void print() {
-        System.out.println("x-position " + xValue + ", y-position " + yValue);
+        System.out.print("(");
+        System.out.printf("%1.2f", xValue);
+        System.out.print(",");
+        System.out.printf("%1.2f", yValue);
+        System.out.print(")");
+        //System.out.println();
     }
     
     /**
@@ -82,6 +87,7 @@ public class Position {
      * scale parameter can be used o mace the circle bigger and smaller
      * @param g2D Graphics2D
      * @param diameter double
+     * @param scale
      */
     public void drawCircle(Graphics2D g2D, int diameter, double scale) {
         g2D.drawOval((int)((Math.round(xValue)-diameter/2)*scale),(int)((Math.round(yValue)-diameter/2)*scale), (int)((double)diameter*scale), (int)((double)diameter*scale));
@@ -92,6 +98,7 @@ public class Position {
      * determines the distance from the center of the cross to the end points
      * @param g2D Graphics2D
      * @param size integer
+     * @param scale
      */
     public void drawCross(Graphics2D g2D, int size, double scale) {
         g2D.drawLine((int)(Math.round(xValue-size)*scale), (int)(Math.round(yValue-size)*scale),
@@ -153,5 +160,42 @@ public class Position {
         double yTemp = yValue;
         xValue = Math.cos(rad)*xTemp+-Math.sin(rad)*yTemp;
         yValue = Math.sin(rad)*xTemp+Math.cos(rad)*yTemp;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (int) (Double.doubleToLongBits(this.xValue) ^ (Double.doubleToLongBits(this.xValue) >>> 32));
+        hash = 17 * hash + (int) (Double.doubleToLongBits(this.yValue) ^ (Double.doubleToLongBits(this.yValue) >>> 32));
+        return hash;
+    }
+    
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Position other = (Position) obj;
+        if (Double.doubleToLongBits(round(this.xValue, 1)) != Double.doubleToLongBits(round(other.xValue, 1))) {
+            return false;
+        }
+        if (Double.doubleToLongBits(round(this.yValue, 1)) != Double.doubleToLongBits(round(other.yValue, 1))) {
+            return false;
+        }
+        return true;
     }
 }

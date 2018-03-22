@@ -6,15 +6,10 @@
  */
 package no.ntnu.et.general;
 
-import no.ntnu.et.general.Angle;
-import no.ntnu.et.general.Position;
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import no.ntnu.et.general.Line;
 
 /**
  * This class contains methods useful to other classes.
@@ -31,6 +26,20 @@ public class Utilities {
      */
     public static Position polar2cart(Angle theta, double r){
         double thetaRad = Math.toRadians(theta.getValue());
+        double x = r*Math.cos(thetaRad);
+        double y = r*Math.sin(thetaRad);
+        Position cart = new Position(x,y);
+        return cart;
+    }
+    
+    /**
+     * Create s new Position object with values given in Cartesian coordinates.
+     * @param theta angle represented by an integer
+     * @param r
+     * @return 
+     */
+    public static Position polar2cart(int theta, double r) {
+        double thetaRad = Math.toRadians(theta);
         double x = r*Math.cos(thetaRad);
         double y = r*Math.sin(thetaRad);
         Position cart = new Position(x,y);
@@ -70,7 +79,6 @@ public class Utilities {
      * Selects a color within a predefined set of colors. The
      * parameter "i" is used to select a color from the set. Modulo is used if
      * i is larger than the size of the set
-     * @param g Graphics2D
      * @param i integer
      * @return Color
      */
@@ -170,7 +178,6 @@ public class Utilities {
     /**
      * Calculates the global headings of the IR-tower
      * 
-     * @param robotHeading the heading of the robot
      * @param towerHeadings array with the angles of each sensor tower, relative
      * to the robot heading.
      * @return int[4] newHeadings
@@ -213,18 +220,31 @@ public class Utilities {
         return null;
     }
     
-    /*
-    public static void createLines(ArrayList<Position> pointBuffer, ArrayList<Line> lineBuffer) {
-        removeDuplicates(pointBuffer);
-        Arrays.sort()
+    /**
+     * Calculate the dot product of two vectors.
+     * 
+     * @param u
+     * @param v
+     * @return 
+     */
+    public static double dot(double[] u, double[] v) {
+        return u[0] * v[0] + u[1] * v[1];
     }
-*/    
-
-    private static void removeDuplicates(ArrayList<Position> buffer) {
-        //List<Position> temp = new ArrayList<Position>();
-        Set<Position> temp = new HashSet<>();
-        temp.addAll(buffer);
-        buffer.clear();
-        buffer.addAll(temp);
+    
+    /**
+     * Calculates the norm of a vector.
+     * 
+     * @param u
+     * @return 
+     */
+    public static double norm(double[] u) {
+        return Math.sqrt(dot(u, u));
     }
+    
+    public static Position getProjectedPoint(Position p, double a, double b) {
+        double x = (p.getXValue() + a * p.getYValue() - a * b) / (1 + Math.pow(a, 2));
+        double y = (a * p.getXValue() + Math.pow(a, 2) * p.getYValue() + b) / (1 + Math.pow(a, 2));
+        return new Position(x, y);
+    }
+    
 }

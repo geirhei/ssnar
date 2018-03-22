@@ -25,19 +25,12 @@ import no.ntnu.tem.application.RobotController;
  * @author Eirik Thon
  */
 public class CollisionManager extends Thread {
-
     private HashMap<String, NavigationRobot> robots;
-    
     private ConcurrentHashMap<String, CollisionHandler> handlers;
-
     private GridMap map;
-    
     private boolean paused;
-    
     private ArrayList<String> robotNames;
-    
     private RobotController robotControl;
-    
     private boolean debug = true;
     
     public CollisionManager(GridMap map, RobotController robotController) {
@@ -99,6 +92,10 @@ public class CollisionManager extends Thread {
             }
             for (int i = 0; i < robotNames.size(); i++){
                 String robot1Name = robotNames.get(i);
+                
+                // Uncomment to ignore the NXT robot
+                //if (robot1Name.equals("NXT")) { continue; }
+                
                 if(handlers.containsKey(robot1Name)){
                     continue;
                 }
@@ -153,13 +150,9 @@ public class CollisionManager extends Thread {
     
     
     private class CollisionHandler implements Runnable{
-     
         private boolean paused;
-        
         private String name;
-        
         private String blockingRobot;
-        
         private String type;
 
         public CollisionHandler() {
@@ -198,13 +191,11 @@ public class CollisionManager extends Thread {
         
         @Override
         public void run() {
-            if(type == "WallCollision"){
+            if (type.equals("WallCollision")) {
                 wallCollision();
-            }
-            else if (type == "RobotCollision"){
+            } else if (type.equals("RobotCollision")) {
                 robotCollision();
-            }
-            else{
+            } else {
                 mutualCollision();
             }
         }

@@ -8,6 +8,7 @@ package no.ntnu.tem.robot;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import no.ntnu.et.general.Line;
 import no.ntnu.et.general.Position;
 import no.ntnu.hkm.particlefilter.Particlefilter;
 import org.ejml.simple.SimpleMatrix;
@@ -31,7 +32,7 @@ public class Robot {
     private final int[] towerOffset, sensorOffset;
     private final IR irSensors;
     private final ConcurrentLinkedQueue<Measurement> measurements;
-    private final ConcurrentLinkedQueue<Measurement> slamMeasurements;
+    private boolean manualMode = false;
 
     private int[] initialPosition;
     private int[] estimatedPosition;
@@ -45,7 +46,7 @@ public class Robot {
     private int[] destination;
     private int messageCorruptCount = 0;
     private int ValueCorruptCount = 0;
-    private int address;
+    private final int address;
     private boolean connected = false;
     //Particle filter
     Particlefilter p = null;
@@ -69,12 +70,13 @@ public class Robot {
     private int batteryLevel;
     private final int[] basePosition;
     
-    private boolean manualMode = false;
+    private ArrayList<Line> lines;
 
     /**
      * Constructor of the class Robot
      *
      * @param robotID The robots ID
+     * @param address
      * @param name The robots name
      * @param width The robots physical width (cm)
      * @param length The robots physical length (cm)
@@ -97,7 +99,6 @@ public class Robot {
         this.irSensors = new IR(irHeading);
         this.batteryLevel = 1023;
         this.measurements = new ConcurrentLinkedQueue<>();
-        this.slamMeasurements = new ConcurrentLinkedQueue<>();
         this.address = address;
         this.initialPosition = new int[]{0, 0, 0};
         this.estimatedPosition = new int[]{0, 0};
@@ -115,8 +116,41 @@ public class Robot {
         this.adjustDirection = 0;
         this.backUpDist = 0;
         this.basePosition = new int[]{0, 35, 0};
+
+        // Line array
+        lines = new ArrayList<Line>();
     }
 
+    /**
+     * Used for visualization of line generation
+     * 
+     * @param line
+     * @param index 
+     */
+    public void addLine(Line line, int index) {
+        //Position a = new Position(line[0], line[1]);
+        //Position b = new Position(line[2], line[3]);
+        //Line newLine = new Line(a, b);
+        //line.print();
+        lines.add(line);
+        /*
+        if (!lines.isEmpty() && index < lines.size()) {
+            lines.set(index, line);
+        } else {
+            lines.add(line);
+        }
+        */
+        System.out.println("Line added in Robot.");
+    }
+    
+    public ArrayList<Line> getLines() {
+        return lines;
+    }
+    
+    public void clearLines() {
+        lines.clear();
+    }
+    
     public void setManualMode(boolean b) {
         manualMode = b;
     }
@@ -175,7 +209,6 @@ public class Robot {
             irHeading[i] = (towerHeading + irSensors.getSpreading()[i]) % 360;
         }
         Measurement measurment = new Measurement(measuredOrientation, measuredPosition, irHeading, irData);
-        slamMeasurements.offer(measurment); // Separate queue for the boundary robot
         return measurements.offer(measurment);
     }
 
@@ -196,11 +229,6 @@ public class Robot {
         return m;
     }
     
-    public Measurement getSlamMeasurement() {
-        Measurement m = slamMeasurements.poll();
-        return m;
-    }
-
     /**
      * Method that returns the robots id
      *
@@ -407,6 +435,7 @@ public class Robot {
     /**
      * Particlefilter functionality.
      *
+     * @param p
      */
     public void setParticleFilter(Particlefilter p) {
         this.p = p;

@@ -16,7 +16,6 @@ import java.awt.Graphics2D;
 public class Pose {
     
     private Position position;
-    
     private Angle heading;
     
     /**
@@ -94,6 +93,7 @@ public class Pose {
      * Paints the pose onto a Graphics2D object. The pose is painted as a circle
      * at the position and a line indicating the heading.
      * @param g2D Graphics2D object to paint upon.
+     * @param scale
      */
     public void paint(Graphics2D g2D, double scale){
         position.drawCircle(g2D, 10, scale);

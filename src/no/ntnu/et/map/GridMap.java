@@ -11,9 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import no.ntnu.et.general.Line;
-import no.ntnu.et.general.Observation;
 import no.ntnu.et.general.Position;
-import no.ntnu.et.general.Vertex;
 import no.ntnu.et.mapping.MappingController;
 
 /**
@@ -51,23 +49,10 @@ public class GridMap{
     private int rightColumn;
     private int leftColumn;
     
-    private ArrayList<Vertex> vertices = new ArrayList();
     
     //SLAMrobot simulation
     private ArrayList<MapLocation> obstructed = new ArrayList();
     private ArrayList<MapLocation> frontiers = new ArrayList();
-    
-    private ArrayList<Position> StateSpace = new ArrayList();
-    private ArrayList<Observation> observationHistory = new ArrayList();
-    private ArrayList<int[]> actionHistory = new ArrayList();
-    private ArrayList<Position> PointBufferF = new ArrayList();
-    private ArrayList<Position> PointBufferL = new ArrayList();
-    private ArrayList<Position> PointBufferB = new ArrayList();
-    private ArrayList<Position> PointBufferR = new ArrayList();
-    private ArrayList<ArrayList<Position>> pointBuffers = new ArrayList<ArrayList<Position>>();
-    private ArrayList<ArrayList<Line>> lineBuffers = new ArrayList<ArrayList<Line>>();
-    //private ArrayList<Line> lineRepository = new ArrayList<Line>();
-    private List<Line> lineRepository;
     
     /**
      * Constructor for the GridMap class
@@ -91,26 +76,7 @@ public class GridMap{
                     map.put(new MapLocation(i, j), new Cell());
                 }
             }
-            
-            vertices.add( new Vertex(Vertex.INTERIOR, new Position(25, 25)) );
-            for (int k = 0; k < 4; k++) {
-                pointBuffers.add(new ArrayList<Position>());
-                lineBuffers.add(new ArrayList<Line>());
-            }
-            lineRepository = Collections.synchronizedList(new ArrayList<Line>());
         }
-    }
-    
-    public ArrayList<ArrayList<Position>> getPointBuffers() {
-        return pointBuffers;
-    }
-    
-    public ArrayList<ArrayList<Line>> getLineBuffers() {
-        return lineBuffers;
-    }
-    
-    public List<Line> getLineRepository() {
-        return lineRepository;
     }
     
     public ArrayList<MapLocation> getObstructed() {
@@ -138,14 +104,6 @@ public class GridMap{
     public void clearLocation(MapLocation loc) {
         frontiers.remove(loc);
         obstructed.remove(loc);
-    }
-    
-    public void addVertex(Vertex vertex) {
-        vertices.add(vertex);
-    }
-    
-    public ArrayList<Vertex> getVertices() {
-        return vertices;
     }
     
     /**

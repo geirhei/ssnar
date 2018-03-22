@@ -7,7 +7,6 @@
 package no.ntnu.et.mapping;
 
 import java.util.HashMap;
-import no.ntnu.et.general.Position;
 import org.ejml.simple.SimpleMatrix;
 import org.ejml.simple.SimpleSVD;
 

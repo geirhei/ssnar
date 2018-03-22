@@ -17,8 +17,8 @@ import java.awt.Graphics2D;
  * @author Eirik Thon
  */
 public class Feature {
-    private Position start;
-    private Position end;
+    private final Position start;
+    private final Position end;
     
     /**
      * Constructor

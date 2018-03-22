@@ -14,12 +14,9 @@ import no.ntnu.tem.application.RobotController;
 import no.ntnu.et.map.GridMap;
 import no.ntnu.et.map.MapLocation;
 import no.ntnu.et.general.Angle;
-import no.ntnu.et.general.Line;
 import no.ntnu.et.general.Pose;
 import no.ntnu.et.general.Position;
-import no.ntnu.et.navigation.NavigationRobot;
 import no.ntnu.tem.robot.Robot;
-import no.ntnu.et.mapping.TransformationAlg;
 
 /**
  * This class creates the map from the measurements. See (Thon 2016) for more
@@ -36,12 +33,9 @@ public class MappingController extends Thread {
     private Object nameLock = new Object();
     private boolean paused;
     private Thread mapCleaner;
-    private boolean debug = false;
-    private boolean mergeNeeded = false;
+    private boolean debug = true;
     
-    ArrayList<ArrayList<Position>> pointBuffers;
-    ArrayList<ArrayList<Line>> lineBuffers;
-    List<Line> lineRepository;
+    private int lineCtr = 0;
 
     /**
      * Constructor
@@ -58,10 +52,6 @@ public class MappingController extends Thread {
         mapCleaner = new Thread(new MapCleaningWorker());
         mapCleaner.start();
         mapCleaner.setName("Map Cleaner");
-        pointBuffers = map.getPointBuffers();
-        lineBuffers = map.getLineBuffers();
-        lineRepository = map.getLineRepository();
-        
     }
     
     /**
@@ -158,70 +148,33 @@ public class MappingController extends Thread {
                 robot.setPosition(position);
                 robot.setRobotOrientation((int) Math.round(robotAngle.getValue()) + robot.getAdjustDirection());
                 
-                 
-
                 // Find the location of the robot in the map
                 map.resize(robotPosition);
                 MapLocation robotLocation = map.findLocationInMap(robotPosition);
 
                 Sensor[] sensors = measurementHandlers.get(name).getIRSensorData();
 				
-				//Drone Handling
-                //The drone uses the same structure that the sensor data uses,
-                //but they represents start and end points for lines.
-                //Must be handled separately
-                if (robot.getName().equals("Drone")) {
-                    //Sensor[] sensors = measurementHandlers.get(name).getIRSensorData();
+		// Drone and NXT robot handling, based on unit name.
+                // Uses the same structure that the sensor data uses,
+                // but they represents start and end points for lines.
+                //if (robot.getName().equals("Drone") || robot.getName().equals("NXT")) {
+                if (robot.getName().equals("Drone") || robot.getName().equals("SLAM")) {
                     Position start = sensors[0].getPosition();
                     Position end = sensors[1].getPosition();
-                    map.resize(start);
-                    map.resize(end);
-                    ArrayList<MapLocation> line = getLineBetweenPoints(map.findLocationInMap(start), map.findLocationInMap(end));
-                    line.forEach((location) -> {
-                        map.addMeasurement(location, true);
-                    });
+                    if (start.getXValue() != 0 && start.getYValue() != 0 && end.getXValue() != 0 && end.getYValue() != 0) {
+                        map.resize(start);
+                        map.resize(end);
+                        ArrayList<MapLocation> line = getLineBetweenPoints(map.findLocationInMap(start), map.findLocationInMap(end));
+                        line.forEach((location) -> {
+                            map.addMeasurement(location, true);
+                        });
+                        
+                        lineCtr++;
+                        if (debug) {
+                            System.out.println("No. of lines: " + lineCtr);
+                        }
+                    }
                     continue;
-                }
-                
-                // SLAMrobot handling. Does not currently care about other robots.
-                // 2D list of positions should be ok
-
-                if (robot.getName().equals("SLAM")) {
-                    
-                    for (int j = 0; j < 4; j++) {
-                        if (sensors[j].isMeasurement()) {
-                            Position measurementPoint = sensors[j].getPosition();
-                            pointBuffers.get(j).add(measurementPoint);
-                        } else {
-                            // If no obstacle is measured, set the point values av infinity
-                            //Position inf = new Position(Double.MAX_VALUE, Double.MAX_VALUE);
-                            //pointBuffers.get(j).add(inf);
-                        }
-                        if (pointBuffers.get(j).size() > 50) {
-                            mergeNeeded = true;
-                        }
-                    }
-                    
-                    if (mergeNeeded) {
-                        for (int k = 0; k < 4; k++) {
-                            Line.lineCreate(pointBuffers.get(k), lineBuffers.get(k));
-                        }
-                        
-                        for (int l = 0; l < 4; l++) {
-                            Line.lineMerge(lineBuffers.get(l), lineRepository);
-                        }
-                        
-                        System.out.println("pointBuffer0 size: " + pointBuffers.get(0).size());
-                        System.out.println("Lines created.");
-                        System.out.println("lineBuffer0 size: " + lineBuffers.get(0).size());
-                        System.out.println("Lines merged.");
-                        System.out.println("lineRepository size: " + lineRepository.size());
-                        mergeNeeded = false;
-                    }
-                    
-                    //System.out.println("Point buffer 1 length: " + pointBuffers.get(0).size());
-                    
-                    //continue;
                 }
                 
                 int sensorOneValue = 0;
@@ -246,7 +199,7 @@ public class MappingController extends Thread {
 
                     // The measurement is only added to the map if it is at a certain distance to the other robots
                     if (!tooClose) {
-                        int[] irheading = measurementHandlers.get(name).getSensorAngel();
+                        int[] irheading = measurementHandlers.get(name).getSensorAngle();
                         int[] irdata = measurementHandlers.get(name).getCurrentMeasurement().getIRdata();
 
                         map.resize(sensor.getPosition());

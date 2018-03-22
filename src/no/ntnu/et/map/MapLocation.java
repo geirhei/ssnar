@@ -6,8 +6,6 @@
  */
 package no.ntnu.et.map;
 
-import java.util.ArrayList;
-
 /**
  * This class represent a location in a grid. It contains the row and the column
  * of the location

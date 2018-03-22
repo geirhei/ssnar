@@ -9,10 +9,10 @@ import no.ntnu.et.general.Line;
 
 
 public class Drone extends SimRobot{
-    private int height = 100; // Unused as of now
-    private int frameHeight = 250;
-    private int frameWidth = 250;
-    private SimWorld world;
+    private final int height = 100; // Unused as of now
+    private final int frameHeight = 250;
+    private final int frameWidth = 250;
+    private final SimWorld world;
     
     Drone(SimWorld world, Pose initialPose, String name, int id, int address) {
         super(world,initialPose,name,id,address);
@@ -25,7 +25,7 @@ public class Drone extends SimRobot{
     @Override
     boolean moveRobot(double noise){
         if (!rotationFinished) {
-            System.out.println("Moveing");
+            System.out.println("Moving");
             if (Math.abs(measuredRotation) >= Math.abs(targetRotation)){
                 measuredRotation = 0;
                 rotationFinished = true;
@@ -90,7 +90,7 @@ public class Drone extends SimRobot{
                         break mainLoop;
                     }
                     //Else move endpoint towards start point
-                    else{
+                    else {
                         endX -= dir[0];
                         endY -= dir[1];
                     }
@@ -98,7 +98,7 @@ public class Drone extends SimRobot{
                 break;
             }
             //Else move start point towards end point
-            else{
+            else  {
                 startX += dir[0];
                 startY += dir[1];
             }

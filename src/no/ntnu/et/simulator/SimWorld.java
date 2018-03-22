@@ -26,7 +26,6 @@ public class SimWorld {
     private int height;
     ArrayList<Feature> features;
     ArrayList<Integer> robotIDs;
-    private ArrayList<String[]> possibleRobotNames;
     private int addressCounter = 0;
     HashMap<Integer, SimRobot> robots;
     private Integer ArduinoCounter = 0;
